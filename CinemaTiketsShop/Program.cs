@@ -1,3 +1,6 @@
+using CinemaTiketsShop.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace CinemaTiketsShop
 {
     public class Program
@@ -8,6 +11,11 @@ namespace CinemaTiketsShop
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<ApplicationDbConntext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
 
             var app = builder.Build();
 
