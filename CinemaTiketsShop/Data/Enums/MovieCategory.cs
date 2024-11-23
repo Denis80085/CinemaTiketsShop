@@ -7,6 +7,7 @@
         Comedy,
         Triller,
         Action,
-        Musicle
+        Musicle,
+        Criminal
     }
 }

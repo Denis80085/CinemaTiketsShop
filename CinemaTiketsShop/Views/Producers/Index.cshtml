@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Producer>
+
+@{
+    ViewData["Title"] = "List of producers";
+}
+
+<div class="row d-flex justify-content-center align-items-center">
+    <div class="col-md-8">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr class="text-center">
+                        <th>@Html.DisplayNameFor(Model => Model.FotoURL)</th>
+                        <th>@Html.DisplayNameFor(Model => Model.Name)</th>
+                        <th>@Html.DisplayNameFor(Model => Model.Bio)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">
+                                <img class="rounded-circle" src="@item.FotoURL" alt="@item.Name" style="max-width: 200px" />
+                            </td>
+
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelitem => item.Name)
+                            </td>
+
+                            <td class="align-middle">
+                                @Html.DisplayFor(modelitem => item.Bio)
+                            </td>
+
+                            <td class="align-middle">
+                                <div style="display: flex; justify-content:space-around; align-items: center">
+                                    <a class="btn btn-outline-primary"><i class="bi bi-pencil-square">Edit</i></a>
+                                    <a class="btn btn-outline-info"><i class="bi bi-eye">Edit</i></a>
+                                    <a class="btn btn-danger text-white"><i class="bi bi-trash">Delete</i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

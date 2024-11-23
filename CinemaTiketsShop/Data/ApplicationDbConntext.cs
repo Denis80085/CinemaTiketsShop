@@ -81,6 +81,71 @@ namespace CinemaTiketsShop.Data
                 ma.HasKey(ma => new {ma.MovieId, ma.ActorId});
             });
 
+            //seeding Cinemas
+            builder.Entity<Cinema>().HasData(
+                new Cinema 
+                {
+                    Id = 1,
+                    Name = "Disel Kino",
+                    Logo = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
+                    Description = "Big cinema. Evrey week new realeases. Suports new talented producers"
+                },
+                new Cinema 
+                {
+                    Id=2,
+                    Name = "Hookie Cinema",
+                    Logo = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
+                    Description = "Cosy Cinema, all brand new movies. Anime night evrey monday"
+                }
+                    
+            );
+
+            //Seeding Movies
+            builder.Entity<Movie>()
+                .HasData(
+                    new Movie 
+                    {
+                        Id = 1,
+                        Name = "Unglorious Bastards",
+                        ProducerId = 1,
+                        Description = "Other history of the WW2",
+                        Logo = "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg",
+                        StartDate = DateTime.Parse("18.11.2024"),
+                        EndDate = DateTime.Parse("26.11.2024"),
+                        Price = 18.4,
+                        CinemaId = 2,
+                        Category = Enums.MovieCategory.Action   
+                    },
+                    new Movie 
+                    {
+                        Id = 2,
+                        Name = "Wolf of Wall street",
+                        ProducerId = 2,
+                        Description = "The life of a guy, who made a dirty buisnes",
+                        Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
+                        StartDate = DateTime.Parse("18.11.2024"),
+                        EndDate = DateTime.Parse("26.11.2024"),
+                        Price = 18.4,
+                        CinemaId = 1,
+                        Category = Enums.MovieCategory.Criminal
+                    }
+                );
+
+            //Seeding Movies_Actors
+
+            builder.Entity<Movie_Actor>()
+                .HasData(
+                    new Movie_Actor
+                    {
+                        ActorId = 1,
+                        MovieId = 2
+                    },
+                    new Movie_Actor
+                    {
+                        ActorId = 2,
+                        MovieId = 1
+                    }
+                );
 
         }
     }

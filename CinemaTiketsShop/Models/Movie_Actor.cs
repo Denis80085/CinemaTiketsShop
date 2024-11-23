@@ -7,11 +7,11 @@ namespace CinemaTiketsShop.Models
         public int MovieId { get; set; }
 
         [ForeignKey("MovieId")]
-        public required Movie Movie { get; set; }
+        public Movie Movie { get; set; }
 
         public int ActorId { get; set; }
 
         [ForeignKey("ActorId")]
-        public required Actor Actor { get; set; }
+        public Actor Actor { get; set; }
     }
 }

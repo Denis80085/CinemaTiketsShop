@@ -9,24 +9,35 @@ namespace CinemaTiketsShop.Models
     {
         public int Id { get; set; }
         [Required]
+        [Display(Name = "Film name")]
         public string Name { get; set; } = string.Empty;
         [Required]
+        [Display(Name = "Description")]
         public string Description { get; set; } = string.Empty;
         [Required]
+        [Display(Name = "Film image")]
         public string Logo { get; set; } = string.Empty;
         [Required]
         public MovieCategory Category { get; set; }
+
+        [Required]
+        public DateTime StartDate { get; set; }
+        [Required]
+        public DateTime EndDate { get; set; }
+
+        [Required]
+        public double Price { get; set; }
 
         //Ralationships
         public int CinemaId { get; set; }
 
         [ForeignKey("CinemaId")]
-        public required Cinema Cinema { get; set; }
+        public Cinema Cinema { get; set; }
 
         public int ProducerId { get; set; }
 
         [ForeignKey("ProducerId")]
-        public required Producer Producer { get; set; }
+        public Producer? Producer { get; set; }
 
         public List<Movie_Actor>? Movies_Actors { get; set; }
     }

@@ -6,10 +6,13 @@ namespace CinemaTiketsShop.Models
     {
         public int Id { get; set; }
         [Required]
+        [Display(Name = "Cinema Name")]
         public string Name { get; set; } = string.Empty;
         [Required]
+        [Display(Name = "Descrption")]
         public string Description { get; set; } = string.Empty;
         [Required]
+        [Display(Name = "Logo Picture")]
         public string Logo { get; set; } = string.Empty;
 
         //Relationships
