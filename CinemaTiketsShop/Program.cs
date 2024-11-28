@@ -1,4 +1,5 @@
 using CinemaTiketsShop.Data;
+using CinemaTiketsShop.Data.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaTiketsShop
@@ -16,6 +17,8 @@ namespace CinemaTiketsShop
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<IActorServices, ActorService>();
 
             var app = builder.Build();
 

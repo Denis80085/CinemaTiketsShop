@@ -35,6 +35,13 @@ namespace CinemaTiketsShop.Data
                        Name = "Bred Pit",
                        Bio = "Popular actor. He had filmed in lot of popular movies.",
                        FotoURL = "https://image.stern.de/34287660/t/4O/v1/w1440/r1.7778/-/brad-pitt-cannes.jpg"
+                   },
+                   new Actor
+                   {
+                       Id = 3,
+                       Name = "Johny Depp",
+                       Bio = "Popular actor. He had filmed in lot of popular movies.",
+                       FotoURL = "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/33623_v9_bd.jpg"
                    });
             });
             
@@ -53,6 +60,13 @@ namespace CinemaTiketsShop.Data
                         Name = "Martin Scorsese",
                         Bio = "Thery talented producer. His carear contains such films as Godfellas, Woolf of the wool street, Shutered island etc.",
                         FotoURL = "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcT1T9q4leZMVWGx-_AFAwhe9jbRSevlm_y2Vi5F4MkCLgwUmNhSc8nddZPtY4vvJI1emvb7YJid1Ki3ESM"
+                    },
+                    new Producer
+                    {
+                        Id = 3,
+                        Name = "Espen Sandberg",
+                        Bio = "producer of pirates of the caribbean",
+                        FotoURL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfw8TbUDvrqSCEruiCs44JJeqRV5q4lw1picG3KgkfpVlO-2rpCv_2MUj5IX18FkeQsik1wzLaed1W2CwCzuGIYA"
                     }
                 );
             });
@@ -128,6 +142,32 @@ namespace CinemaTiketsShop.Data
                         Price = 18.4,
                         CinemaId = 1,
                         Category = Enums.MovieCategory.Criminal
+                    },
+                    new Movie
+                    {
+                        Id = 3,
+                        Name = "Wolf of Wall street",
+                        ProducerId = 2,
+                        Description = "The life of a guy, who made a dirty buisnes",
+                        Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
+                        StartDate = DateTime.Parse("18.11.2024"),
+                        EndDate = DateTime.Parse("28.11.2024"),
+                        Price = 18.4,
+                        CinemaId = 2,
+                        Category = Enums.MovieCategory.Criminal
+                    },
+                    new Movie
+                    {
+                        Id = 4,
+                        Name = "Pirates of Caribbean",
+                        ProducerId = 3,
+                        Description = "Disney movie about pirates",
+                        Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
+                        StartDate = DateTime.Parse("30.11.2024"),
+                        EndDate = DateTime.Parse("01.02.2025"),
+                        Price = 20.0,
+                        CinemaId = 1,
+                        Category = Enums.MovieCategory.Action
                     }
                 );
 
@@ -144,6 +184,11 @@ namespace CinemaTiketsShop.Data
                     {
                         ActorId = 2,
                         MovieId = 1
+                    },
+                    new Movie_Actor
+                    {
+                        ActorId = 3,
+                        MovieId = 4
                     }
                 );
 
