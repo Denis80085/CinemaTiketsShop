@@ -38,7 +38,7 @@ namespace CinemaTiketsShop
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Actors}/{action=Index}/{id?}")
+                pattern: "{controller=Movies}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

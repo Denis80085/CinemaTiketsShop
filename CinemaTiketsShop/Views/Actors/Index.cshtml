@@ -22,7 +22,7 @@
                     {
                         <tr>
                             <td class="align-middle">
-                                <img class="rounded-circle" src="@item.FotoURL" alt="@item.Name" style="max-width: 200px"/>
+                                <img class="rounded-circle" src="@item.FotoURL" alt="@item.Name" style="max-width: 150px"/>
                             </td>
 
                             <td class="align-middle" >
@@ -34,9 +34,9 @@
                             </td>
 
                             <td class="align-middle">
-                                <div style="display: flex; justify-content:space-around; align-items: center">
+                                <div class="d-flex flex-row justify-content-between">
                                     <a class="btn btn-outline-primary"><i class="bi bi-pencil-square">Edit</i></a>
-                                    <a class="btn btn-outline-info"><i class="bi bi-eye">Edit</i></a>
+                                    <a class="btn btn-outline-info" asp-action="Details" asp-controller="Actors" asp-route-id ="@item.Id"><i class="bi bi-eye">Details</i></a>
                                     <a class="btn btn-danger text-white"><i class="bi bi-trash">Delete</i></a>
                                 </div>
                             </td>
@@ -46,4 +46,10 @@
             </table>
         </div>
     </div>
+    
 </div>
+
+<div class="text-white" style="position: fixed; right: 25px; bottom: 80px;">
+    <a class="btn btn-success" asp-controller="Actors" asp-action="Create"> <i class="bi bi-clipboard2-plus"></i> Add new </a>
+</div>
+

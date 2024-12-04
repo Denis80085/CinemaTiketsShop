@@ -1,0 +1,66 @@
+﻿@model Actor
+
+@{
+    ViewData["Title"] = "Add new actor";
+}
+
+<div class="row text">
+    <div class="col-md-8 offset-2">
+        <p>
+            <h1>Create a new actor:</h1>
+        </p>
+
+        <div class="col-md-8 offset-2">
+
+            <form asp-action="Create" class="d-flex flex-column justify-content-around gap-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group text-center">
+                    <img style="max-width: 200px" id="FotoPreview" class="border-info rounded-circle"/>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="FotoURL" class="control-label"></label>
+                    <input asp-for="FotoURL" class="form-control" />
+                    <span asp-validation-for="FotoURL" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Bio" class="control-label"></label>
+                    <textarea asp-for="Bio" class="form-control"></textarea>
+                    <span asp-validation-for="Bio" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="d-flex flex-row-reverse justify-content-lg-between">
+                        <input type="submit" value="Create" class="btn btn-outline-success float-start" />
+                        <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
+                    </div>
+                </div>
+
+            </form>
+        
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#FotoURL").val();
+        })
+
+        $("#FotoURL").on("change", function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $(this).val();
+        })
+    </script>
+}
