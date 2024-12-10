@@ -35,9 +35,10 @@
 
                             <td class="align-middle">
                                 <div class="d-flex flex-row justify-content-between">
-                                    <a class="btn btn-outline-primary"><i class="bi bi-pencil-square">Edit</i></a>
-                                    <a class="btn btn-outline-info" asp-action="Details" asp-controller="Actors" asp-route-id ="@item.Id"><i class="bi bi-eye">Details</i></a>
-                                    <a class="btn btn-danger text-white"><i class="bi bi-trash">Delete</i></a>
+                                    <a class="btn btn-outline-primary" asp-controller="Actors" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square">Edit</i></a>
+                                    <a class="btn btn-outline-info" asp-controller="Actors" asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye">Details</i></a>
+                                    <!--TODO: Add a pop up window on delete click-->
+                                    <a class="btn btn-danger text-white" asp-controller="Actors" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash">Delete</i></a>
                                 </div>
                             </td>
                         </tr>
@@ -52,4 +53,3 @@
 <div class="text-white" style="position: fixed; right: 25px; bottom: 80px;">
     <a class="btn btn-success" asp-controller="Actors" asp-action="Create"> <i class="bi bi-clipboard2-plus"></i> Add new </a>
 </div>
-

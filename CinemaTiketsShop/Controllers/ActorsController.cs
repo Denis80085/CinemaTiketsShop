@@ -2,7 +2,9 @@
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace CinemaTiketsShop.Controllers
 {
@@ -31,6 +33,7 @@ namespace CinemaTiketsShop.Controllers
         {
             if (!ModelState.IsValid) 
             {
+                Debug.WriteLine("Actor not created", category: "Actor Validation Error by creating:");
                 return View(actor);
             }
 
@@ -39,7 +42,7 @@ namespace CinemaTiketsShop.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("Actors/Details/{id:int}")]
         public async Task<IActionResult> Details([FromRoute] int id) 
         {
             var Actor = await _actorService.GetById(id);
@@ -50,8 +53,77 @@ namespace CinemaTiketsShop.Controllers
             }
             else 
             {
+                Debug.WriteLine("Actor Not Found", category: "Details Controler Error:");
                 return View("Empty");
             }
+        }
+
+        [HttpGet("Edit/{id:int}")]
+        public async Task<IActionResult> Edit([FromRoute]int id) 
+        {
+            var ActorResult = await _actorService.GetById(id);
+
+            if (ActorResult._isFound) 
+            {
+                return View(ActorResult._actor);
+            }
+            else 
+            {
+                Debug.WriteLine("Actor Not Found", category: "Edit Controler Error:");
+                return View("Empty");
+            }
+
+        }
+
+        [HttpPost("Edit/{id:int}")]
+        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id, Name, FotoURL, Bio")] Actor actor)
+        {
+            if (!ModelState.IsValid) 
+            {
+                return View("Empty");
+            }
+
+            var NewActor = await _actorService.Update(id, actor);
+
+            if (NewActor != null)
+            {
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+            else
+            {
+                Debug.WriteLine("Actor Not Found", category: "Edit Controler Error:");
+                return View("Empty");
+            }
+        }
+
+        [HttpGet("Delete/{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute]int id) 
+        {
+            var ActorResult = await _actorService.GetById(id);
+
+            if (ActorResult._isFound && ActorResult._actor != null)
+            {
+                return View(ActorResult._actor);
+            }
+            else
+            {
+                Debug.WriteLine("Actor Not Found", category: "Delete Controler Error:");
+                return View("Empty");
+            }
+        }
+
+        [HttpPost("Delete/{id:int}")]
+        public async Task<IActionResult> Delete([Bind("Id, Name, FotoURL, Bio")] Actor deleteActor)
+        {
+            if(await _actorService.Delete(deleteActor) != null) 
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else 
+            {
+                Debug.WriteLine("Actor Not Found", category: "HDelete Controler Error:");
+                return RedirectToAction(nameof(Index));
+            }        
         }
     }
 }

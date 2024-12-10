@@ -1,6 +1,7 @@
 ﻿using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace CinemaTiketsShop.Data.Services
 {
@@ -20,9 +21,21 @@ namespace CinemaTiketsShop.Data.Services
             await _context.SaveChangesAsync();
         }
 
-        public void Delete(Actor actor)
+        public async Task<Actor?> Delete(Actor actor)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Actors.Remove(actor);
+                await _context.SaveChangesAsync();
+
+                return actor;
+            }
+            catch (Exception ex) 
+            {
+                Debug.WriteLine(ex.Message, category: "Actor Updating Error");
+                return null;
+            }
+
         }
 
         public async Task<IEnumerable<Actor>> GetActors()
@@ -46,9 +59,34 @@ namespace CinemaTiketsShop.Data.Services
             }
         }
 
-        public Task<Actor> Update(int id, Actor NewActor)
+        public async Task<Actor?> Update(int id, Actor NewActor)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if(_context.Actors.Any(a => a.Id == id)) 
+                {
+                    _context.Update(NewActor);
+
+                    await _context.SaveChangesAsync();
+
+                    return NewActor;
+                }
+                else 
+                {
+                    throw new KeyNotFoundException($"No Actor with id {id} was found");
+                }
+                
+            }
+            catch (KeyNotFoundException kex)
+            {
+                Debug.WriteLine(kex.Message, category: "Actor Id not found while Updating");
+                return null;
+            }
+            catch (Exception ex) 
+            {
+                Debug.WriteLine(ex.Message, category: "Actor Updating Error");
+                return null;
+            }  
         }
     }
 }
