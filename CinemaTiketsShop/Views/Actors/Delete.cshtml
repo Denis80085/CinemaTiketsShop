@@ -37,11 +37,37 @@
 
                     <div class="form-group">
                         <div class="d-flex flex-row-reverse justify-content-lg-between">
-                            <input type="submit" value="Delete" class="btn btn-danger text-white"/>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Delete
+                            </button>
                             <a class="btn btn-outline-primary" asp-controller="Actors" asp-action="Index">Cancel</a>
                         </div>
                     </div>
 
+                    
+                    
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="position:fixed; align-self:center">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete @Model.Name</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                
+                                <div class="modal-body text-danger text-center">
+                                    Are you sure you want to delete actor: @Model.Name?
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+                                    <input type="submit" value="Yes" class="btn btn-outline-danger" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
 
             </div>
