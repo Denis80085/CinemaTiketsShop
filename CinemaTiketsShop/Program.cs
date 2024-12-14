@@ -19,6 +19,7 @@ namespace CinemaTiketsShop
             });
 
             builder.Services.AddScoped<IActorServices, ActorService>();
+            builder.Services.AddScoped<IProducerService, ProducerService>();
 
             var app = builder.Build();
 
