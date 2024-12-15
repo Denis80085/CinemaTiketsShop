@@ -80,7 +80,7 @@ namespace CinemaTiketsShop.Controllers
         {
             if (!ModelState.IsValid) 
             {
-                return View("Empty");
+                return View(actor);
             }
 
             var NewActor = await _actorService.Update(id, actor);

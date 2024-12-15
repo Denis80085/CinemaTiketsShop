@@ -1,0 +1,71 @@
+﻿@model Producer
+
+@{
+    ViewData["Title"] = "Edit Producer";
+}
+
+<div class="row text">
+
+    <div class="col-md-12">
+        <div class="col-md-8  offset-2">
+            <p>
+                <h1>Create a new Producer:</h1>
+            </p>
+
+            <div class="col-md-8 offset-2">
+
+                <div class="form-group text-center">
+                    <img style="max-width: 200px" id="FotoPreview" class="border-info rounded-circle" alt="not found"/>
+                </div>
+
+                <form asp-action="Edit" class="gap-4">
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="FotoURL" class="form-label"><strong>Foto:</strong></label>
+                        <input type="text" class="form-control" asp-for="FotoURL" placeholder="Foto URL" required>
+                        <span asp-validation-for="FotoURL" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="Name" class="form-label"><strong>Full Name:</strong></label>
+                        <input type="text" class="form-control" asp-for="Name" placeholder="Producer's full name" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="Bio" class="form-label"><strong>Biogrophy:</strong></label>
+                        <textarea type="text" class="form-control" asp-for="Bio" placeholder="Producer's biography" required></textarea>
+                        <span asp-validation-for="Bio" class="text-danger"></span>
+                    </div>
+
+                    <input type="hidden" name="Id" value="@Model.Id" readonly/>
+
+                    <div class="form-group" style="margin-top: 10px">
+                        <div class="d-flex flex-row-reverse justify-content-lg-between">
+                            <input type="submit" value="Update" class="btn btn-outline-success float-start" />
+                            <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
+                        </div>
+                    </div>
+                    
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+    <script>
+
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#FotoURL").val();
+        })
+
+        $("#FotoURL").on("change", function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $(this).val();
+        })
+    </script>
+}

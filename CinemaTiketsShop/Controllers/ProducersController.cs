@@ -63,5 +63,58 @@ namespace CinemaTiketsShop.Controllers
                 return View(NewProducer);
             }
         }
+
+        public async Task<IActionResult> Edit(int id) 
+        {
+            try 
+            {
+                var ProducerResult = await _ProducerService.GetByIdAsync(id);
+
+                if (ProducerResult.isFound) 
+                {
+                    return View(ProducerResult.Producer);
+                }
+                else 
+                {
+                    throw new ArgumentNullException($"Producer with id {id} not found");
+                }
+            }
+            catch(Exception ex) 
+            {
+                Debug.WriteLine(ex.Message, category: "Producer Controller Error");
+                //some loggs
+                return RedirectToAction(nameof(Index)); //ToDo: replace with Empty Page, Add logging 
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, FotoURL")] Producer UpdatedProducer)
+        {
+            
+            if (!ModelState.IsValid)
+            {
+                return View(UpdatedProducer);
+            }
+
+            try
+            {
+                var ProducerResult = await _ProducerService.UpdateAsync(UpdatedProducer, Id);
+
+                if (ProducerResult.UpdateSucceded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    throw new Exception($"Update of producer {UpdatedProducer.Name} failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, category: "Producer Controller Error");
+                //some loggs
+                return RedirectToAction(nameof(Index)); //ToDo: replace with Empty Page, Add logging 
+            }
+        }
     }
 }
