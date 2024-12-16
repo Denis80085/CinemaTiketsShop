@@ -10,5 +10,7 @@ namespace CinemaTiketsShop.Data.Services
         Task<ProducerResult> GetByIdAsync(int id);
 
         Task<ProducerResult> UpdateAsync(Producer UpdatedProducer, int id);
+
+        Task DeleteAsync(Producer producer);
     }
 }

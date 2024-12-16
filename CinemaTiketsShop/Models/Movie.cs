@@ -2,6 +2,7 @@
 using CinemaTiketsShop.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CinemaTiketsShop.Models
 {
@@ -34,7 +35,8 @@ namespace CinemaTiketsShop.Models
         [ForeignKey("CinemaId")]
         public Cinema Cinema { get; set; }
 
-        public int ProducerId { get; set; }
+        [AllowNull]
+        public int? ProducerId { get; set; }
 
         [ForeignKey("ProducerId")]
         public Producer? Producer { get; set; }

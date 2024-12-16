@@ -18,6 +18,7 @@ namespace CinemaTiketsShop.Controllers
             _ProducerService = producerService;
         }
 
+        [HttpGet]
         public  async Task<IActionResult> Index()
         {
             var Producers = await _context.Producers.Select(p => p).ToListAsync();
@@ -64,6 +65,7 @@ namespace CinemaTiketsShop.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id) 
         {
             try 
@@ -106,7 +108,7 @@ namespace CinemaTiketsShop.Controllers
                 }
                 else
                 {
-                    throw new Exception($"Update of producer {UpdatedProducer.Name} failed");
+                    throw new Exception($"Update of producer failed");
                 }
             }
             catch (Exception ex)
@@ -114,6 +116,55 @@ namespace CinemaTiketsShop.Controllers
                 Debug.WriteLine(ex.Message, category: "Producer Controller Error");
                 //some loggs
                 return RedirectToAction(nameof(Index)); //ToDo: replace with Empty Page, Add logging 
+            }
+        }
+
+        public async Task<IActionResult> Delete([FromRoute] int id) 
+        {
+            try
+            {
+                var producerResult = await _ProducerService.GetByIdAsync(id);
+
+                if (producerResult.isFound) 
+                {
+                    return View(producerResult.Producer);
+                }
+                else 
+                {
+                    throw new Exception($"Deleting of producer failed. Producer Not Found");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message, category: "Producer Controller Error");
+                //some loggs
+                return RedirectToAction(nameof(Index));//ToDo: replace with Empty Page, Add logging
+            }
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed([FromForm] int Id) 
+        {
+            try 
+            {
+                var producerResult = await _ProducerService.GetByIdAsync(Id);
+
+                if (producerResult.isFound && producerResult.Producer !=  null)
+                {
+                    await _ProducerService.DeleteAsync(producerResult.Producer);
+
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    throw new Exception($"Confirm Deleting of the producer failed. Producer Not Found");
+                }
+            }
+            catch(Exception ex) 
+            {
+                Debug.WriteLine(ex.Message, category: "Producer Controller Error");
+                //some loggs
+                return RedirectToAction(nameof(Index));//ToDo: replace with Empty Page, Add logging
             }
         }
     }

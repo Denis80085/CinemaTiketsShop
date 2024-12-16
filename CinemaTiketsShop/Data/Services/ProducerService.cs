@@ -30,11 +30,24 @@ namespace CinemaTiketsShop.Data.Services
             }
         }
 
+        public async Task DeleteAsync(Producer producer)
+        {
+            try 
+            {
+                _context.Producers.Remove(producer);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Producer could not be deleted with the message: {ex.Message}");
+            }
+        }
+
         public async Task<ProducerResult> GetByIdAsync(int id)
         {
             try 
             {
-                var Producer = await _context.Producers.FirstOrDefaultAsync(x => x.Id == id);
+                var Producer = await _context.Producers.Include(p => p.Movies).FirstOrDefaultAsync(x => x.Id == id);
                 
                 if (Producer != null)
                 {

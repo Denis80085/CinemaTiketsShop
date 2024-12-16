@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaTiketsShop.Migrations
 {
     [DbContext(typeof(ApplicationDbConntext))]
-    [Migration("20241116171012_seed")]
-    partial class seed
+    [Migration("20241216184228_Renew")]
+    partial class Renew
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,8 @@ namespace CinemaTiketsShop.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("FotoURL")
                         .IsRequired()
@@ -42,7 +43,8 @@ namespace CinemaTiketsShop.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(270)
+                        .HasColumnType("nvarchar(270)");
 
                     b.HasKey("Id");
 
@@ -62,6 +64,13 @@ namespace CinemaTiketsShop.Migrations
                             Bio = "Popular actor. He had filmed in lot of popular movies.",
                             FotoURL = "https://image.stern.de/34287660/t/4O/v1/w1440/r1.7778/-/brad-pitt-cannes.jpg",
                             Name = "Bred Pit"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Bio = "Popular actor. He had filmed in lot of popular movies.",
+                            FotoURL = "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/33623_v9_bd.jpg",
+                            Name = "Johny Depp"
                         });
                 });
 
@@ -94,14 +103,14 @@ namespace CinemaTiketsShop.Migrations
                         {
                             Id = 1,
                             Description = "Big cinema. Evrey week new realeases. Suports new talented producers",
-                            Logo = "logo url",
+                            Logo = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
                             Name = "Disel Kino"
                         },
                         new
                         {
                             Id = 2,
                             Description = "Cosy Cinema, all brand new movies. Anime night evrey monday",
-                            Logo = "logo URL",
+                            Logo = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
                             Name = "Hookie Cinema"
                         });
                 });
@@ -138,7 +147,7 @@ namespace CinemaTiketsShop.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("ProducerId")
+                    b.Property<int?>("ProducerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -173,11 +182,37 @@ namespace CinemaTiketsShop.Migrations
                             CinemaId = 1,
                             Description = "The life of a guy, who made a dirty buisnes",
                             EndDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Logo = "https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg",
-                            Name = "Wolf of the Wall street",
+                            Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
+                            Name = "Wolf of Wall street",
                             Price = 18.399999999999999,
                             ProducerId = 2,
                             StartDate = new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Category = 7,
+                            CinemaId = 2,
+                            Description = "The life of a guy, who made a dirty buisnes",
+                            EndDate = new DateTime(2024, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
+                            Name = "Wolf of Wall street",
+                            Price = 18.399999999999999,
+                            ProducerId = 2,
+                            StartDate = new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Category = 5,
+                            CinemaId = 1,
+                            Description = "Disney movie about pirates",
+                            EndDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
+                            Name = "Pirates of Caribbean",
+                            Price = 20.0,
+                            ProducerId = 3,
+                            StartDate = new DateTime(2024, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -205,6 +240,11 @@ namespace CinemaTiketsShop.Migrations
                         {
                             MovieId = 1,
                             ActorId = 2
+                        },
+                        new
+                        {
+                            MovieId = 4,
+                            ActorId = 3
                         });
                 });
 
@@ -217,7 +257,8 @@ namespace CinemaTiketsShop.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("FotoURL")
                         .IsRequired()
@@ -225,7 +266,8 @@ namespace CinemaTiketsShop.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(270)
+                        .HasColumnType("nvarchar(270)");
 
                     b.HasKey("Id");
 
@@ -245,6 +287,13 @@ namespace CinemaTiketsShop.Migrations
                             Bio = "Thery talented producer. His carear contains such films as Godfellas, Woolf of the wool street, Shutered island etc.",
                             FotoURL = "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcT1T9q4leZMVWGx-_AFAwhe9jbRSevlm_y2Vi5F4MkCLgwUmNhSc8nddZPtY4vvJI1emvb7YJid1Ki3ESM",
                             Name = "Martin Scorsese"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Bio = "producer of pirates of the caribbean",
+                            FotoURL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfw8TbUDvrqSCEruiCs44JJeqRV5q4lw1picG3KgkfpVlO-2rpCv_2MUj5IX18FkeQsik1wzLaed1W2CwCzuGIYA",
+                            Name = "Espen Sandberg"
                         });
                 });
 
@@ -258,9 +307,7 @@ namespace CinemaTiketsShop.Migrations
 
                     b.HasOne("CinemaTiketsShop.Models.Producer", "Producer")
                         .WithMany("Movies")
-                        .HasForeignKey("ProducerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProducerId");
 
                     b.Navigation("Cinema");
 

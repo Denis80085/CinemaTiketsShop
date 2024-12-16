@@ -31,7 +31,8 @@ namespace CinemaTiketsShop.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("FotoURL")
                         .IsRequired()
@@ -39,7 +40,8 @@ namespace CinemaTiketsShop.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(270)
+                        .HasColumnType("nvarchar(270)");
 
                     b.HasKey("Id");
 
@@ -142,7 +144,7 @@ namespace CinemaTiketsShop.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int>("ProducerId")
+                    b.Property<int?>("ProducerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -187,9 +189,9 @@ namespace CinemaTiketsShop.Migrations
                         {
                             Id = 3,
                             Category = 7,
-                            CinemaId = 1,
+                            CinemaId = 2,
                             Description = "The life of a guy, who made a dirty buisnes",
-                            EndDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
                             Name = "Wolf of Wall street",
                             Price = 18.399999999999999,
@@ -202,7 +204,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 5,
                             CinemaId = 1,
                             Description = "Disney movie about pirates",
-                            EndDate = new DateTime(2024, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
                             Name = "Pirates of Caribbean",
                             Price = 20.0,
@@ -252,7 +254,8 @@ namespace CinemaTiketsShop.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("FotoURL")
                         .IsRequired()
@@ -260,7 +263,8 @@ namespace CinemaTiketsShop.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(270)
+                        .HasColumnType("nvarchar(270)");
 
                     b.HasKey("Id");
 
@@ -300,9 +304,7 @@ namespace CinemaTiketsShop.Migrations
 
                     b.HasOne("CinemaTiketsShop.Models.Producer", "Producer")
                         .WithMany("Movies")
-                        .HasForeignKey("ProducerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProducerId");
 
                     b.Navigation("Cinema");
 
