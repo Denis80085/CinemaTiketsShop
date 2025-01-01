@@ -22,7 +22,7 @@
                     {
                         <tr>
                             <td class="align-middle">
-                                <img class="rounded-circle" src="@item.FotoURL" alt="@item.Name" style="max-width: 200px" />
+                                <img class="rounded-circle" src="@item.FotoURL" alt="@item.Name" style="max-width: 250px" />
                             </td>
 
                             <td class="align-middle">
@@ -36,7 +36,7 @@
                             <td class="align-middle">
                                 <div style="display: flex; justify-content:space-around; align-items: center">
                                     <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square">Edit</i></a>
-                                    <a class="btn btn-outline-info"><i class="bi bi-eye">Details</i></a>
+                                    <a class="btn btn-outline-info"  asp-action="Details" asp-route-id="@item.Id"><i class="bi bi-eye">Details</i></a>
                                     <a class="btn btn-danger text-white" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash">Delete</i></a>
                                 </div>
                             </td>

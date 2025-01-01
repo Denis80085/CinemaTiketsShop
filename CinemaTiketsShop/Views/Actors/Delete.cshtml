@@ -2,6 +2,17 @@
 
 @{
     ViewData["Title"] = $"Delete {Model.Name}?";
+
+    IEnumerable<Movie>? Movies;
+
+    if (Model.Movies_Actors != null && Model.Movies_Actors.Count > 0)
+    {
+        Movies = Model.Movies_Actors.Select(mp => mp.Movie).ToList();
+    }
+    else
+    {
+        Movies = null;
+    }
 }
 
 <div class="row text">
@@ -57,9 +68,28 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 
-                                <div class="modal-body text-danger text-center">
+                                <div class="modal-body text-danger text-start" style="padding-left: 10px;">
                                     Are you sure you want to delete actor: @Model.Name?
                                 </div>
+
+                                
+                                <div class="text-start" style="padding-left: 10px;">
+                                    @if (Movies != null)
+                                    {
+                                        <p class="text-secondary">
+                                            Thiese movies will miss some information about @Model.Name:
+                                            @foreach (var item in Movies)
+                                            {
+                                                <h5 class="badge text-bg-info">@item.Name </h5>
+                                            }
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-success" style="left: 10px">This producer is not included in any movies on your site</p>
+                                    }
+                                </div>
+                                
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>

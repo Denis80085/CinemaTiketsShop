@@ -22,6 +22,6 @@ namespace CinemaTiketsShop.Models
         public string FotoURL { get; set; } = string.Empty;
 
         //Relationships
-        public List<Movie_Actor>? Movies_Actors { get; set; }
+        public List<Movie_Actor> Movies_Actors { get; set; } = new List<Movie_Actor>();
     }
 }

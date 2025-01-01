@@ -1,6 +1,7 @@
 ﻿using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 using System.Diagnostics;
 
 namespace CinemaTiketsShop.Data.Services
@@ -47,11 +48,11 @@ namespace CinemaTiketsShop.Data.Services
 
         public async Task<ActorResult> GetById(int id)
         {
-            var result = await _context.Actors.FirstOrDefaultAsync(a => a.Id == id);
+            var Actors = await _context.Actors.Include(a => a.Movies_Actors).ThenInclude(a => a.Movie).Where(a => a.Id == id ).Select(a => a).ToListAsync();
 
-            if (result != null) 
+            if (Actors != null) 
             {
-                return ActorResult.Found(result);
+                return ActorResult.Found(Actors[0]);
             }
             else 
             {

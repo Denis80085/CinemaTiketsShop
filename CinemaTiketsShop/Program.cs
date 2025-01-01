@@ -1,5 +1,7 @@
 using CinemaTiketsShop.Data;
 using CinemaTiketsShop.Data.Services;
+using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaTiketsShop
@@ -20,6 +22,9 @@ namespace CinemaTiketsShop
 
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
+            builder.Services.AddScoped<IPhotoService, PhotoService>();
+
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
 
             var app = builder.Build();
 
