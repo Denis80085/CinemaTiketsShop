@@ -6,5 +6,7 @@ namespace CinemaTiketsShop.Services
     {
         Task<ImageUploadResult> UploadPhotoAsync(IFormFile file);
         Task<DeletionResult> DeletePhotoAsync(string publicId);
+
+        Task<ImageUploadResult> UploadPhotoWithUrlAsync(string PicUrl);
     }
 }

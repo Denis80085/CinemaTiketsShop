@@ -3,6 +3,8 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace CinemaTiketsShop.Services
 {
@@ -50,6 +52,28 @@ namespace CinemaTiketsShop.Services
                 UploadResult = await _cloudinary.UploadAsync(UploadParams);
             }
             else 
+            {
+                _logger.LogWarning("Uploading image failed");
+            }
+
+            return UploadResult;
+        }
+
+        public async Task<ImageUploadResult> UploadPhotoWithUrlAsync(string PicUrl)
+        {
+            var UploadResult = new ImageUploadResult();
+
+            if (!string.IsNullOrWhiteSpace(PicUrl))
+            {
+                var UploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(PicUrl),
+                    Transformation = new Transformation().Height(250).Width(250).Crop("fill").Gravity("face")
+                };
+
+                UploadResult = await _cloudinary.UploadAsync(UploadParams);
+            }
+            else
             {
                 _logger.LogWarning("Uploading image failed");
             }

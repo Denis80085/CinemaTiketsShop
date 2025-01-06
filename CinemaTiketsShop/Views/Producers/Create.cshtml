@@ -17,15 +17,21 @@
             <div class="col-md-8 offset-2">
 
                 <div class="form-group text-center">
-                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" />
+                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle"/>
                 </div>
                
                 <form enctype="multipart/form-data" asp-action="Create" class="gap-4">
 
                     <div style="margin-top: 40px">
-                        <label asp-for="Foto" class="form-label"><strong>Foto:</strong></label>
+                        <label asp-for="Foto" class="form-label"><strong>Select a picture from your device:</strong></label>
                         <input asp-for="Foto" class="form-control" type="file">
                         <span asp-validation-for="Foto" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="PictureUrl" class="form-label"><strong>Or put a picture URL:</strong></label>
+                        <input asp-for="PictureUrl" class="form-control" type="text">
+                        <span asp-validation-for="PictureUrl" class="text-danger"></span>
                     </div>
 
                     <div style="margin-top: 40px">
@@ -79,5 +85,15 @@
                 }
             });
         });
+
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#PictureUrl").val();
+        })
+
+        $("#PictureUrl").on("change", function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $(this).val();
+        })
     </script>
 }

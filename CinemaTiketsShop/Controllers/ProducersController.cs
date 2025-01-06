@@ -1,10 +1,13 @@
 ﻿using CinemaTiketsShop.Data;
 using CinemaTiketsShop.Data.Services;
+using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.ViewModels.ProducerVMs;
+using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
 namespace CinemaTiketsShop.Controllers
@@ -51,15 +54,38 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, Bio, Foto")]CreateProducerViewModel ProducerVM) 
+        public async Task<IActionResult> Create([Bind("Name, Bio, Foto, PictureUrl")]CreateProducerViewModel ProducerVM) 
         {
             _logger.LogInformation($"Producer Controler Create-Action called: {DateTime.Now}");
+
+            if (ProducerVM.Foto == null && string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
+            {
+                ModelState.AddModelError("Foto", "No picture was found");
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var result = await _photoService.UploadPhotoAsync(ProducerVM.Foto);
+                    var result = new ImageUploadResult();
+
+                    if(ProducerVM.Foto != null) 
+                    {
+                        result = await _photoService.UploadPhotoAsync(ProducerVM.Foto);
+                    }
+                    else if(!string.IsNullOrWhiteSpace(ProducerVM.PictureUrl)) 
+                    {
+                        if (PictureUrl.isValid(ProducerVM.PictureUrl)) 
+                        {
+                            result = await _photoService.UploadPhotoWithUrlAsync(ProducerVM.PictureUrl);
+                        }
+                        else 
+                        {
+                            ModelState.AddModelError("PictureUrl", "Url doesent point to a image of type .jpg, .png, .webp or .svg");
+                            return View(ProducerVM);
+                        }
+                        
+                    }                    
 
                     var NewProducer = new Producer
                     {

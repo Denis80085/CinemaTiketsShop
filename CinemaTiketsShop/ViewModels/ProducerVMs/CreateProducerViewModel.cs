@@ -15,6 +15,9 @@ namespace CinemaTiketsShop.ViewModels.ProducerVMs
         [StringLength(500, MinimumLength = 2, ErrorMessage = "Biography must contain at least 2 and maximum 500 chars")]
         public string? Bio { get; set; }
 
-        public required IFormFile Foto { get; set; } 
+        public IFormFile? Foto { get; set; }
+
+        [Url]
+        public string? PictureUrl { get; set; }
     }
 }
