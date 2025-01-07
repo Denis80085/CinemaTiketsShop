@@ -78,12 +78,6 @@ namespace CinemaTiketsShop.Controllers
                         if (await PictureUrl.isValid(ProducerVM.PictureUrl)) 
                         {
                             result = await _photoService.UploadPhotoWithUrlAsync(ProducerVM.PictureUrl);
-
-                            if(result.StatusCode != System.Net.HttpStatusCode.OK) 
-                            {
-                                ModelState.AddModelError("PictureUrl", $"Error by uploading the image from URL. Error {result.StatusCode}");
-                                return View(ProducerVM);
-                            }
                         }
                         else 
                         {
@@ -91,13 +85,20 @@ namespace CinemaTiketsShop.Controllers
                             return View(ProducerVM);
                         }
                         
-                    }                    
+                    }
+                    
+                    if(result.StatusCode != System.Net.HttpStatusCode.OK) 
+                    {
+                        ModelState.AddModelError("PictureUrl", $"Error by uploading the image. Error {result.StatusCode}");
+                        return View(ProducerVM);
+                    }
 
                     var NewProducer = new Producer
                     {
                         Name = ProducerVM.Name,
                         Bio = ProducerVM.Bio,
-                        FotoURL = result.Url.ToString()
+                        FotoURL = result.Url.ToString(),
+                        PublicId = result.PublicId
                     };
 
                     var producer = await _ProducerService.CreateAsync(NewProducer);
@@ -233,6 +234,11 @@ namespace CinemaTiketsShop.Controllers
 
                 if (producerResult.isFound && producerResult.Producer !=  null)
                 {
+                    if (!string.IsNullOrWhiteSpace(producerResult.Producer.PublicId))
+                    {
+                        var result = await _photoService.DeletePhotoAsync(producerResult.Producer.PublicId);
+                    }
+
                     await _ProducerService.DeleteAsync(producerResult.Producer);
 
                     _logger.LogWarning($"Producer {producerResult.Producer.Name} was removed from database: {DateTime.Now}");

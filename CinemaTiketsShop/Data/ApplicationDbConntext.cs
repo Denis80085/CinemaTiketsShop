@@ -1,13 +1,16 @@
 ﻿using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaTiketsShop.Data
 {
     public class ApplicationDbConntext : DbContext
     {
-        public ApplicationDbConntext(DbContextOptions options) : base(options)
+        private readonly IPhotoService _photoService;
+
+        public ApplicationDbConntext(DbContextOptions options,  IPhotoService photoService) : base(options)
         {
-            
+            _photoService = photoService;
         }
 
         public required DbSet<Actor> Actors { get; set; }

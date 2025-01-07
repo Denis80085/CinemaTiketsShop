@@ -19,6 +19,9 @@ namespace CinemaTiketsShop.Models
         [Display(Name = "Foto")]
         public string FotoURL { get; set; } = string.Empty;
 
+        //For Cloudinary
+        public string PublicId { get; set; } = string.Empty;
+
         //Relationships
         public List<Movie>? Movies { get; set; }
     }
