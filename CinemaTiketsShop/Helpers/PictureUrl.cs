@@ -5,18 +5,24 @@ namespace CinemaTiketsShop.Helpers
 {
     public static class PictureUrl
     {
-        private readonly static List<string> AllowedTypes = ["jpg", "png", "svg", "webp"];
+        private readonly static List<string?> AllowedTypes = ["image/jpeg", "image/png", "image/svg", "image/webp"];
         
-        public static bool isValid(string? Uri) 
+        public async static Task<bool> isValid(string? Uri) 
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Uri);
-            request.Method = "HEAD";
+            using HttpClient client = new();
 
             try
             {
-                using HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                var request = new HttpRequestMessage(HttpMethod.Head, Uri);
 
-                if (response.StatusCode == HttpStatusCode.OK && AllowedTypes.Contains(response.ContentType.Trim().ToLower()))
+                var response = await client.SendAsync(request);
+
+                if(response == null) 
+                {
+                    return false;
+                }
+
+                if (response.StatusCode == HttpStatusCode.OK && AllowedTypes.Contains(response.Content.Headers.ContentType?.MediaType?.Trim().ToLower()))
                 {
                     return true;
                 }
@@ -25,7 +31,15 @@ namespace CinemaTiketsShop.Helpers
                     return false;
                 }
             }
-            catch
+            catch (HttpRequestException)
+            {
+                return false;
+            }
+            catch (TaskCanceledException)
+            {
+                return false;
+            }
+            catch (Exception) 
             {
                 return false;
             }

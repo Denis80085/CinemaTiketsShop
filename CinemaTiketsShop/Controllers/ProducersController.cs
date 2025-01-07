@@ -75,9 +75,15 @@ namespace CinemaTiketsShop.Controllers
                     }
                     else if(!string.IsNullOrWhiteSpace(ProducerVM.PictureUrl)) 
                     {
-                        if (PictureUrl.isValid(ProducerVM.PictureUrl)) 
+                        if (await PictureUrl.isValid(ProducerVM.PictureUrl)) 
                         {
                             result = await _photoService.UploadPhotoWithUrlAsync(ProducerVM.PictureUrl);
+
+                            if(result.StatusCode != System.Net.HttpStatusCode.OK) 
+                            {
+                                ModelState.AddModelError("PictureUrl", $"Error by uploading the image from URL. Error {result.StatusCode}");
+                                return View(ProducerVM);
+                            }
                         }
                         else 
                         {
