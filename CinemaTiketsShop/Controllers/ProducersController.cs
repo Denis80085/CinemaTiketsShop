@@ -1,6 +1,7 @@
 ﻿using CinemaTiketsShop.Data;
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Mappers.ProducerMappers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.ViewModels.ProducerVMs;
@@ -144,9 +145,11 @@ namespace CinemaTiketsShop.Controllers
             {
                 var ProducerResult = await _ProducerService.GetByIdAsync(id);
 
-                if (ProducerResult.isFound) 
+                if (ProducerResult.isFound && ProducerResult.Producer != null) 
                 {
-                    return View(ProducerResult.Producer);
+                    var ProducerModel = ProducerResult.Producer;
+
+                    return View(ProducerModel.MapEditProducerVM());
                 }
                 else 
                 {
@@ -168,19 +171,25 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, FotoURL")] Producer UpdatedProducer)
+        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, PictureUrl, Foto")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning($"Producer Controler Edit-Action validation failed: {DateTime.Now}");
-                return View(UpdatedProducer);
+                return View(ProducerVM);
+            }
+
+            if(!await PictureUrl.isValid(ProducerVM.PictureUrl)) 
+            {
+                ModelState.AddModelError("PictureUrl", "Url doesent point to a image of type .jpg, .png, .webp or .svg");
+                return View(ProducerVM);
             }
 
             try
             {
-                var ProducerResult = await _ProducerService.UpdateAsync(UpdatedProducer, Id);
+                var ProducerResult = await _ProducerService.UpdateAsync(ProducerVM.MapProducerModel(), Id);
 
                 if (ProducerResult.UpdateSucceded)
                 {

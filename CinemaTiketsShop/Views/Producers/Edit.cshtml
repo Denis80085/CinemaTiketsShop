@@ -1,4 +1,5 @@
-﻿@model Producer
+﻿@using CinemaTiketsShop.ViewModels.ProducerVMs
+@model EditProducerViewModel
 
 @{
     ViewData["Title"] = "Edit Producer";
@@ -18,12 +19,19 @@
                     <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" alt="not found"/>
                 </div>
 
-                <form asp-action="Edit" class="gap-4">
+                <form enctype="multipart/form-data" asp-action="Edit" class="gap-4">
 
                     <div style="margin-top: 40px">
-                        <label asp-for="FotoURL" class="form-label"><strong>Foto:</strong></label>
-                        <input type="text" class="form-control" asp-for="FotoURL" placeholder="Foto URL" required>
-                        <span asp-validation-for="FotoURL" class="text-danger"></span>
+                        <label asp-for="Foto" class="form-label"><strong>Select a picture from your device:</strong></label>
+                        <input asp-for="Foto" class="form-control" type="file">
+                        <span asp-for="Foto" class="text-danger"></span>
+                    </div>
+                    
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="PictureUrl" class="form-label"><strong>Change Foto by with url:</strong></label>
+                        <input type="text" class="form-control" asp-for="PictureUrl" placeholder="Foto URL" required>
+                        <span asp-validation-for="PictureUrl" class="text-danger"></span>
                     </div>
 
                     <div style="margin-top: 40px">
@@ -60,10 +68,10 @@
 
         $(document).ready(function(){
             var output =  document.getElementById('FotoPreview');
-            output.src = $("#FotoURL").val();
+            output.src = $("#PictureUrl").val();
         })
 
-        $("#FotoURL").on("change", function(){
+        $("#PictureUrl").on("change", function(){
             var output =  document.getElementById('FotoPreview');
             output.src = $(this).val();
         })
