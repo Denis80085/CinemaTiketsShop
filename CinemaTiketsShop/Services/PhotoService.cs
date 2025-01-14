@@ -26,9 +26,14 @@ namespace CinemaTiketsShop.Services
             _logger = logger;
         }
 
-        public async Task<DeletionResult> DeletePhotoAsync(string publicId)
+        public async Task<DeletionResult> DeletePhotoAsync(string? publicId)
         {
-            var deleteParams = new DeletionParams(publicId);
+            if (string.IsNullOrWhiteSpace(publicId)) 
+            {
+                return new DeletionResult();
+            }
+
+            DeletionParams deleteParams = new DeletionParams(publicId);
 
             var DeleteResult = await _cloudinary.DestroyAsync(deleteParams);
 

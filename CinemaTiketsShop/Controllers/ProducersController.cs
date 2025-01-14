@@ -82,7 +82,7 @@ namespace CinemaTiketsShop.Controllers
                         }
                         else 
                         {
-                            ModelState.AddModelError("PictureUrl", "Url doesent point to a image of type .jpg, .png, .webp or .svg");
+                            ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                             return View(ProducerVM);
                         }
                         
@@ -171,7 +171,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, PictureUrl, Foto")] EditProducerViewModel ProducerVM)
+        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, PictureUrl, Foto, PublicId")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
@@ -183,12 +183,26 @@ namespace CinemaTiketsShop.Controllers
 
             if(!await PictureUrl.isValid(ProducerVM.PictureUrl)) 
             {
-                ModelState.AddModelError("PictureUrl", "Url doesent point to a image of type .jpg, .png, .webp or .svg");
+                ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                 return View(ProducerVM);
             }
 
             try
             {
+                if(ProducerVM.Foto != null) 
+                {
+                    var res = await _photoService.UploadPhotoAsync(ProducerVM.Foto);
+
+                    if(res.StatusCode == System.Net.HttpStatusCode.OK) 
+                    {
+                        await _photoService.DeletePhotoAsync(ProducerVM.PublicId);
+
+                        ProducerVM.PublicId = res.PublicId;
+
+                        ProducerVM.PictureUrl = res.Url.AbsoluteUri;
+                    }
+                }
+
                 var ProducerResult = await _ProducerService.UpdateAsync(ProducerVM.MapProducerModel(), Id);
 
                 if (ProducerResult.UpdateSucceded)

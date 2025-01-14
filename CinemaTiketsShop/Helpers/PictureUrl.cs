@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace CinemaTiketsShop.Helpers
 {

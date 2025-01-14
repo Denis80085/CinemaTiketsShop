@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CinemaTiketsShop.Models
 {
@@ -9,7 +10,7 @@ namespace CinemaTiketsShop.Models
         [Required]
         [Display(Name ="Full Name")]
         [StringLength(270, MinimumLength = 2, ErrorMessage = "Full name must contain at least 2 and maximum 70 chars")]
-        public string Name { get; set; } = string.Empty;
+        public required string Name { get; set; }
 
         [Display(Name = "Biography")]
         [StringLength(500, MinimumLength = 2, ErrorMessage = "Biography must contain at least 2 and maximum 500 chars")]
@@ -17,10 +18,11 @@ namespace CinemaTiketsShop.Models
 
         [Required]
         [Display(Name = "Foto")]
-        public string FotoURL { get; set; } = string.Empty;
+        public required string FotoURL { get; set; }
 
         //For Cloudinary
-        public string PublicId { get; set; } = string.Empty;
+        [AllowNull]
+        public string? PublicId { get; set; } 
 
         //Relationships
         public List<Movie>? Movies { get; set; }
