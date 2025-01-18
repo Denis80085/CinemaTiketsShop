@@ -6,6 +6,7 @@ using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.ViewModels.ProducerVMs;
 using CloudinaryDotNet.Actions;
+using CloudinaryDotNet.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -19,13 +20,15 @@ namespace CinemaTiketsShop.Controllers
         private readonly IProducerService _ProducerService;
         private readonly ILogger _logger;
         private readonly IPhotoService _photoService;
+        private readonly IPictureUploader _pictureUploader;
 
-        public ProducersController(ApplicationDbConntext context, IProducerService producerService, ILogger<ProducersController> logger, IPhotoService photoService)
+        public ProducersController(ApplicationDbConntext context, IProducerService producerService, ILogger<ProducersController> logger, IPhotoService photoService, IPictureUploader pictureUploader)
         {
             _context = context;
             _ProducerService = producerService;
             _logger = logger;
             _photoService = photoService;
+            _pictureUploader = pictureUploader;
         }
 
         [HttpGet]
@@ -171,7 +174,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, PictureUrl, Foto, PublicId")] EditProducerViewModel ProducerVM)
+        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, PictureUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
@@ -189,17 +192,37 @@ namespace CinemaTiketsShop.Controllers
 
             try
             {
+                UploadedImageResult result;
+
                 if(ProducerVM.Foto != null) 
                 {
-                    var res = await _photoService.UploadPhotoAsync(ProducerVM.Foto);
+                    result = await _pictureUploader.UploadImageFromFileAsync(ProducerVM);
 
-                    if(res.StatusCode == System.Net.HttpStatusCode.OK) 
+                    if (result.Succeded) 
                     {
-                        await _photoService.DeletePhotoAsync(ProducerVM.PublicId);
+                        ProducerVM.PictureUrl = result.PictureUrl;
+                        ProducerVM.PublicId = result.PublicId;
+                    }
+                    else 
+                    {
+                        ModelState.AddModelError("Foto", "Picture upload faieled");
+                        return View(ProducerVM);
+                    }
+                }
+                
+                else if(ProducerVM.PictureUrl != ProducerVM.OldPictureUrl) 
+                {
+                    result = await _pictureUploader.UploadImageFromUrlAsync(ProducerVM);
 
-                        ProducerVM.PublicId = res.PublicId;
-
-                        ProducerVM.PictureUrl = res.Url.AbsoluteUri;
+                    if (result.Succeded)
+                    {
+                        ProducerVM.PictureUrl = result.PictureUrl;
+                        ProducerVM.PublicId = result.PublicId;
+                    }
+                    else 
+                    {
+                        ModelState.AddModelError("PictureUrl", "Picture upload faieled");
+                        return View(ProducerVM);
                     }
                 }
 

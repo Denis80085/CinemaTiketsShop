@@ -24,5 +24,8 @@ namespace CinemaTiketsShop.ViewModels.ProducerVMs
 
         [Url]
         public required string PictureUrl { get; set; }
+
+        [Url]
+        public string? OldPictureUrl { get; set; }
     }
 }
