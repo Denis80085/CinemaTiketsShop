@@ -5,7 +5,7 @@ namespace CinemaTiketsShop.Data.Services
 {
     public interface IPictureUploader
     {
-        Task<UploadedImageResult> UploadImageFromFileAsync(object Model);
-        Task<UploadedImageResult> UploadImageFromUrlAsync(object Model);
+        Task<UploadedImageResult> UpdateImageFromFileAsync(IFormFile image, string? OldPublicId);
+        Task<UploadedImageResult> UpdateImageFromUrlAsync(string PictureUrl, string? OldPublicId);
     }
 }

@@ -23,12 +23,14 @@
                 <form enctype="multipart/form-data" asp-action="Create" class="gap-4">
 
                     <div style="margin-top: 40px">
+                        <input type="radio" name="Picture_Upload_Method" value="FromDevice" checked/>
                         <label asp-for="Foto" class="form-label"><strong>Select a picture from your device:</strong></label>
                         <input asp-for="Foto" class="form-control" type="file">
                         <span asp-validation-for="Foto" class="text-danger"></span>
                     </div>
 
                     <div style="margin-top: 40px">
+                        <input type="radio" name="Picture_Upload_Method" value="FromUrl"/>
                         <label asp-for="PictureUrl" class="form-label"><strong>Or put a picture URL:</strong></label>
                         <input asp-for="PictureUrl" class="form-control" type="text">
                         <span asp-validation-for="PictureUrl" class="text-danger"></span>

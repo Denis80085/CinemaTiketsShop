@@ -22,15 +22,17 @@
                 <form enctype="multipart/form-data" asp-action="Edit" class="gap-4">
 
                     <div style="margin-top: 40px">
+                        <input type="radio" name="picture_change_method" value="FromDevice" id="picture_change_1" checked/>
                         <label asp-for="Foto" class="form-label"><strong>Select a picture from your device:</strong></label>
                         <input asp-for="Foto" class="form-control" type="file">
-                        <span asp-for="Foto" class="text-danger"></span>
+                        <span asp-validation-for="Foto" class="text-danger"></span>
                     </div>
                     
 
                     <div style="margin-top: 40px">
+                        <input type="radio" name="picture_change_method" value="FromUrl" id="picture_change_1"/>
                         <label asp-for="PictureUrl" class="form-label"><strong>Change Foto by with url:</strong></label>
-                        <input type="url" class="form-control" asp-for="PictureUrl" placeholder="Foto URL" required>
+                        <input type="url" class="form-control" asp-for="PictureUrl" placeholder="Foto URL" >
                         <span asp-validation-for="PictureUrl" class="text-danger"></span>
                     </div>
 

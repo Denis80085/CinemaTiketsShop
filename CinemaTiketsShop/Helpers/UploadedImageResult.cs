@@ -6,6 +6,8 @@
         public string? PublicId { get; }
         public bool Succeded { get; }
 
+        public bool ErrorAcured { get; set; } = false;
+
         public UploadedImageResult(string picUrl, string pId, bool succed)
         {
             PictureUrl = picUrl;
@@ -17,6 +19,11 @@
         {
             Succeded = succed;
             PictureUrl = picUrl;
+        }
+
+        public void SetError() 
+        {
+            ErrorAcured = true;
         }
     }
 }

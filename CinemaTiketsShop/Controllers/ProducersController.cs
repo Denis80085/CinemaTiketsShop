@@ -58,40 +58,41 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, Bio, Foto, PictureUrl")]CreateProducerViewModel ProducerVM) 
+        public async Task<IActionResult> Create([Bind("Name, Bio, Foto, PictureUrl")]CreateProducerViewModel ProducerVM, [FromForm]string Picture_Upload_Method) 
         {
             _logger.LogInformation($"Producer Controler Create-Action called: {DateTime.Now}");
 
             if (ProducerVM.Foto == null && string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
             {
                 ModelState.AddModelError("Foto", "No picture was found");
+
+                return View(ProducerVM);
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+
                     var result = new ImageUploadResult();
 
-                    if(ProducerVM.Foto != null) 
+                    if (Picture_Upload_Method == "FromDevice" && ProducerVM.Foto != null)
                     {
                         result = await _photoService.UploadPhotoAsync(ProducerVM.Foto);
                     }
-                    else if(!string.IsNullOrWhiteSpace(ProducerVM.PictureUrl)) 
+                    
+                    if (Picture_Upload_Method == "FromUrl" && !string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
                     {
-                        if (await PictureUrl.isValid(ProducerVM.PictureUrl)) 
-                        {
-                            result = await _photoService.UploadPhotoWithUrlAsync(ProducerVM.PictureUrl);
-                        }
-                        else 
+                        if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
                         {
                             ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                             return View(ProducerVM);
                         }
-                        
+
+                        result = await _photoService.UploadPhotoWithUrlAsync(ProducerVM.PictureUrl);
                     }
-                    
-                    if(result.StatusCode != System.Net.HttpStatusCode.OK) 
+
+                    if (result.StatusCode != System.Net.HttpStatusCode.OK)
                     {
                         ModelState.AddModelError("PictureUrl", $"Error by uploading the image. Error {result.StatusCode}");
                         return View(ProducerVM);
@@ -174,7 +175,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [Bind("Id, Name, Bio, PictureUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
+        public async Task<IActionResult> Edit([FromForm]int Id, [FromForm]string picture_change_method,[Bind("Id, Name, Bio, PictureUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
@@ -184,46 +185,42 @@ namespace CinemaTiketsShop.Controllers
                 return View(ProducerVM);
             }
 
-            if(!await PictureUrl.isValid(ProducerVM.PictureUrl)) 
-            {
-                ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
-                return View(ProducerVM);
-            }
-
             try
             {
-                UploadedImageResult result;
+                UploadedImageResult result = new UploadedImageResult(false);
 
-                if(ProducerVM.Foto != null) 
+                if(picture_change_method == "FromDevice" && ProducerVM.Foto != null) 
                 {
-                    result = await _pictureUploader.UploadImageFromFileAsync(ProducerVM);
-
-                    if (result.Succeded) 
-                    {
-                        ProducerVM.PictureUrl = result.PictureUrl;
-                        ProducerVM.PublicId = result.PublicId;
-                    }
-                    else 
-                    {
-                        ModelState.AddModelError("Foto", "Picture upload faieled");
-                        return View(ProducerVM);
-                    }
+                    result = await _pictureUploader.UpdateImageFromFileAsync(ProducerVM.Foto, ProducerVM.PublicId);
                 }
                 
-                else if(ProducerVM.PictureUrl != ProducerVM.OldPictureUrl) 
+                if(picture_change_method == "FromUrl" && ProducerVM.PictureUrl != ProducerVM.OldPictureUrl) 
                 {
-                    result = await _pictureUploader.UploadImageFromUrlAsync(ProducerVM);
-
-                    if (result.Succeded)
+                    if (string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
                     {
-                        ProducerVM.PictureUrl = result.PictureUrl;
-                        ProducerVM.PublicId = result.PublicId;
-                    }
-                    else 
-                    {
-                        ModelState.AddModelError("PictureUrl", "Picture upload faieled");
+                        ModelState.AddModelError("PictureUrl", "Please enter a image url");
                         return View(ProducerVM);
                     }
+
+                    if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
+                    {
+                        ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                        return View(ProducerVM);
+                    }
+
+                    result = await _pictureUploader.UpdateImageFromUrlAsync(ProducerVM.PictureUrl, ProducerVM.PublicId);
+                }
+
+                if (result.ErrorAcured)
+                {
+                    ModelState.AddModelError("Foto", "Picture upload faieled");
+                    return View(ProducerVM);
+                }
+
+                if (result.Succeded)
+                {
+                    ProducerVM.OldPictureUrl = result.PictureUrl;
+                    ProducerVM.PublicId = result.PublicId;
                 }
 
                 var ProducerResult = await _ProducerService.UpdateAsync(ProducerVM.MapProducerModel(), Id);
