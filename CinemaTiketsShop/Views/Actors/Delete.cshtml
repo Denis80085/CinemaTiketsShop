@@ -1,0 +1,119 @@
+﻿@model Actor
+
+@{
+    ViewData["Title"] = $"Delete {Model.Name}?";
+
+    IEnumerable<Movie>? Movies;
+
+    if (Model.Movies_Actors != null && Model.Movies_Actors.Count > 0)
+    {
+        Movies = Model.Movies_Actors.Select(mp => mp.Movie).ToList();
+    }
+    else
+    {
+        Movies = null;
+    }
+}
+
+<div class="row text">
+    <div class="col-md-8 offset-2">
+        <p>
+            <h1>Press delete to remove @Model.Name or cancel to go back</h1>
+        </p>
+
+        <div class="col-md-8 offset-2">
+
+            <div class="d-flex flex-column justify-content-around gap-4">
+
+                <div class="form-group text-center">
+                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" />
+                </div>
+
+                <form asp-controller="Actors" asp-action="Delete" asp-route-id="@Model.Id" class="d-flex  flex-column justify-content-around gap-4">
+
+                    <div class="form-group">
+                        <label asp-for="FotoURL" class="control-label"></label>
+                        <input asp-for="FotoURL" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Bio" class="control-label"></label>
+                        <textarea asp-for="Bio" class="form-control" readonly></textarea>
+                    </div>
+
+                    <input asp-for="PublicId" class="form-control" type="hidden" readonly/>
+
+                    <div class="form-group">
+                        <div class="d-flex flex-row-reverse justify-content-lg-between">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Delete
+                            </button>
+                            <a class="btn btn-outline-primary" asp-controller="Actors" asp-action="Index">Cancel</a>
+                        </div>
+                    </div>
+
+                    
+                    
+                    
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="position:fixed; align-self:center">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete @Model.Name</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                
+                                <div class="modal-body text-danger text-start" style="padding-left: 10px;">
+                                    Are you sure you want to delete actor: @Model.Name?
+                                </div>
+
+                                
+                                <div class="text-start" style="padding-left: 10px;">
+                                    @if (Movies != null)
+                                    {
+                                        <p class="text-secondary">
+                                            Thiese movies will miss some information about @Model.Name:
+                                            @foreach (var item in Movies)
+                                            {
+                                                <h5 class="badge text-bg-info">@item.Name </h5>
+                                            }
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-success" style="left: 10px">This producer is not included in any movies on your site</p>
+                                    }
+                                </div>
+                                
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+                                    <input type="submit" value="Yes" class="btn btn-outline-danger" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#FotoURL").val();
+        })
+    </script>
+}

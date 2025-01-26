@@ -46,3 +46,14 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+header {
+    position: sticky; /* Or use position: fixed for always visible */
+    top: 0;
+    color: white;
+    z-index: 1000; /* Ensures it stays above other content */
+}
+
+main {
+    margin-top: 20px;
+}

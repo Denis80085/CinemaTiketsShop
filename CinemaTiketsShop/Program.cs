@@ -1,3 +1,9 @@
+using CinemaTiketsShop.Data;
+using CinemaTiketsShop.Data.Services;
+using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Services;
+using Microsoft.EntityFrameworkCore;
+
 namespace CinemaTiketsShop
 {
     public class Program
@@ -8,6 +14,18 @@ namespace CinemaTiketsShop
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<ApplicationDbConntext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            builder.Services.AddScoped<IActorServices, ActorService>();
+            builder.Services.AddScoped<IProducerService, ProducerService>();
+            builder.Services.AddScoped<IPhotoService, PhotoService>();
+            builder.Services.AddScoped<IPictureUploader, PictureUploader>();
+
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
 
             var app = builder.Build();
 
@@ -27,7 +45,7 @@ namespace CinemaTiketsShop
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Movies}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();
