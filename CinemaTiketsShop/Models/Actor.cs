@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 
@@ -20,6 +21,9 @@ namespace CinemaTiketsShop.Models
         [Required]
         [Display(Name = "Foto")]
         public string FotoURL { get; set; } = string.Empty;
+
+        [AllowNull]
+        public string? PublicId { get; set; }
 
         //Relationships
         public List<Movie_Actor> Movies_Actors { get; set; } = new List<Movie_Actor>();

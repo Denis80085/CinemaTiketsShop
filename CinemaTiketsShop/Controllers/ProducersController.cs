@@ -85,7 +85,7 @@ namespace CinemaTiketsShop.Controllers
                     {
                         if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
                         {
-                            ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                            ModelState.AddModelError("PictureUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                             return View(ProducerVM);
                         }
 
@@ -204,7 +204,7 @@ namespace CinemaTiketsShop.Controllers
 
                     if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
                     {
-                        ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                        ModelState.AddModelError("PictureUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                         return View(ProducerVM);
                     }
 
@@ -213,7 +213,7 @@ namespace CinemaTiketsShop.Controllers
 
                 if (result.ErrorAcured)
                 {
-                    ModelState.AddModelError("Foto", "Picture upload faieled");
+                    ModelState.AddModelError("Foto", "Picture upload failed");
                     return View(ProducerVM);
                 }
 

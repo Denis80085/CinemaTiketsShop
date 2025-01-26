@@ -5,16 +5,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using CinemaTiketsShop.ViewModels.ActorVMs;
+using CinemaTiketsShop.Helpers;
+using CloudinaryDotNet.Actions;
+using CinemaTiketsShop.Services;
+using CinemaTiketsShop.Mappers.ActorMappers;
 
 namespace CinemaTiketsShop.Controllers
 {
     public class ActorsController : Controller
     {
         private readonly IActorServices _actorService;
+        private readonly ILogger _logger;
+        private readonly IPhotoService _photoService;
+        private readonly IPictureUploader _pictureUploader;
 
-        public ActorsController(IActorServices actorService)
+        public ActorsController(IActorServices actorService, ILogger<ActorsController> logger, IPhotoService photoService, IPictureUploader pictureUploader)
         {
             _actorService = actorService;
+            _logger = logger;
+            _photoService = photoService;
+            _pictureUploader = pictureUploader;
         }
 
         public async Task<IActionResult> Index()
@@ -29,17 +40,66 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, FotoURL, Bio")]Actor actor) 
+        public async Task<IActionResult> Create([Bind("Name, FotoUrl, Bio, Foto")]CreateActorViewModel ActorVM, [FromForm] string Picture_Upload_Method) 
         {
             if (!ModelState.IsValid) 
             {
                 Debug.WriteLine("Actor not created", category: "Actor Validation Error by creating:");
-                return View(actor);
+                return View(ActorVM);
             }
 
-            await _actorService.Create(actor);
+            if (ActorVM.Foto == null && string.IsNullOrWhiteSpace(ActorVM.FotoUrl))
+            {
+                ModelState.AddModelError("Foto", "No picture was found");
 
-            return RedirectToAction(nameof(Index));
+                return View(ActorVM);
+            }
+
+            try 
+            {
+                var result = new ImageUploadResult();
+
+                if (Picture_Upload_Method == "FromDevice" && ActorVM.Foto != null)
+                {
+                    result = await _photoService.UploadPhotoAsync(ActorVM.Foto);
+                }
+
+                if (Picture_Upload_Method == "FromUrl" && !string.IsNullOrWhiteSpace(ActorVM.FotoUrl))
+                {
+                    if (!await PictureUrl.isValid(ActorVM.FotoUrl))
+                    {
+                        ModelState.AddModelError("FotoUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                        return View(ActorVM);
+                    }
+
+                    result = await _photoService.UploadPhotoWithUrlAsync(ActorVM.FotoUrl);
+                }
+
+                if (result.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    ModelState.AddModelError("FotoUrl", $"Error by uploading the image. Error {result.StatusCode}");
+                    return View(ActorVM);
+                }
+
+                var actor = new Actor
+                {
+                    Name = ActorVM.Name,
+                    Bio  = ActorVM.Bio,
+                    FotoURL = result.Url.ToString(),
+                    PublicId = result.PublicId
+                };
+
+                await _actorService.Create(actor);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogCritical(ex, "Actor Controler Error at Create");
+
+                return View("Empty");
+            }
+
         }
 
         [HttpGet("Actors/Details/{id:int}")]
@@ -63,9 +123,9 @@ namespace CinemaTiketsShop.Controllers
         {
             var ActorResult = await _actorService.GetById(id);
 
-            if (ActorResult._isFound) 
+            if (ActorResult._isFound && ActorResult._actor != null) 
             {
-                return View(ActorResult._actor);
+                return View(ActorResult._actor.MapEditActorViewModel());
             }
             else 
             {
@@ -76,18 +136,54 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost("Edit/{id:int}")]
-        public async Task<IActionResult> Edit([FromRoute]int id, [Bind("Id, Name, FotoURL, Bio")] Actor actor)
+        public async Task<IActionResult> Edit([FromRoute]int id, [FromForm]string picture_change_method, [Bind("Id, Name, FotoUrl, OldFotoUrl, Bio, PublicId, Foto")] EditActorViewModel ActorVM)
         {
             if (!ModelState.IsValid) 
             {
-                return View(actor);
+                return View(ActorVM);
             }
 
-            var NewActor = await _actorService.Update(id, actor);
+            UploadedImageResult result = new UploadedImageResult(false);
+
+            if (picture_change_method == "FromDevice" && ActorVM.Foto != null)
+            {
+                result = await _pictureUploader.UpdateImageFromFileAsync(ActorVM.Foto, ActorVM.PublicId);
+            }
+
+            if (picture_change_method == "FromUrl" && ActorVM.FotoUrl != ActorVM.OldFotoUrl)
+            {
+                if (string.IsNullOrWhiteSpace(ActorVM.FotoUrl))
+                {
+                    ModelState.AddModelError("FotoUrl", "Please enter a image url");
+                    return View(ActorVM);
+                }
+
+                if (!await PictureUrl.isValid(ActorVM.FotoUrl))
+                {
+                    ModelState.AddModelError("FotoUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                    return View(ActorVM);
+                }
+
+                result = await _pictureUploader.UpdateImageFromUrlAsync(ActorVM.FotoUrl, ActorVM.PublicId);
+            }
+
+            if (result.ErrorAcured)
+            {
+                ModelState.AddModelError("Foto", "Picture upload failed");
+                return View(ActorVM);
+            }
+
+            if (result.Succeded)
+            {
+                ActorVM.OldFotoUrl = result.PictureUrl;
+                ActorVM.PublicId = result.PublicId;
+            }
+
+            var NewActor = await _actorService.Update(id, ActorVM.MapActorModel());
 
             if (NewActor != null)
             {
-                return RedirectToAction(nameof(Details), new { id = id });
+                return RedirectToAction(nameof(Index));
             }
             else
             {
@@ -113,10 +209,12 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost("Delete/{id:int}")]
-        public async Task<IActionResult> Delete([Bind("Id, Name, FotoURL, Bio")] Actor deleteActor)
+        public async Task<IActionResult> Delete([Bind("Id, Name, FotoURL, Bio, PublicId")] Actor deleteActor)
         {
             if(await _actorService.Delete(deleteActor) != null) 
             {
+                await _photoService.DeletePhotoAsync(deleteActor.PublicId);
+
                 return RedirectToAction(nameof(Index));
             }
             else 
