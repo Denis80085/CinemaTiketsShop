@@ -1,6 +1,6 @@
 ﻿using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
-using CinemaTiketsShop.ViewModels.ProducerVMs;
 using CloudinaryDotNet.Actions;
 
 namespace CinemaTiketsShop.Data.Services
@@ -35,7 +35,7 @@ namespace CinemaTiketsShop.Data.Services
 
                 var uploadFaieled = new UploadedImageResult(false);
 
-                uploadFaieled.SetError();
+                uploadFaieled.SetError($"Upload faield with code {res.StatusCode}", "Foto");
 
                 return uploadFaieled;
             }
@@ -43,19 +43,35 @@ namespace CinemaTiketsShop.Data.Services
             {
                 var uploadFaieled = new UploadedImageResult(false);
 
-                uploadFaieled.SetError();
+                uploadFaieled.SetError("Unexcpected error while uploading your picture", "Foto");
 
                 return uploadFaieled;
             }
         }
 
-        public async Task<UploadedImageResult> UpdateImageFromUrlAsync(string PictureUrl, string? OldPublicId)
+        public async Task<UploadedImageResult> UpdateImageFromUrlAsync(string? pictureUrl, string? OldPublicId)
         {
+            var uploadFaieled = new UploadedImageResult(false);
+
+            if (string.IsNullOrWhiteSpace(pictureUrl))
+            {
+                uploadFaieled.SetError($"Please insert a link of a image of type .jpg, .png, .webp or .svg", "FotoUrl");
+
+                return uploadFaieled;
+            }
+
+            if (!await PictureUrl.isValid(pictureUrl)) 
+            {
+                uploadFaieled.SetError($"Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg", "FotoUrl");
+
+                return uploadFaieled;
+            }
+
             try 
             {
                 var res = new ImageUploadResult();
 
-                res = await _photoService.UploadPhotoWithUrlAsync(PictureUrl);
+                res = await _photoService.UploadPhotoWithUrlAsync(pictureUrl);
 
                 if (res.StatusCode == System.Net.HttpStatusCode.OK)
                 {
@@ -66,17 +82,13 @@ namespace CinemaTiketsShop.Data.Services
                     return uploadResult;
                 }
 
-                var uploadFaieled = new UploadedImageResult(false);
-
-                uploadFaieled.SetError();
+                uploadFaieled.SetError($"Upload faield with code {res.StatusCode}", "FotoUrl");
 
                 return uploadFaieled;
             }
             catch 
             {
-                var uploadFaieled = new UploadedImageResult(false);
-
-                uploadFaieled.SetError();
+                uploadFaieled.SetError("Unexcpected error while uploading your picture", "FotoUrl");
 
                 return uploadFaieled; 
             }

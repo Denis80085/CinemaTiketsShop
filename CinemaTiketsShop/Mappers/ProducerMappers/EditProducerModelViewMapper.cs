@@ -14,7 +14,7 @@ namespace CinemaTiketsShop.Mappers.ProducerMappers
                 Id = ProducerModel.Id,
                 Name = ProducerModel.Name,
                 Bio = ProducerModel.Bio,
-                PictureUrl = ProducerModel.FotoURL,
+                FotoUrl = ProducerModel.FotoURL,
                 PublicId = ProducerModel.PublicId,
                 OldPictureUrl = ProducerModel.FotoURL
             };

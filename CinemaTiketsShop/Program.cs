@@ -24,6 +24,8 @@ namespace CinemaTiketsShop
             builder.Services.AddScoped<IProducerService, ProducerService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
             builder.Services.AddScoped<IPictureUploader, PictureUploader>();
+            builder.Services.AddScoped<ICinemaService, CinemaService>();
+            builder.Services.AddScoped<IMovieService, MovieService>();
 
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
 

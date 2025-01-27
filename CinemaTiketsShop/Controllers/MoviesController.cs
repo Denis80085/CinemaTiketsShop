@@ -1,4 +1,4 @@
-﻿using CinemaTiketsShop.Data;
+﻿using CinemaTiketsShop.Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,16 +6,16 @@ namespace CinemaTiketsShop.Controllers
 {
     public class MoviesController : Controller
     {
-        private readonly ApplicationDbConntext _context;
+        private readonly IMovieService _movieService;
 
-        public MoviesController(ApplicationDbConntext context)
+        public MoviesController(IMovieService movieService)
         {
-            _context = context;
+            _movieService = movieService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var movies = await _context.Movies.Select(m =>  m).Include(x => x.Cinema).OrderBy(m => m.Name).ToListAsync();
+            var movies = await _movieService.GetAll();
             return View(movies);
         }
     }

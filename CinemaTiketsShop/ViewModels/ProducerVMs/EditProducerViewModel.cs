@@ -23,7 +23,7 @@ namespace CinemaTiketsShop.ViewModels.ProducerVMs
         public IFormFile? Foto { get; set; }
 
         [Url]
-        public string? PictureUrl { get; set; }
+        public string? FotoUrl { get; set; }
 
         [Url]
         public required string OldPictureUrl { get; set; }

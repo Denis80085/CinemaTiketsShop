@@ -152,24 +152,12 @@ namespace CinemaTiketsShop.Controllers
 
             if (picture_change_method == "FromUrl" && ActorVM.FotoUrl != ActorVM.OldFotoUrl)
             {
-                if (string.IsNullOrWhiteSpace(ActorVM.FotoUrl))
-                {
-                    ModelState.AddModelError("FotoUrl", "Please enter a image url");
-                    return View(ActorVM);
-                }
-
-                if (!await PictureUrl.isValid(ActorVM.FotoUrl))
-                {
-                    ModelState.AddModelError("FotoUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
-                    return View(ActorVM);
-                }
-
                 result = await _pictureUploader.UpdateImageFromUrlAsync(ActorVM.FotoUrl, ActorVM.PublicId);
             }
 
             if (result.ErrorAcured)
             {
-                ModelState.AddModelError("Foto", "Picture upload failed");
+                ModelState.AddModelError(result.ErrorAt, result.ErrorMessage);
                 return View(ActorVM);
             }
 

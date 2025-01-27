@@ -10,7 +10,7 @@
             <table class="table">
                 <thead>
                     <tr class="text-center">
-                        <th>@Html.DisplayNameFor(Model => Model.Logo)</th>
+                        <th>@Html.DisplayNameFor(Model => Model.LogoUrl)</th>
                         <th>@Html.DisplayNameFor(Model => Model.Name)</th>
                         <th>@Html.DisplayNameFor(Model => Model.Description)</th>
                         <th>Actions</th>
@@ -22,7 +22,7 @@
                     {
                         <tr>
                             <td class="align-middle">
-                                <img class="rounded-circle" src="@item.Logo" alt="@item.Name" style="max-width: 150px" />
+                                <img class="rounded-circle" src="@item.LogoUrl" alt="@item.Name" style="max-width: 250px" />
                             </td>
 
                             <td class="align-middle">
@@ -45,4 +45,8 @@
             </table>
         </div>
     </div>
+</div>
+
+<div class="text-white" style="position: fixed; right: 25px; bottom: 80px;">
+    <a class="btn btn-success" asp-action="Create"><i class="bi bi-clipboard2-plus"></i>Add New</a>
 </div>

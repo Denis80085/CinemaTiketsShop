@@ -104,14 +104,14 @@ namespace CinemaTiketsShop.Data
                 {
                     Id = 1,
                     Name = "Disel Kino",
-                    Logo = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
+                    LogoUrl = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
                     Description = "Big cinema. Evrey week new realeases. Suports new talented producers"
                 },
                 new Cinema 
                 {
                     Id=2,
                     Name = "Hookie Cinema",
-                    Logo = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
+                    LogoUrl = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
                     Description = "Cosy Cinema, all brand new movies. Anime night evrey monday"
                 }
                     
