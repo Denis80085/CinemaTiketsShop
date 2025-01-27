@@ -1,64 +1,99 @@
-﻿@model Actor
+﻿@using CinemaTiketsShop.ViewModels.ActorVMs;
+
+@model CreateActorViewModel
 
 @{
     ViewData["Title"] = "Add new actor";
 }
 
 <div class="row text">
-    <div class="col-md-8 offset-2">
-        <p>
-            <h1>Create a new actor:</h1>
-        </p>
 
-        <div class="col-md-8 offset-2">
+    <div class="col-md-12">
+        <div class="col-md-8  offset-2">
+            <p>
+                <h1>Create a new Actor:</h1>
+            </p>
 
-            <form asp-action="Create" class="d-flex flex-column justify-content-around gap-4">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="col-md-8 offset-2">
 
                 <div class="form-group text-center">
-                    <img style="max-width: 200px" id="FotoPreview" class="border-info rounded-circle"/>
+                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" />
                 </div>
 
-                <div class="form-group">
-                    <label asp-for="FotoURL" class="control-label"></label>
-                    <input asp-for="FotoURL" class="form-control" required/>
-                    <span asp-validation-for="FotoURL" class="text-danger"></span>
-                </div>
+                <form enctype="multipart/form-data" asp-action="Create" class="gap-4">
 
-                <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" required/>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <label asp-for="Bio" class="control-label"></label>
-                    <textarea asp-for="Bio" class="form-control" required></textarea>
-                    <span asp-validation-for="Bio" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <div class="d-flex flex-row-reverse justify-content-lg-between">
-                        <input type="submit" value="Create" class="btn btn-outline-success float-start"/>
-                        <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
+                    <div style="margin-top: 40px">
+                        <input type="radio" name="Picture_Upload_Method" value="FromDevice" checked />
+                        <label asp-for="Foto" class="form-label"><strong>Select a picture from your device:</strong></label>
+                        <input asp-for="Foto" class="form-control" type="file">
+                        <span asp-validation-for="Foto" class="text-danger"></span>
                     </div>
-                </div>
 
-            </form>
-        
+                    <div style="margin-top: 40px">
+                        <input type="radio" name="Picture_Upload_Method" value="FromUrl" />
+                        <label asp-for="FotoUrl" class="form-label"><strong>Or put a picture URL:</strong></label>
+                        <input asp-for="FotoUrl" class="form-control" type="text">
+                        <span asp-validation-for="FotoUrl" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="Name" class="form-label"><strong>Full Name:</strong></label>
+                        <input type="text" class="form-control" asp-for="Name" placeholder="Producer's full name" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="Bio" class="form-label"><strong>Biogrophy:</strong></label>
+                        <textarea type="text" class="form-control" asp-for="Bio" placeholder="Producer's biography" required></textarea>
+                        <span asp-validation-for="Bio" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 10px">
+                        <div class="d-flex flex-row-reverse justify-content-lg-between">
+                            <input type="submit" value="Create" class="btn btn-outline-success float-start" />
+                            <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
         </div>
     </div>
+
 </div>
 
-@section scripts{
+
+@section scripts {
     <script>
-        
+        $(document).ready(function () {
+            // Listen for the change event on the file input
+            $("#Foto").on("change", function (event) {
+                var output = document.getElementById('FotoPreview');
+                var file = event.target.files[0]; // Get the selected file
+
+                if (file) {
+                    var reader = new FileReader();
+
+                    // When the file is successfully read
+                    reader.onload = function (e) {
+                        output.src = e.target.result; // Set the preview's src to the file's data URL
+                    };
+
+                    // Read the file as a data URL
+                    reader.readAsDataURL(file);
+                } else {
+                    output.src = ""; // Clear the preview if no file is selected
+                }
+            });
+        });
+
         $(document).ready(function(){
             var output =  document.getElementById('FotoPreview');
-            output.src = $("#FotoURL").val();
+            output.src = $("#PictureUrl").val();
         })
 
-        $("#FotoURL").on("change", function(){
+        $("#PictureUrl").on("change", function(){
             var output =  document.getElementById('FotoPreview');
             output.src = $(this).val();
         })

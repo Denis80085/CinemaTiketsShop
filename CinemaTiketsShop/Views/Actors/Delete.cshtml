@@ -26,7 +26,7 @@
             <div class="d-flex flex-column justify-content-around gap-4">
 
                 <div class="form-group text-center">
-                    <img style="max-width: 200px" id="FotoPreview" class="border-info rounded-circle" />
+                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" />
                 </div>
 
                 <form asp-controller="Actors" asp-action="Delete" asp-route-id="@Model.Id" class="d-flex  flex-column justify-content-around gap-4">
@@ -45,6 +45,8 @@
                         <label asp-for="Bio" class="control-label"></label>
                         <textarea asp-for="Bio" class="form-control" readonly></textarea>
                     </div>
+
+                    <input asp-for="PublicId" class="form-control" type="hidden" readonly/>
 
                     <div class="form-group">
                         <div class="d-flex flex-row-reverse justify-content-lg-between">

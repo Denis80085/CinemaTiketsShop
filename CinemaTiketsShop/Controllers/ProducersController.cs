@@ -85,7 +85,7 @@ namespace CinemaTiketsShop.Controllers
                     {
                         if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
                         {
-                            ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                            ModelState.AddModelError("PictureUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                             return View(ProducerVM);
                         }
 
@@ -175,7 +175,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [FromForm]string picture_change_method,[Bind("Id, Name, Bio, PictureUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
+        public async Task<IActionResult> Edit([FromForm]int Id, [FromForm]string picture_change_method,[Bind("Id, Name, Bio, FotoUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
@@ -194,26 +194,14 @@ namespace CinemaTiketsShop.Controllers
                     result = await _pictureUploader.UpdateImageFromFileAsync(ProducerVM.Foto, ProducerVM.PublicId);
                 }
                 
-                if(picture_change_method == "FromUrl" && ProducerVM.PictureUrl != ProducerVM.OldPictureUrl) 
+                if(picture_change_method == "FromUrl" && ProducerVM.FotoUrl != ProducerVM.OldPictureUrl) 
                 {
-                    if (string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
-                    {
-                        ModelState.AddModelError("PictureUrl", "Please enter a image url");
-                        return View(ProducerVM);
-                    }
-
-                    if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
-                    {
-                        ModelState.AddModelError("PictureUrl", "Url validation faieled. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
-                        return View(ProducerVM);
-                    }
-
-                    result = await _pictureUploader.UpdateImageFromUrlAsync(ProducerVM.PictureUrl, ProducerVM.PublicId);
+                    result = await _pictureUploader.UpdateImageFromUrlAsync(ProducerVM.FotoUrl, ProducerVM.PublicId);
                 }
 
                 if (result.ErrorAcured)
                 {
-                    ModelState.AddModelError("Foto", "Picture upload faieled");
+                    ModelState.AddModelError(result.ErrorAt, result.ErrorMessage);
                     return View(ProducerVM);
                 }
 

@@ -1,31 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 
-namespace CinemaTiketsShop.ViewModels.ProducerVMs
+namespace CinemaTiketsShop.ViewModels.ActorVMs
 {
-    public class EditProducerViewModel
+    public class CreateActorViewModel
     {
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         [Display(Name = "Full Name")]
         [StringLength(270, MinimumLength = 2, ErrorMessage = "Full name must contain at least 2 and maximum 70 chars")]
-        public required string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Biography")]
         [StringLength(500, MinimumLength = 2, ErrorMessage = "Biography must contain at least 2 and maximum 500 chars")]
         public string? Bio { get; set; }
 
-        [AllowNull]
-        public string? PublicId { get; set; }
-
         public IFormFile? Foto { get; set; }
 
         [Url]
         public string? FotoUrl { get; set; }
-
-        [Url]
-        public required string OldPictureUrl { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using CinemaTiketsShop.Data.Base;
 using CinemaTiketsShop.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CinemaTiketsShop.Models
 {
-    public class Movie
+    public class Movie : IEntityBase
     {
         public int Id { get; set; }
         [Required]
@@ -33,7 +34,8 @@ namespace CinemaTiketsShop.Models
         public int CinemaId { get; set; }
 
         [ForeignKey("CinemaId")]
-        public Cinema Cinema { get; set; }
+        [Required]
+        public Cinema? Cinema { get; set; }
 
         [AllowNull]
         public int? ProducerId { get; set; }

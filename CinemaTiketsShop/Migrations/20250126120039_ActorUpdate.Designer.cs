@@ -4,6 +4,7 @@ using CinemaTiketsShop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaTiketsShop.Migrations
 {
     [DbContext(typeof(ApplicationDbConntext))]
-    partial class ApplicationDbConntextModelSnapshot : ModelSnapshot
+    [Migration("20250126120039_ActorUpdate")]
+    partial class ActorUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,7 +89,7 @@ namespace CinemaTiketsShop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LogoUrl")
+                    b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -103,14 +106,14 @@ namespace CinemaTiketsShop.Migrations
                         {
                             Id = 1,
                             Description = "Big cinema. Evrey week new realeases. Suports new talented producers",
-                            LogoUrl = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
+                            Logo = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
                             Name = "Disel Kino"
                         },
                         new
                         {
                             Id = 2,
                             Description = "Cosy Cinema, all brand new movies. Anime night evrey monday",
-                            LogoUrl = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
+                            Logo = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
                             Name = "Hookie Cinema"
                         });
                 });

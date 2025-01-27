@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CinemaTiketsShop.ViewModels.ProducerVMs
+namespace CinemaTiketsShop.ViewModels.ActorVMs
 {
-    public class EditProducerViewModel
+    public class EditActorViewModel
     {
         [Required]
         public int Id { get; set; }
@@ -26,6 +26,6 @@ namespace CinemaTiketsShop.ViewModels.ProducerVMs
         public string? FotoUrl { get; set; }
 
         [Url]
-        public required string OldPictureUrl { get; set; }
+        public required string OldFotoUrl { get; set; }
     }
 }
