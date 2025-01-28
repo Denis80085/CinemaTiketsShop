@@ -1,5 +1,6 @@
 ﻿using CinemaTiketsShop.Data.Base;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CinemaTiketsShop.Models
 {
@@ -14,7 +15,10 @@ namespace CinemaTiketsShop.Models
         public string? Description { get; set; } 
         [Required]
         [Display(Name = "Logo Picture")]
-        public  string? LogoUrl { get; set; } 
+        public  string? LogoUrl { get; set; }
+
+        [AllowNull]
+        public string? PublicId { get; set; }
 
         //Relationships
         public List<Movie>? Movies { get; set; }

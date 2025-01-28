@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CinemaTiketsShop.Data.Base
 {
@@ -12,9 +13,13 @@ namespace CinemaTiketsShop.Data.Base
             _context = context;
         }
 
-        virtual public Task Create(T entity)
+        virtual public async Task<T?> Create(T entity)
         {
-            throw new NotImplementedException();
+            var entry = await _context.Set<T>().AddAsync(entity);
+
+            await _context.SaveChangesAsync();
+
+            return entry.Entity;
         }
 
         virtual public Task<T?> Delete(T entity)

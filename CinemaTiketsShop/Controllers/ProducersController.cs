@@ -4,6 +4,7 @@ using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Mappers.ProducerMappers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
+using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 using CinemaTiketsShop.ViewModels.ProducerVMs;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet.Core;

@@ -7,7 +7,7 @@ namespace CinemaTiketsShop.Data.Base
     {
         Task<IEnumerable<T>> GetAll();
         Task<T> GetById(int id);
-        Task Create(T entity);
+        Task<T?> Create(T entity);
         Task<T?> Update(int id, T entity);
         Task<T?> Delete(T entity);
     }
