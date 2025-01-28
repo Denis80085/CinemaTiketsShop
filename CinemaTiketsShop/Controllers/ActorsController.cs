@@ -40,7 +40,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, FotoUrl, Bio, Foto")]CreateActorViewModel ActorVM, [FromForm] string Picture_Upload_Method) 
+        public async Task<IActionResult> Create([Bind("Name, PictureUrl, Bio, Foto")]CreateActorViewModel ActorVM, [FromForm] string Picture_Upload_Method) 
         {
             if (!ModelState.IsValid) 
             {
@@ -48,7 +48,7 @@ namespace CinemaTiketsShop.Controllers
                 return View(ActorVM);
             }
 
-            if (ActorVM.Foto == null && string.IsNullOrWhiteSpace(ActorVM.FotoUrl))
+            if (ActorVM.Foto == null && string.IsNullOrWhiteSpace(ActorVM.PictureUrl))
             {
                 ModelState.AddModelError("Foto", "No picture was found");
 
@@ -64,20 +64,20 @@ namespace CinemaTiketsShop.Controllers
                     result = await _photoService.UploadPhotoAsync(ActorVM.Foto);
                 }
 
-                if (Picture_Upload_Method == "FromUrl" && !string.IsNullOrWhiteSpace(ActorVM.FotoUrl))
+                if (Picture_Upload_Method == "FromUrl" && !string.IsNullOrWhiteSpace(ActorVM.PictureUrl))
                 {
-                    if (!await PictureUrl.isValid(ActorVM.FotoUrl))
+                    if (!await PictureUrl.isValid(ActorVM.PictureUrl))
                     {
-                        ModelState.AddModelError("FotoUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
+                        ModelState.AddModelError("PictureUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
                         return View(ActorVM);
                     }
 
-                    result = await _photoService.UploadPhotoWithUrlAsync(ActorVM.FotoUrl);
+                    result = await _photoService.UploadPhotoWithUrlAsync(ActorVM.PictureUrl);
                 }
 
                 if (result.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    ModelState.AddModelError("FotoUrl", $"Error by uploading the image. Error {result.StatusCode}");
+                    ModelState.AddModelError("PictureUrl", $"Error by uploading the image. Error {result.StatusCode}");
                     return View(ActorVM);
                 }
 

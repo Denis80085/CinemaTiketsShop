@@ -3,7 +3,7 @@
 @model ICreateBaseViewModel
 
 @{
-    ViewData["Title"] = "Create Producer";
+    ViewData["Title"] = "Add new Cinema";
 }
 
 <div class="row text">
@@ -11,7 +11,7 @@
     <div class="col-md-12">
         <div class="col-md-8  offset-2">
             <p>
-                <h1>Create a new Producer:</h1>
+                <h1>Add new Cinema:</h1>
             </p>
 
             <div class="col-md-8 offset-2">
@@ -19,7 +19,7 @@
                 <div class="form-group text-center">
                     <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle"/>
                 </div>
-               
+
                 <form enctype="multipart/form-data" asp-action="Create" class="gap-4">
 
                     <div style="margin-top: 40px">
@@ -37,14 +37,14 @@
                     </div>
 
                     <div style="margin-top: 40px">
-                        <label asp-for="Name" class="form-label"><strong>Full Name:</strong></label>
-                        <input type="text" class="form-control" asp-for="Name" placeholder="Producer's full name" required>
+                        <label asp-for="Name" class="form-label"><strong>Cinema Name:</strong></label>
+                        <input type="text" class="form-control" asp-for="Name" placeholder="Cinema name" required>
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
 
                     <div style="margin-top: 40px">
-                        <label asp-for="Bio" class="form-label"><strong>Biogrophy:</strong></label>
-                        <textarea type="text" class="form-control" asp-for="Bio" placeholder="Producer's biography" required></textarea>
+                        <label asp-for="Bio" class="form-label"><strong>Description:</strong></label>
+                        <textarea type="text" class="form-control" asp-for="Bio" placeholder="Cinema Description" required></textarea>
                         <span asp-validation-for="Bio" class="text-danger"></span>
                     </div>
 
@@ -65,37 +65,37 @@
 
 
 @section scripts {
-    <script>
-        $(document).ready(function () {
-            // Listen for the change event on the file input
-            $("#Foto").on("change", function (event) {
-                var output = document.getElementById('FotoPreview');
-                var file = event.target.files[0]; // Get the selected file
+        <script>
+            $(document).ready(function () {
+                // Listen for the change event on the file input
+                $("#Foto").on("change", function (event) {
+                    var output = document.getElementById('FotoPreview');
+                    var file = event.target.files[0]; // Get the selected file
 
-                if (file) {
-                    var reader = new FileReader();
+                    if (file) {
+                        var reader = new FileReader();
 
-                    // When the file is successfully read
-                    reader.onload = function (e) {
-                        output.src = e.target.result; // Set the preview's src to the file's data URL
-                    };
+                        // When the file is successfully read
+                        reader.onload = function (e) {
+                            output.src = e.target.result; // Set the preview's src to the file's data URL
+                        };
 
-                    // Read the file as a data URL
-                    reader.readAsDataURL(file);
-                } else {
-                    output.src = ""; // Clear the preview if no file is selected
-                }
+                        // Read the file as a data URL
+                        reader.readAsDataURL(file);
+                    } else {
+                        output.src = ""; // Clear the preview if no file is selected
+                    }
+                });
             });
-        });
 
-        $(document).ready(function(){
-            var output =  document.getElementById('FotoPreview');
-            output.src = $("#PictureUrl").val();
-        })
+            $(document).ready(function(){
+                var output =  document.getElementById('FotoPreview');
+                output.src = $("#PictureUrl").val();
+            })
 
-        $("#PictureUrl").on("change", function(){
-            var output =  document.getElementById('FotoPreview');
-            output.src = $(this).val();
-        })
-    </script>
+            $("#PictureUrl").on("change", function(){
+                var output =  document.getElementById('FotoPreview');
+                output.src = $(this).val();
+            })
+        </script>
 }
