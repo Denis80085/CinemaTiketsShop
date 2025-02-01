@@ -1,5 +1,6 @@
 ﻿using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Mappers.CinemaMappers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.ViewModels.CinemaVMs;
 using Microsoft.AspNetCore.Mvc;
@@ -97,6 +98,74 @@ namespace CinemaTiketsShop.Controllers
             catch (Exception ex)
             {
                 _logger.LogCritical(ex, ex.Message);
+                return View("Empty");
+            }
+        }
+
+        public async Task<IActionResult> Edit([FromRoute]int id) 
+        {
+            try 
+            {
+                var Cinema = await _cinemaService.GetById(id);
+
+                return View(Cinema.MapEditViewModel());
+            }
+            catch(KeyNotFoundException ex) 
+            {
+                _logger.LogCritical(ex, ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogCritical(ex, "Cinema could not be found with message: " + ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, ex.Message);
+                return View("Empty");
+            }  
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([Bind("Id, Name, PictureUrl, OldPictureUrl, Bio, Foto, PublicId")]EditCinemaViewModel CinemaViewModel, [FromForm]string picture_change_method) 
+        {
+            UploadedImageResult result = new UploadedImageResult(false);
+
+            if (picture_change_method == "FromDevice" && CinemaViewModel.Foto != null)
+            {
+                result = await _pictureUploader.UpdateImageFromFileAsync(CinemaViewModel.Foto, CinemaViewModel.PublicId);
+            }
+
+            if (picture_change_method == "FromUrl" && CinemaViewModel.PictureUrl != CinemaViewModel.OldPictureUrl)
+            {
+                result = await _pictureUploader.UpdateImageFromUrlAsync(CinemaViewModel.PictureUrl, CinemaViewModel.PublicId);
+            }
+
+            if (result.ErrorAcured)
+            {
+                ModelState.AddModelError(result.ErrorAt, result.ErrorMessage);
+                return View(CinemaViewModel);
+            }
+
+            if (result.Succeded)
+            {
+                CinemaViewModel.OldPictureUrl = result.PictureUrl;
+                CinemaViewModel.PublicId = result.PublicId;
+            }
+
+            var Cinema = CinemaViewModel.MapCinemaModel();
+
+            var CinemaUpdated = await _cinemaService.Update(Cinema.Id,  Cinema);
+
+            if (CinemaUpdated != null)
+            {
+                _logger.LogInformation($"Producer update succeded: {DateTime.Now}");
+                return RedirectToAction(nameof(Index));
+            }
+            else 
+            {
+                _logger.LogInformation($"Producer update failed: {DateTime.Now}");
                 return View("Empty");
             }
         }

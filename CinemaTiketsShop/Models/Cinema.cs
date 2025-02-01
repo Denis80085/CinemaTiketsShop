@@ -9,13 +9,13 @@ namespace CinemaTiketsShop.Models
         public int Id { get; set; }
         [Required]
         [Display(Name = "Cinema Name")]
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         [Required]
         [Display(Name = "Descrption")]
-        public string? Description { get; set; } 
+        public string? Description { get; set; }
         [Required]
         [Display(Name = "Logo Picture")]
-        public  string? LogoUrl { get; set; }
+        public string LogoUrl { get; set; } = string.Empty;
 
         [AllowNull]
         public string? PublicId { get; set; }

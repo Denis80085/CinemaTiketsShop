@@ -44,9 +44,22 @@ namespace CinemaTiketsShop.Data.Base
             return foundEntity;
         }
 
-        virtual public Task<T?> Update(int id, T entity)
+        virtual async public Task<T?> Update(int id, T entity)
         {
-            throw new NotImplementedException();
+            if(!_context.Set<T>().Any(e => e.Id == id)) 
+            {
+                return null;
+            }
+
+            var updatedEntity = _context.Set<T>().Update(entity);
+
+            if(updatedEntity.State == EntityState.Modified) 
+            {
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            else 
+                return null;
         }
     }
 }
