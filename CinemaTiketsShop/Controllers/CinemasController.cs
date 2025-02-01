@@ -2,6 +2,7 @@
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Mappers.CinemaMappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services;
 using CinemaTiketsShop.ViewModels.CinemaVMs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,14 +14,17 @@ namespace CinemaTiketsShop.Controllers
         private readonly ICinemaService _cinemaService;
         private readonly ILogger<CinemasController> _logger;
         private readonly IPictureUploader _pictureUploader;
+        private readonly IPhotoService _photoService;
 
-        public CinemasController( ICinemaService cinemaService, ILogger<CinemasController> logger, IPictureUploader pictureUploader)
+        public CinemasController( ICinemaService cinemaService, ILogger<CinemasController> logger, IPictureUploader pictureUploader, IPhotoService photoService)
         {
             _cinemaService = cinemaService;
             _logger = logger;
             _pictureUploader = pictureUploader;
+            _photoService = photoService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -102,6 +106,7 @@ namespace CinemaTiketsShop.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit([FromRoute]int id) 
         {
             try 
@@ -130,6 +135,11 @@ namespace CinemaTiketsShop.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([Bind("Id, Name, PictureUrl, OldPictureUrl, Bio, Foto, PublicId")]EditCinemaViewModel CinemaViewModel, [FromForm]string picture_change_method) 
         {
+            if (!ModelState.IsValid) 
+            {
+                return View(CinemaViewModel);
+            }
+
             UploadedImageResult result = new UploadedImageResult(false);
 
             if (picture_change_method == "FromDevice" && CinemaViewModel.Foto != null)
@@ -168,6 +178,83 @@ namespace CinemaTiketsShop.Controllers
                 _logger.LogInformation($"Producer update failed: {DateTime.Now}");
                 return View("Empty");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details([FromRoute]int id) 
+        {
+            try
+            {
+                var Cinema = await _cinemaService.GetById(id);
+
+                return View(Cinema);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogCritical(ex, ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogCritical(ex, "Cinema could not be found with message: " + ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, ex.Message);
+                return View("Empty");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete([FromRoute]int id) 
+        {
+            try
+            {
+                var Cinema = await _cinemaService.GetById(id);
+
+                Cinema = await _cinemaService.IncludeMovies(Cinema);
+
+                if(Cinema == null) 
+                {
+                    return View("Empty");
+                }
+
+                return View(Cinema);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogCritical(ex, ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogCritical(ex, "Cinema could not be found with message: " + ex.Message);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, ex.Message);
+                return View("Empty");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmDelete([Bind("Id, PublicId")]Cinema cinema) 
+        {
+            var DeletedCinema = await _cinemaService.Delete(cinema);
+
+            if (DeletedCinema == null) 
+            {
+                return View("Empty");
+            }
+
+            if (!string.IsNullOrEmpty(DeletedCinema.PublicId)) 
+            {
+                await _photoService.DeletePhotoAsync(DeletedCinema.PublicId);
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

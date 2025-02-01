@@ -22,9 +22,17 @@ namespace CinemaTiketsShop.Data.Base
             return entry.Entity;
         }
 
-        virtual public Task<T?> Delete(T entity)
+        virtual public async Task<T?> Delete(T entity)
         {
-            throw new NotImplementedException();
+            var Entity = _context.Set<T>().Remove(entity);
+
+            if (Entity.State == EntityState.Deleted)
+            {
+                await _context.SaveChangesAsync();
+                return entity;
+            }
+            else
+                return null;
         }
 
         virtual public async Task<IEnumerable<T>> GetAll()

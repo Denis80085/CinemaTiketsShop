@@ -1,0 +1,109 @@
+﻿@model Cinema
+
+@{
+    ViewData["Title"] = $"Delete {Model.Name}?";
+}
+
+<div class="row text">
+    <div class="col-md-8 offset-2">
+        <p>
+            <h1>Press delete to remove @Model.Name or cancel to go back</h1>
+        </p>
+
+        <div class="col-md-8 offset-2">
+
+            <div class="d-flex flex-column justify-content-around gap-4">
+
+                <div class="form-group text-center">
+                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" />
+                </div>
+
+                <div class="d-flex  flex-column justify-content-around gap-4">
+
+                    <div class="form-group">
+                        <label asp-for="LogoUrl" class="control-label"></label>
+                        <input asp-for="LogoUrl" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" class="form-control" readonly></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="d-flex flex-row-reverse justify-content-lg-between">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Delete
+                            </button>
+                            <a class="btn btn-outline-primary" asp-action="Index">Cancel</a>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="position:fixed; align-self:center">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Delete @Model.Name</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+
+                                <div class="modal-body text-primary">
+                                    Are you sure you want to delete producer: @Model.Name?<br />
+
+                                    @if (Model.Movies != null && Model.Movies.Count > 0)
+                                    {
+                                        <p class="text-secondary">
+                                            Thiese movies will be deleted with @Model.Name:
+                                            @foreach (var item in Model.Movies)
+                                            {
+                                                <h5 class="badge text-bg-info">@item.Name </h5>
+                                            }
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-success">This producer is not included in any movies on your site</p>
+                                    }
+                                </div>
+
+                                <form asp-action="ConfirmDelete" method="post">
+                                    <input type="hidden" name="Id" asp-for="Id" readonly />
+                                    <input type="hidden" name="PublicId" asp-for="PublicId" readonly />
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
+
+                                        <input type="submit" value="Yes" class="btn btn-outline-danger" />
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#LogoUrl").val();
+        })
+    </script>
+}
