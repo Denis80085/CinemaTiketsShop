@@ -1,4 +1,5 @@
-﻿using CinemaTiketsShop.Data.Wrappers;
+﻿using CinemaTiketsShop.Data.Base;
+using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
@@ -6,23 +7,25 @@ using System.Diagnostics;
 
 namespace CinemaTiketsShop.Data.Services
 {
-    public class ActorService : IActorServices
+    public class ActorService : EntityBaseRepo<Actor>, IActorServices
     {
         private readonly ApplicationDbConntext _context;
 
-        public ActorService(ApplicationDbConntext context)
+        public ActorService(ApplicationDbConntext context) : base(context) 
         {
             _context = context;
         }
 
-        public async Task Create(Actor actor)
+        public override async Task<Actor?> Create(Actor actor)
         {
             await _context.Actors.AddAsync(actor);
 
             await _context.SaveChangesAsync();
+
+            return actor;
         }
 
-        public async Task<Actor?> Delete(Actor actor)
+        public override async Task<Actor?> Delete(Actor actor)
         {
             try
             {
@@ -46,7 +49,7 @@ namespace CinemaTiketsShop.Data.Services
             return result;
         }
 
-        public async Task<ActorResult> GetById(int id)
+        public  async Task<ActorResult> GetActorResultById(int id)
         {
             var Actors = await _context.Actors.Include(a => a.Movies_Actors).ThenInclude(a => a.Movie).Where(a => a.Id == id ).Select(a => a).ToListAsync();
 
@@ -60,7 +63,7 @@ namespace CinemaTiketsShop.Data.Services
             }
         }
 
-        public async Task<Actor?> Update(int id, Actor NewActor)
+        public override async Task<Actor?> Update(int id, Actor NewActor)
         {
             try
             {
@@ -89,5 +92,9 @@ namespace CinemaTiketsShop.Data.Services
                 return null;
             }  
         }
+
+        
+
+        
     }
 }

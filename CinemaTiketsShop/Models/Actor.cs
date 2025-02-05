@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CinemaTiketsShop.Data.Base;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 
 namespace CinemaTiketsShop.Models
 {
-    public class Actor
+    public class Actor : IEntityBase  
     {
         public int Id { get; set; }
 

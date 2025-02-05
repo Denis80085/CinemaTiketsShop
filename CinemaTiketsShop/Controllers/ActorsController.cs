@@ -105,7 +105,7 @@ namespace CinemaTiketsShop.Controllers
         [HttpGet("Actors/Details/{id:int}")]
         public async Task<IActionResult> Details([FromRoute] int id) 
         {
-            var Actor = await _actorService.GetById(id);
+            var Actor = await _actorService.GetActorResultById(id);
 
             if (Actor._isFound) 
             {
@@ -121,7 +121,7 @@ namespace CinemaTiketsShop.Controllers
         [HttpGet("Edit/{id:int}")]
         public async Task<IActionResult> Edit([FromRoute]int id) 
         {
-            var ActorResult = await _actorService.GetById(id);
+            var ActorResult = await _actorService.GetActorResultById(id);
 
             if (ActorResult._isFound && ActorResult._actor != null) 
             {
@@ -183,7 +183,7 @@ namespace CinemaTiketsShop.Controllers
         [HttpGet("Delete/{id:int}")]
         public async Task<IActionResult> Delete([FromRoute]int id) 
         {
-            var ActorResult = await _actorService.GetById(id);
+            var ActorResult = await _actorService.GetActorResultById(id);
 
             if (ActorResult._isFound && ActorResult._actor != null)
             {

@@ -29,3 +29,29 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Base card styling */
+.clickable-card {
+    max-width: 540px;
+    width:fit-content;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    background-color: #fff;
+    padding: 0;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+    /* Hover effect */
+    .clickable-card:hover {
+        transform: translateY(-5px); /* Move card up slightly */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Add shadow */
+        background-color: #f9f9f9; /* Optional: Change background color */
+    }
+
+/* Card content styling */
+.card-content {
+    text-align: center;
+}
