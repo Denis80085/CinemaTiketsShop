@@ -12,25 +12,26 @@ namespace CinemaTiketsShop.ViewModels.MovieVMs
         [Display(Name = "Description")]
         [StringLength(500, MinimumLength = 2, ErrorMessage = "Description must contain at least 2 and maximum 500 chars")]
         override public string? Bio { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Plese select a category")]
         public MovieCategory Category { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Plese add a start date")]
         public DateTime StartDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Plese add a end date")]
         public DateTime EndDate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Plese write the price")]
         public double Price { get; set; }
 
         //Ralationships
-        [Required]
+        [Required(ErrorMessage = "Plese select a cinema")]
         public int CinemaId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Plese select a producer")]
         public int ProducerId { get; set; }
 
-        public LinkedList<Actor>? Actors { get; set; }
+        [Required(ErrorMessage = "Plese select actors")]
+        public List<int>? SelActors { get; set; }
 
     }
 }

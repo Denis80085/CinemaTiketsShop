@@ -1,14 +1,11 @@
-﻿@using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
-@using CinemaTiketsShop.ViewModels.ActorVMs;
+﻿@using CinemaTiketsShop.ViewModels.MovieVMs;
+@using CinemaTiketsShop.Data.Enums;
 
-@model CreateBaseViewModel
+@model CreateMovieViewModel
 
 @{
     ViewData["Title"] = "Add new movie";
-
-    Dictionary<int, ActorSelectorView>? Actors = (Dictionary<int, ActorSelectorView>?)ViewData["Actors"];
     Dictionary<int, string>? Cinemas = (Dictionary<int, string>?)ViewData["Cinemas"];
-    Dictionary<int, string>? Producers = (Dictionary<int, string>?)ViewData["Producers"];
 }
 
 <div class="row text">
@@ -37,7 +34,7 @@
                     <div style="margin-top: 40px">
                         <input type="radio" name="Picture_Upload_Method" value="FromUrl" />
                         <label asp-for="PictureUrl" class="form-label"><strong>Or put a picture URL:</strong></label>
-                        <input asp-for="PictureUrl" class="form-control" type="text">
+                        <input asp-for="PictureUrl" class="form-control" type="text" placeholder="https://example.jpeg (Only .jpeg, .png, .svg, .webp)">
                         <span asp-validation-for="PictureUrl" class="text-danger"></span>
                     </div>
 
@@ -53,32 +50,43 @@
                         <span asp-validation-for="Bio" class="text-danger"></span>
                     </div>
 
+                    <div style="margin-top: 40px">
+                        <label asp-for="Category" class="form-label"><strong>Select Movie Category:</strong></label>
+                        <select asp-for="Category" class="form-select">
+                            <option class="dropdown-item">--Select a Category--</option>
+                            @if (Cinemas is not null)
+                                @foreach (var category in Enum.GetValues(typeof(MovieCategory)))
+                                {
+                                    <option class="dropdown-item" value="@category">@category</option>
+                                }
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 40px">
+                        <label asp-for="CinemaId" class="form-label"><strong>Select cinema:</strong></label>
+                        <select asp-for="CinemaId" class="form-select">
+                            <option class="dropdown-item">--Select a Cinema--</option>
+                            @if(Cinemas is not null)
+                            @foreach(var c in Cinemas)
+                            {
+                                <option class="dropdown-item" value="@c.Key">@c.Value</option>
+                            }
+                        </select>
+                        <span asp-validation-for="CinemaId" class="text-danger"></span>
+                    </div>
+
+                    @(await Html.PartialAsync("_Actor_Producer_SelectTable.cshtml"))
+
                     <div style="margin-top: 10px">
                         <div class="d-flex flex-row-reverse justify-content-lg-between">
-                            <input type="submit" value="Create" class="btn btn-outline-success float-start" />
+                            <input type="submit" value="Create" asp-action="Insert" class="btn btn-outline-success float-start" />
                             <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
                         </div>
                     </div>
 
-                    <div class="row" style="margin-top: 10px">
-                        <h2>Select Actors:</h2>
-                        <div class="table-active">
-                            <table class="table-primary">
-                                <tr>
-                                    
-                                    @if (Actors != null)
-                                        @foreach (var a in Actors)
-                                        {
-                                            <td>
-                                                <img class="rounded-circle" src="@a.Value.Picture" alt="Alternate Text" style="width:150px" />
-                                                <p>@a.Value.Name</p>
-                                            </td>
-                                        } <!--TO DOOOOOO!!!-->
-                                </tr>
-                            </table>
-
-                        </div>  
-                    </div>
+                    
+                    
                 </form>
 
             </div>
@@ -87,39 +95,3 @@
 
 </div>
 
-
-@section scripts {
-    <script>
-        $(document).ready(function () {
-            // Listen for the change event on the file input
-            $("#Foto").on("change", function (event) {
-                var output = document.getElementById('FotoPreview');
-                var file = event.target.files[0]; // Get the selected file
-
-                if (file) {
-                    var reader = new FileReader();
-
-                    // When the file is successfully read
-                    reader.onload = function (e) {
-                        output.src = e.target.result; // Set the preview's src to the file's data URL
-                    };
-
-                    // Read the file as a data URL
-                    reader.readAsDataURL(file);
-                } else {
-                    output.src = ""; // Clear the preview if no file is selected
-                }
-            });
-        });
-
-        $(document).ready(function(){
-            var output =  document.getElementById('FotoPreview');
-            output.src = $("#PictureUrl").val();
-        })
-
-        $("#PictureUrl").on("change", function(){
-            var output =  document.getElementById('FotoPreview');
-            output.src = $(this).val();
-        })
-    </script>
-}

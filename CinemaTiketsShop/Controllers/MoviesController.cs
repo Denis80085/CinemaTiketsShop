@@ -1,6 +1,7 @@
 ﻿using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Dictionarys;
-using CinemaTiketsShop.ViewModels.ActorVMs;
+using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
+using CinemaTiketsShop.ViewModels.MovieVMs;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 
@@ -31,13 +32,20 @@ namespace CinemaTiketsShop.Controllers
 
         public async Task<IActionResult> Create() 
         {
-            IDictionary<int, ActorSelectorView> ActorDic = await modelDictionarySelector.SelectActorsKeysAndNames();
-            IDictionary<int, string> ProducerDic = await modelDictionarySelector.SelectProducersKeysAndNames();
+            IDictionary<int, ItemSelect> ActorDic = await modelDictionarySelector.SelectActorsKeysAndNames();
+            IDictionary<int, ItemSelect> ProducerDic = await modelDictionarySelector.SelectProducersKeysAndNames();
             IDictionary<int, string> CinemaDic = await modelDictionarySelector.SelectCinemasKeysAndNames();
 
             ViewData["Actors"] = ActorDic;
             ViewData["Producers"] = ProducerDic;
             ViewData["Cinemas"] = CinemaDic;
+
+            return View();
+        }
+
+        public IActionResult Insert([Bind("SelActors")]CreateMovieViewModel MovieVM)
+        {
+            
 
             return View();
         }

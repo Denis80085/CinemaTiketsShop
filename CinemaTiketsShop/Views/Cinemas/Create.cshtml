@@ -65,37 +65,37 @@
 
 
 @section scripts {
-        <script>
-            $(document).ready(function () {
-                // Listen for the change event on the file input
-                $("#Foto").on("change", function (event) {
-                    var output = document.getElementById('FotoPreview');
-                    var file = event.target.files[0]; // Get the selected file
+    <script>
+        $(document).ready(function () {
+            // Listen for the change event on the file input
+            $("#Foto").on("change", function (event) {
+                var output = document.getElementById('FotoPreview');
+                var file = event.target.files[0]; // Get the selected file
 
-                    if (file) {
-                        var reader = new FileReader();
+                if (file) {
+                    var reader = new FileReader();
 
-                        // When the file is successfully read
-                        reader.onload = function (e) {
-                            output.src = e.target.result; // Set the preview's src to the file's data URL
-                        };
+                    // When the file is successfully read
+                    reader.onload = function (e) {
+                        output.src = e.target.result; // Set the preview's src to the file's data URL
+                    };
 
-                        // Read the file as a data URL
-                        reader.readAsDataURL(file);
-                    } else {
-                        output.src = ""; // Clear the preview if no file is selected
-                    }
-                });
+                    // Read the file as a data URL
+                    reader.readAsDataURL(file);
+                } else {
+                    output.src = ""; // Clear the preview if no file is selected
+                }
             });
+        });
 
-            $(document).ready(function(){
-                var output =  document.getElementById('FotoPreview');
-                output.src = $("#PictureUrl").val();
-            })
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#PictureUrl").val();
+        })
 
-            $("#PictureUrl").on("change", function(){
-                var output =  document.getElementById('FotoPreview');
-                output.src = $(this).val();
-            })
-        </script>
+        $("#PictureUrl").on("change", function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $(this).val();
+        })
+    </script>
 }

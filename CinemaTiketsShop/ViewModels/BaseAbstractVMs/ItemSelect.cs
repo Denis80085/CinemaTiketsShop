@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
-namespace CinemaTiketsShop.ViewModels.ActorVMs
+namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
 {
-    public class ActorSelectorView
+    public class ItemSelect
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

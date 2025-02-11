@@ -23,7 +23,7 @@ namespace CinemaTiketsShop
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
-            builder.Services.AddScoped<IPictureUploader, PictureUploader>();
+            builder.Services.AddTransient<IPictureUploader, PictureUploader>();
             builder.Services.AddScoped<ICinemaService, CinemaService>();
             builder.Services.AddScoped<IMovieService, MovieService>();
 

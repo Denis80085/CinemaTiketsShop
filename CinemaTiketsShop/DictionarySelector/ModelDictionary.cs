@@ -1,5 +1,5 @@
 ﻿using CinemaTiketsShop.Data.Services;
-using CinemaTiketsShop.ViewModels.ActorVMs;
+using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 
 
 
@@ -19,20 +19,20 @@ namespace CinemaTiketsShop.Dictionarys
         }
 
 
-        public async Task<IDictionary<int, ActorSelectorView>> SelectActorsKeysAndNames() 
+        public async Task<IDictionary<int, ItemSelect>> SelectActorsKeysAndNames() 
         {
             if(_ActorService == null) 
             {
-                return new Dictionary<int, ActorSelectorView>();
+                return new Dictionary<int, ItemSelect>();
             }
 
-            var ActorDictionary = new Dictionary<int, ActorSelectorView>();
+            var ActorDictionary = new Dictionary<int, ItemSelect>();
 
             var ActorsList = await _ActorService.GetActors();
 
             foreach (var Actor in ActorsList) 
             {
-                ActorDictionary[Actor.Id] = new ActorSelectorView
+                ActorDictionary[Actor.Id] = new ItemSelect
                 {
                     Id = Actor.Id,
                     Name = Actor.Name,
@@ -43,20 +43,25 @@ namespace CinemaTiketsShop.Dictionarys
             return ActorDictionary;
         }
 
-        public async Task<IDictionary<int, string>> SelectProducersKeysAndNames()
+        public async Task<IDictionary<int, ItemSelect>> SelectProducersKeysAndNames()
         {
             if (_ProducerService == null)
             {
-                return new Dictionary<int, string>();
+                return new Dictionary<int, ItemSelect>();
             }
 
-            var ProducerDictionary = new Dictionary<int, string>();
+            var ProducerDictionary = new Dictionary<int, ItemSelect>();
 
             var ProducerList = await _ProducerService.GetAll();
 
             foreach (var p in ProducerList)
             {
-                ProducerDictionary[p.Id] = p.Name;
+                ProducerDictionary[p.Id] = new ItemSelect
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Picture = p.FotoURL
+                };
             }
 
             return ProducerDictionary;
