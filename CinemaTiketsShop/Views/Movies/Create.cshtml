@@ -8,6 +8,7 @@
     Dictionary<int, string>? Cinemas = (Dictionary<int, string>?)ViewData["Cinemas"];
 }
 
+
 <div class="row text">
 
     <div class="col-md-12">
@@ -19,7 +20,7 @@
             <div class="col-md-8 offset-2">
 
                 <div class="form-group text-center">
-                    <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" />
+                    <img style="max-width: 250px" id="FotoPreview" class="border-info" alt="not initialized" />
                 </div>
 
                 <form enctype="multipart/form-data" asp-action="Create" class="gap-4">
@@ -76,11 +77,31 @@
                         <span asp-validation-for="CinemaId" class="text-danger"></span>
                     </div>
 
+                    <div style="margin-top: 40px">
+                        <label asp-for="Price" class="form-label"><strong>Tiket Price:</strong></label>
+                        <input type="number" step="0.01" class="form-control" asp-for="Price" placeholder="00.00€" required>
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <h2  style ="margin-top: 40px">Release date:</h2>
+
+                    <div style="margin-top: 20px">
+                        <label asp-for="StartDate" class="form-label"><strong>Starts on:</strong></label>
+                        <input type="date" class="form-control" asp-for="StartDate" placeholder="dd-mm-yyyy" required>
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+
+                    <div style="margin-top: 20px">
+                        <label asp-for="EndDate" class="form-label"><strong>Expires on:</strong></label>
+                        <input type="date" class="form-control" asp-for="EndDate" placeholder="dd-mm-yyyy" required>
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+
                     @(await Html.PartialAsync("_Actor_Producer_SelectTable.cshtml"))
 
                     <div style="margin-top: 10px">
                         <div class="d-flex flex-row-reverse justify-content-lg-between">
-                            <input type="submit" value="Create" asp-action="Insert" class="btn btn-outline-success float-start" />
+                            <input type="submit" formmethod="post" value="Create" asp-action="Create" class="btn btn-outline-success float-start" />
                             <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
                         </div>
                     </div>
@@ -94,4 +115,5 @@
     </div>
 
 </div>
+
 

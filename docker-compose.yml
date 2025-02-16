@@ -1,0 +1,34 @@
+networks:
+  CinemaTiketsShop:
+
+services:
+  cinematiketsshop:
+    image: ${DOCKER_REGISTRY-}cinematiketsshop
+    build:
+      context: .
+      dockerfile: CinemaTiketsShop/Dockerfile
+      
+    ports:
+        - 8080:8080
+        - 8081:8081
+    networks: 
+        - CinemaTiketsShop
+
+  cinematiketsshop.database:
+    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
+    ports:
+       - '1433:1433'
+    container_name: cinematikets.database
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Sql_deNis%67276@DokWork
+    networks: 
+        - CinemaTiketsShop
+    
+    
+  cinematiketsshop.cache:
+     image: redis:latest
+     ports:
+      -  6793:6793
+  
+        

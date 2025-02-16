@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CinemaTiketsShop.Migrations
 {
     /// <inheritdoc />
-    public partial class Renew : Migration
+    public partial class docker : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,8 @@ namespace CinemaTiketsShop.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(270)", maxLength: 270, nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    FotoURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FotoURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,7 +37,8 @@ namespace CinemaTiketsShop.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LogoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,7 +53,8 @@ namespace CinemaTiketsShop.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(270)", maxLength: 270, nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    FotoURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FotoURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,6 +74,7 @@ namespace CinemaTiketsShop.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
+                    PublicId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CinemaId = table.Column<int>(type: "int", nullable: false),
                     ProducerId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -116,42 +120,42 @@ namespace CinemaTiketsShop.Migrations
 
             migrationBuilder.InsertData(
                 table: "Actors",
-                columns: new[] { "Id", "Bio", "FotoURL", "Name" },
+                columns: new[] { "Id", "Bio", "FotoURL", "Name", "PublicId" },
                 values: new object[,]
                 {
-                    { 1, "Popular actor. He was  filmed in Titanic, Shatered Island, Inception, Try catch me if you can, Wolf of the wool street and a lot more.", "https://phantom-marca.unidadeditorial.es/525c725b581b2cb9476fb16e947a5e49/resize/660/f/webp/assets/multimedia/imagenes/2024/10/23/17296866914532.png", "Leonardo DiCaprio" },
-                    { 2, "Popular actor. He had filmed in lot of popular movies.", "https://image.stern.de/34287660/t/4O/v1/w1440/r1.7778/-/brad-pitt-cannes.jpg", "Bred Pit" },
-                    { 3, "Popular actor. He had filmed in lot of popular movies.", "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/33623_v9_bd.jpg", "Johny Depp" }
+                    { 1, "Popular actor. He was  filmed in Titanic, Shatered Island, Inception, Try catch me if you can, Wolf of the wool street and a lot more.", "https://phantom-marca.unidadeditorial.es/525c725b581b2cb9476fb16e947a5e49/resize/660/f/webp/assets/multimedia/imagenes/2024/10/23/17296866914532.png", "Leonardo DiCaprio", null },
+                    { 2, "Popular actor. He had filmed in lot of popular movies.", "https://image.stern.de/34287660/t/4O/v1/w1440/r1.7778/-/brad-pitt-cannes.jpg", "Bred Pit", null },
+                    { 3, "Popular actor. He had filmed in lot of popular movies.", "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/33623_v9_bd.jpg", "Johny Depp", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Cinemas",
-                columns: new[] { "Id", "Description", "Logo", "Name" },
+                columns: new[] { "Id", "Description", "LogoUrl", "Name", "PublicId" },
                 values: new object[,]
                 {
-                    { 1, "Big cinema. Evrey week new realeases. Suports new talented producers", "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg", "Disel Kino" },
-                    { 2, "Cosy Cinema, all brand new movies. Anime night evrey monday", "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg", "Hookie Cinema" }
+                    { 1, "Big cinema. Evrey week new realeases. Suports new talented producers", "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg", "Disel Kino", null },
+                    { 2, "Cosy Cinema, all brand new movies. Anime night evrey monday", "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg", "Hookie Cinema", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Producers",
-                columns: new[] { "Id", "Bio", "FotoURL", "Name" },
+                columns: new[] { "Id", "Bio", "FotoURL", "Name", "PublicId" },
                 values: new object[,]
                 {
-                    { 1, "My beloved producer. For his entire carrer, he has made such cool movies as: Inglorious Bastards, Kill Bill, Pulp Fiction etc.", "https://cdn.britannica.com/02/156802-050-12ABFA13/Quentin-Tarantino.jpg", "Quentin Tarantino" },
-                    { 2, "Thery talented producer. His carear contains such films as Godfellas, Woolf of the wool street, Shutered island etc.", "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcT1T9q4leZMVWGx-_AFAwhe9jbRSevlm_y2Vi5F4MkCLgwUmNhSc8nddZPtY4vvJI1emvb7YJid1Ki3ESM", "Martin Scorsese" },
-                    { 3, "producer of pirates of the caribbean", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfw8TbUDvrqSCEruiCs44JJeqRV5q4lw1picG3KgkfpVlO-2rpCv_2MUj5IX18FkeQsik1wzLaed1W2CwCzuGIYA", "Espen Sandberg" }
+                    { 1, "My beloved producer. For his entire carrer, he has made such cool movies as: Inglorious Bastards, Kill Bill, Pulp Fiction etc.", "https://cdn.britannica.com/02/156802-050-12ABFA13/Quentin-Tarantino.jpg", "Quentin Tarantino", null },
+                    { 2, "Thery talented producer. His carear contains such films as Godfellas, Woolf of the wool street, Shutered island etc.", "https://encrypted-tbn2.gstatic.com/licensed-image?q=tbn:ANd9GcT1T9q4leZMVWGx-_AFAwhe9jbRSevlm_y2Vi5F4MkCLgwUmNhSc8nddZPtY4vvJI1emvb7YJid1Ki3ESM", "Martin Scorsese", null },
+                    { 3, "producer of pirates of the caribbean", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfw8TbUDvrqSCEruiCs44JJeqRV5q4lw1picG3KgkfpVlO-2rpCv_2MUj5IX18FkeQsik1wzLaed1W2CwCzuGIYA", "Espen Sandberg", null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Movies",
-                columns: new[] { "Id", "Category", "CinemaId", "Description", "EndDate", "Logo", "Name", "Price", "ProducerId", "StartDate" },
+                columns: new[] { "Id", "Category", "CinemaId", "Description", "EndDate", "Logo", "Name", "Price", "ProducerId", "PublicId", "StartDate" },
                 values: new object[,]
                 {
-                    { 1, 5, 2, "Other history of the WW2", new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg", "Unglorious Bastards", 18.399999999999999, 1, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, 7, 1, "The life of a guy, who made a dirty buisnes", new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg", "Wolf of Wall street", 18.399999999999999, 2, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, 7, 2, "The life of a guy, who made a dirty buisnes", new DateTime(2024, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg", "Wolf of Wall street", 18.399999999999999, 2, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, 5, 1, "Disney movie about pirates", new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg", "Pirates of Caribbean", 20.0, 3, new DateTime(2024, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, 5, 2, "Other history of the WW2", new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg", "Unglorious Bastards", 18.399999999999999, 1, null, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 7, 1, "The life of a guy, who made a dirty buisnes", new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg", "Wolf of Wall street", 18.399999999999999, 2, null, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, 7, 2, "The life of a guy, who made a dirty buisnes", new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg", "Wolf of Wall street", 18.399999999999999, 2, null, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, 5, 1, "Disney movie about pirates", new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg", "Pirates of Caribbean", 20.0, 3, null, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(

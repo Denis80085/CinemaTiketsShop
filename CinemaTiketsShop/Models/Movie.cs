@@ -30,6 +30,9 @@ namespace CinemaTiketsShop.Models
         [Required]
         public double Price { get; set; }
 
+        [AllowNull]
+        public string? PublicId { get; set; }
+
         //Ralationships
         public int CinemaId { get; set; }
 

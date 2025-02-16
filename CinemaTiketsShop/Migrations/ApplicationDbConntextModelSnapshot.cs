@@ -153,6 +153,9 @@ namespace CinemaTiketsShop.Migrations
                     b.Property<int?>("ProducerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -171,7 +174,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 5,
                             CinemaId = 2,
                             Description = "Other history of the WW2",
-                            EndDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg",
                             Name = "Unglorious Bastards",
                             Price = 18.399999999999999,
@@ -184,7 +187,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 7,
                             CinemaId = 1,
                             Description = "The life of a guy, who made a dirty buisnes",
-                            EndDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
                             Name = "Wolf of Wall street",
                             Price = 18.399999999999999,
@@ -197,7 +200,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 7,
                             CinemaId = 2,
                             Description = "The life of a guy, who made a dirty buisnes",
-                            EndDate = new DateTime(2024, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
                             Name = "Wolf of Wall street",
                             Price = 18.399999999999999,
@@ -210,12 +213,12 @@ namespace CinemaTiketsShop.Migrations
                             Category = 5,
                             CinemaId = 1,
                             Description = "Disney movie about pirates",
-                            EndDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
                             Name = "Pirates of Caribbean",
                             Price = 20.0,
                             ProducerId = 3,
-                            StartDate = new DateTime(2024, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDate = new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 

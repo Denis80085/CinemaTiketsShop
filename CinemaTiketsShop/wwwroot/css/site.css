@@ -55,3 +55,9 @@ body {
 .card-content {
     text-align: center;
 }
+
+.rounded-circle {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}

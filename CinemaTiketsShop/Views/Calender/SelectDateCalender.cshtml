@@ -1,0 +1,59 @@
+﻿<!--Start Date pop up-->
+<div class="modal fade" id="StartDateToggle" aria-hidden="true" aria-labelledby="StartDate" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="StartDate">Click on the date</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id='calendar'></div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" style="width:100px">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.getElementById('StartDateToggle').addEventListener('shown.bs.modal', function () {
+        setTimeout(function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 'auto',
+                selectable: true,
+
+                dateClick: function(info) {
+
+                    alert('Clicked on: ' + info.dateStr);
+
+                    // Get the input element by its ID
+                    var startDate = document.getElementById("StartDateIn");
+
+                    // Set the value of the input element to the clicked date
+                    if (startDate) {
+                        startDate.value = info.dateStr; // Set the date value
+                    } else {
+                        console.error("Element with ID 'StartDate' not found.");
+                    }
+
+                }
+
+            });
+            calendar.render();
+            calendar.updateSize(); // Force the calendar to resize
+        }, 100); // Adjust the delay as needed
+    });
+</script>
+<style>
+
+    #calendar {
+        height: 600px;
+        width: 100%;
+    }
+
+</style>

@@ -1,7 +1,13 @@
 ﻿using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Dictionarys;
+using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Mappers.MovieMappers;
+using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services;
+using CinemaTiketsShop.Services.Redis;
 using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 using CinemaTiketsShop.ViewModels.MovieVMs;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 
@@ -14,22 +20,42 @@ namespace CinemaTiketsShop.Controllers
         private readonly ICinemaService _cinemaService;
         private readonly IProducerService _producerService;
         private readonly ModelDictionary modelDictionarySelector;
+        private readonly IPictureUploader _pictureUploader;
+        private readonly ILogger<MoviesController> _logger;
+        private readonly IPhotoService _photoService;
+        private readonly IRedisCachingService _CacheService;
 
-        public MoviesController(IMovieService movieService, IActorServices actorService, ICinemaService cinemaService, IProducerService  producerService)
+        public MoviesController(IMovieService movieService, IActorServices actorService, ICinemaService cinemaService, 
+            IProducerService  producerService, IPictureUploader pictureUploader, ILogger<MoviesController> logger, IPhotoService photoService, IRedisCachingService CacheService)
         {
             _movieService = movieService;
             _actorsService = actorService;
             _producerService = producerService;
             _cinemaService = cinemaService;
             modelDictionarySelector = new ModelDictionary(actorService, producerService, cinemaService);
+            _pictureUploader = pictureUploader;
+            _logger = logger;
+            _photoService = photoService;
+            _CacheService = CacheService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var movies = await _movieService.GetAll();
-            return View(movies);
+            //var Movies = await _CacheService.GetValues<Movie>(nameof(Movie));
+
+            //if (Movies.Any()) 
+            //{
+               // return View(Movies);
+            //}
+
+            var Movies = await _movieService.GetAll();
+
+            await _CacheService.SetValues(nameof(Movie), Movies);
+
+            return View(Movies);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Create() 
         {
             IDictionary<int, ItemSelect> ActorDic = await modelDictionarySelector.SelectActorsKeysAndNames();
@@ -43,11 +69,61 @@ namespace CinemaTiketsShop.Controllers
             return View();
         }
 
-        public IActionResult Insert([Bind("SelActors")]CreateMovieViewModel MovieVM)
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateMovieViewModel MovieVM, string Picture_Upload_Method)
         {
+            if (!ModelState.IsValid) 
+            {
+                return View(MovieVM);
+            }
             
+            var UploadRes = new UploadedImageResult();
+            try
+            {
+                if (Picture_Upload_Method == "FromDevice") 
+                {
+                    UploadRes = await _pictureUploader.UploadNewImageFromFileAsync(MovieVM.Foto);
+                }
 
-            return View();
+                if(Picture_Upload_Method  == "FromUrl") 
+                {
+                    UploadRes = await _pictureUploader.UploadNewImageFromUrl(MovieVM.PictureUrl);
+                }
+
+                if (UploadRes.ErrorAcured) 
+                {
+                    ModelState.AddModelError(UploadRes.ErrorAt, UploadRes.ErrorMessage);
+                }
+
+                if (!UploadRes.Succeded) 
+                {
+                    ModelState.AddModelError("Foto", "Picture upload failed");
+                }
+
+                if(ModelState.ErrorCount > 0) 
+                {
+                    return View(MovieVM);
+                }
+
+                var newMovie = await _movieService.Create(MovieVM.MapMovieModel(UploadRes), MovieVM.SelActors);
+
+                if (newMovie != null)
+                {
+                    return RedirectToAction("Index");
+                }
+                else 
+                {
+                    await _photoService.DeletePhotoAsync(UploadRes.PublicId);
+                    return View("Empty");
+                }
+            }
+            catch (Exception ex) 
+            {
+                await _photoService.DeletePhotoAsync(UploadRes.PublicId);
+
+                _logger.LogCritical($"Movie Creation failed: {ex.Message}");
+                return View("Empty");
+            }
         }
     }
 }

@@ -127,8 +127,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 1,
                         Description = "Other history of the WW2",
                         Logo = "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg",
-                        StartDate = DateTime.Parse("18.11.2024"),
-                        EndDate = DateTime.Parse("26.11.2024"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 2,
                         Category = Enums.MovieCategory.Action   
@@ -140,8 +140,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 2,
                         Description = "The life of a guy, who made a dirty buisnes",
                         Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
-                        StartDate = DateTime.Parse("18.11.2024"),
-                        EndDate = DateTime.Parse("26.11.2024"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 1,
                         Category = Enums.MovieCategory.Criminal
@@ -153,8 +153,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 2,
                         Description = "The life of a guy, who made a dirty buisnes",
                         Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
-                        StartDate = DateTime.Parse("18.11.2024"),
-                        EndDate = DateTime.Parse("28.11.2024"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 2,
                         Category = Enums.MovieCategory.Criminal
@@ -166,8 +166,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 3,
                         Description = "Disney movie about pirates",
                         Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
-                        StartDate = DateTime.Parse("30.11.2024"),
-                        EndDate = DateTime.Parse("01.02.2025"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 20.0,
                         CinemaId = 1,
                         Category = Enums.MovieCategory.Action

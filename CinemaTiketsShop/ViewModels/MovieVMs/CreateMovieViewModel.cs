@@ -9,9 +9,10 @@ namespace CinemaTiketsShop.ViewModels.MovieVMs
 {
     public class CreateMovieViewModel : CreateBaseViewModel
     {
+
         [Display(Name = "Description")]
         [StringLength(500, MinimumLength = 2, ErrorMessage = "Description must contain at least 2 and maximum 500 chars")]
-        override public string? Bio { get; set; }
+        override public string Bio { get; set; } = string.Empty; 
         [Required(ErrorMessage = "Plese select a category")]
         public MovieCategory Category { get; set; }
 
@@ -31,7 +32,7 @@ namespace CinemaTiketsShop.ViewModels.MovieVMs
         public int ProducerId { get; set; }
 
         [Required(ErrorMessage = "Plese select actors")]
-        public List<int>? SelActors { get; set; }
+        public List<int> SelActors { get; set; } = new List<int>();
 
     }
 }
