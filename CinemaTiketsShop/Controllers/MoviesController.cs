@@ -41,22 +41,22 @@ namespace CinemaTiketsShop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //var Movies = await _CacheService.GetValues<Movie>(nameof(Movie));
+            var Movies = await _CacheService.GetValues<Movie>("Movie");
 
-            //if (Movies.Any()) 
-            //{
-               // return View(Movies);
-            //}
+            if (Movies.Any())
+            {
+                return View(Movies);
+            }
 
-            var Movies = await _movieService.GetAll();
+            Movies = await _movieService.GetAll();
 
-            await _CacheService.SetValues(nameof(Movie), Movies);
+            await _CacheService.SetValues("Movie", Movies, 10);
 
             return View(Movies);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Create() 
+        //Seeds Actors, Producers tables and Cinemas select in create view
+        private async Task InjectCreateTables() 
         {
             IDictionary<int, ItemSelect> ActorDic = await modelDictionarySelector.SelectActorsKeysAndNames();
             IDictionary<int, ItemSelect> ProducerDic = await modelDictionarySelector.SelectProducersKeysAndNames();
@@ -65,6 +65,12 @@ namespace CinemaTiketsShop.Controllers
             ViewData["Actors"] = ActorDic;
             ViewData["Producers"] = ProducerDic;
             ViewData["Cinemas"] = CinemaDic;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Create() 
+        {
+            await InjectCreateTables();
 
             return View();
         }
@@ -74,6 +80,8 @@ namespace CinemaTiketsShop.Controllers
         {
             if (!ModelState.IsValid) 
             {
+                await InjectCreateTables();
+
                 return View(MovieVM);
             }
             

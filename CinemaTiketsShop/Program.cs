@@ -1,10 +1,13 @@
 using CinemaTiketsShop.Data;
+using CinemaTiketsShop.Data.Base;
+using CinemaTiketsShop.Data.Base.CacheDecoration;
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace CinemaTiketsShop
 {
@@ -23,12 +26,7 @@ namespace CinemaTiketsShop
                 {
                     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
-            });
-
-            builder.Services.AddStackExchangeRedisCache(options =>
-            {
-                options.Configuration = builder.Configuration.GetConnectionString("Redis");
-            });
+            });          
 
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
@@ -38,8 +36,8 @@ namespace CinemaTiketsShop
             builder.Services.AddScoped<IMovieService, MovieService>();
             builder.Services.AddScoped<IActor_MovieService, Actor_MovieService>();
             builder.Services.AddScoped<IRedisCachingService, RedisCachingService>();
-
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
+            builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))); //Redis configuration
 
             var app = builder.Build();
 

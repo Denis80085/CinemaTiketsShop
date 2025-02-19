@@ -39,7 +39,7 @@ namespace CinemaTiketsShop.Controllers
             {
                 _logger.LogInformation($"Producer Controler Index called: {DateTime.Now}");
 
-                var Producers = await _context.Producers.Select(p => p).ToListAsync();
+                var Producers = await _ProducerService.GetAll();
 
                 return View(Producers);
             }

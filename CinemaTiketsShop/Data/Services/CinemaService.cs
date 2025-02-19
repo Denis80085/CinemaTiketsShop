@@ -1,6 +1,9 @@
 ﻿using CinemaTiketsShop.Data.Base;
+using CinemaTiketsShop.Data.Base.CacheDecoration;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.Runtime.CompilerServices;
 
 namespace CinemaTiketsShop.Data.Services
@@ -9,9 +12,9 @@ namespace CinemaTiketsShop.Data.Services
     {
         private readonly ApplicationDbConntext _context;
 
-        public CinemaService(ApplicationDbConntext context) : base(context)
+        public CinemaService(IRedisCachingService cach, ApplicationDbConntext conntext) : base(conntext, cach, "Cinema")
         {
-            _context = context;
+            _context = conntext;
         }
 
         public async Task<Cinema?> IncludeMovies(Cinema cinema)

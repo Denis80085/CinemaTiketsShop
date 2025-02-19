@@ -1,6 +1,7 @@
 ﻿using CinemaTiketsShop.Data.Base;
 using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -10,7 +11,7 @@ namespace CinemaTiketsShop.Data.Services
     {
         private readonly ApplicationDbConntext _context;
 
-        public ProducerService(ApplicationDbConntext context) : base(context)
+        public ProducerService(ApplicationDbConntext context, IRedisCachingService cache) : base(context, cache, "Producer")
         {
             _context = context;
         }

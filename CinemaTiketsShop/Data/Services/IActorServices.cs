@@ -7,7 +7,7 @@ namespace CinemaTiketsShop.Data.Services
 {
     public interface IActorServices : IEntityBaseRepo<Actor>
     {
-        Task<IEnumerable<Actor>> GetActors();
+        //Task<IEnumerable<Actor>> GetActors();
         Task<ActorResult> GetActorResultById(int id);
         
     }

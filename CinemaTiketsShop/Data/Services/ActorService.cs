@@ -1,6 +1,7 @@
 ﻿using CinemaTiketsShop.Data.Base;
 using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ namespace CinemaTiketsShop.Data.Services
     {
         private readonly ApplicationDbConntext _context;
 
-        public ActorService(ApplicationDbConntext context) : base(context) 
+        public ActorService(ApplicationDbConntext context, IRedisCachingService cache) : base(context, cache, "Actor") 
         {
             _context = context;
         }
@@ -42,12 +43,12 @@ namespace CinemaTiketsShop.Data.Services
 
         }
 
-        public async Task<IEnumerable<Actor>> GetActors()
-        {
-            var result = await _context.Actors.Select(a => a).ToListAsync();
+        //public async Task<IEnumerable<Actor>> GetActors()
+        //{
+        //    var result = await _context.Actors.Select(a => a).ToListAsync();
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public  async Task<ActorResult> GetActorResultById(int id)
         {

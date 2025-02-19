@@ -30,7 +30,7 @@ namespace CinemaTiketsShop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var Data = await _actorService.GetActors();
+            var Data = await _actorService.GetAll();
             return View(Data);
         }
 

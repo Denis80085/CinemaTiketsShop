@@ -28,7 +28,7 @@ namespace CinemaTiketsShop.Dictionarys
 
             var ActorDictionary = new Dictionary<int, ItemSelect>();
 
-            var ActorsList = await _ActorService.GetActors();
+            var ActorsList = await _ActorService.GetAll();
 
             foreach (var Actor in ActorsList) 
             {

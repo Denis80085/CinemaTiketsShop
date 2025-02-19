@@ -1,4 +1,5 @@
 ﻿
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -7,10 +8,14 @@ namespace CinemaTiketsShop.Data.Base
     public class EntityBaseRepo<T> : IEntityBaseRepo<T> where T : class, IEntityBase, new()
     {
         private readonly ApplicationDbConntext _context;
+        private readonly IRedisCachingService _cache;
+        private readonly string cache_key;
 
-        public EntityBaseRepo(ApplicationDbConntext context)
+        public EntityBaseRepo(ApplicationDbConntext context, IRedisCachingService cache, string CacheKey)
         {
             _context = context;
+            _cache = cache;
+            cache_key = CacheKey;
         }
 
         virtual public async Task<T?> Create(T entity)
@@ -37,7 +42,19 @@ namespace CinemaTiketsShop.Data.Base
 
         virtual public async Task<IEnumerable<T>> GetAll()
         {
-            return await _context.Set<T>().ToListAsync();
+
+            var entities = await _cache.GetValues<T>(cache_key);
+
+            if (entities.Any())
+            {
+                return entities;
+            }
+
+            entities = await _context.Set<T>().ToListAsync();
+
+            await _cache.SetValues(cache_key, entities, 5);
+
+            return entities;
         }
 
         virtual public async Task<T> GetById(int id)
