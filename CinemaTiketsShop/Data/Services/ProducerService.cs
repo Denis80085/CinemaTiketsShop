@@ -49,6 +49,8 @@ namespace CinemaTiketsShop.Data.Services
         {
             try 
             {
+
+
                 var Producer = await _context.Producers.Include(p => p.Movies).FirstOrDefaultAsync(x => x.Id == id);
                 
                 if (Producer != null)
