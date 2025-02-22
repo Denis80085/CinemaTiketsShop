@@ -64,35 +64,35 @@ namespace CinemaTiketsShop.Data.Services
             }
         }
 
-        public override async Task<Actor?> Update(int id, Actor NewActor)
-        {
-            try
-            {
-                if(_context.Actors.Any(a => a.Id == id)) 
-                {
-                    _context.Update(NewActor);
+        //public override async Task<Actor?> Update(int id, Actor NewActor)
+        //{
+        //    try
+        //    {
+        //        if(_context.Actors.Any(a => a.Id == id)) 
+        //        {
+        //            _context.Update(NewActor);
 
-                    await _context.SaveChangesAsync();
+        //            await _context.SaveChangesAsync();
 
-                    return NewActor;
-                }
-                else 
-                {
-                    throw new KeyNotFoundException($"No Actor with id {id} was found");
-                }
+        //            return NewActor;
+        //        }
+        //        else 
+        //        {
+        //            throw new KeyNotFoundException($"No Actor with id {id} was found");
+        //        }
                 
-            }
-            catch (KeyNotFoundException kex)
-            {
-                Debug.WriteLine(kex.Message, category: "Actor Id not found while Updating");
-                return null;
-            }
-            catch (Exception ex) 
-            {
-                Debug.WriteLine(ex.Message, category: "Actor Updating Error");
-                return null;
-            }  
-        }
+        //    }
+        //    catch (KeyNotFoundException kex)
+        //    {
+        //        Debug.WriteLine(kex.Message, category: "Actor Id not found while Updating");
+        //        return null;
+        //    }
+        //    catch (Exception ex) 
+        //    {
+        //        Debug.WriteLine(ex.Message, category: "Actor Updating Error");
+        //        return null;
+        //    }  
+        //}
 
         
 

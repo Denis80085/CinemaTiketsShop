@@ -83,6 +83,9 @@ namespace CinemaTiketsShop.Services.Redis
             {
                 var db = _connection.GetDatabase();
 
+                if (!await db.HashExistsAsync(Key, Val.Id)) 
+                    return;
+
                 await db.HashSetAsync(Key, Val.Id, JsonConvert.SerializeObject(Val));
 
                 var expiration = TimeSpan.FromMinutes(TTL_Min) + TimeSpan.FromSeconds(new Random().Next(1, 3));

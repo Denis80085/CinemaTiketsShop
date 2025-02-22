@@ -21,7 +21,7 @@
             <div class="col-md-8 offset-2">
 
                 <div class="form-group text-center">
-                    <img style="max-width: 250px" id="FotoPreview" class="border-info" alt="not initialized" />
+                    <img style="max-width: 250px" id="FotoPreview" alt="not initialized" />
                 </div>
 
                 <form enctype="multipart/form-data" asp-action="Create" class="gap-4">
@@ -98,7 +98,7 @@
                         <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
 
-                    @(await Html.PartialAsync("_Actor_Producer_SelectTable.cshtml"))
+                    @(await Html.PartialAsync("_Actor_Producer_SelectTable.cshtml", Model))
 
                     <div style="margin-top: 10px">
                         <div class="d-flex flex-row-reverse justify-content-lg-between">
@@ -117,4 +117,39 @@
 
 </div>
 
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Listen for the change event on the file input
+            $("#Foto").on("change", function (event) {
+                var output = document.getElementById('FotoPreview');
+                var file = event.target.files[0]; // Get the selected file
+
+                if (file) {
+                    var reader = new FileReader();
+
+                    // When the file is successfully read
+                    reader.onload = function (e) {
+                        output.src = e.target.result; // Set the preview's src to the file's data URL
+                    };
+
+                    // Read the file as a data URL
+                    reader.readAsDataURL(file);
+                } else {
+                    output.src = ""; // Clear the preview if no file is selected
+                }
+            });
+        });
+
+        $(document).ready(function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $("#PictureUrl").val();
+        })
+
+        $("#PictureUrl").on("change", function(){
+            var output =  document.getElementById('FotoPreview');
+            output.src = $(this).val();
+        })
+    </script>
+}
 

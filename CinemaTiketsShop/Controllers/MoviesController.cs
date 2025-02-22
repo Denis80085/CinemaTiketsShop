@@ -84,6 +84,20 @@ namespace CinemaTiketsShop.Controllers
 
                 return View(MovieVM);
             }
+
+            if(string.IsNullOrEmpty(MovieVM.PictureUrl) && MovieVM.Foto is null) 
+            {
+                await InjectCreateTables();
+                ModelState.AddModelError("Foto", "Please add a picture for the movie");
+                return View(MovieVM);
+            }
+
+            if (!MovieVM.SelActors.Any()) 
+            {
+                await InjectCreateTables();
+                ModelState.AddModelError("SelActors", "Please select at least one actor");
+                return View(MovieVM);
+            }
             
             var UploadRes = new UploadedImageResult();
             try
@@ -110,6 +124,8 @@ namespace CinemaTiketsShop.Controllers
 
                 if(ModelState.ErrorCount > 0) 
                 {
+                    await _photoService.DeletePhotoAsync(UploadRes.PublicId);
+                    await InjectCreateTables();
                     return View(MovieVM);
                 }
 
@@ -117,6 +133,8 @@ namespace CinemaTiketsShop.Controllers
 
                 if (newMovie != null)
                 {
+                    await _CacheService.SetVal("Movie", newMovie, 5);
+
                     return RedirectToAction("Index");
                 }
                 else 

@@ -107,7 +107,7 @@ namespace CinemaTiketsShop.Controllers
                         PublicId = result.PublicId
                     };
 
-                    var producer = await _ProducerService.CreateAsync(NewProducer);
+                    var producer = await _ProducerService.Create(NewProducer);
 
                     if (producer != null)
                     {
@@ -212,9 +212,9 @@ namespace CinemaTiketsShop.Controllers
                     ProducerVM.PublicId = result.PublicId;
                 }
 
-                var ProducerResult = await _ProducerService.UpdateAsync(ProducerVM.MapProducerModel(), Id);
+                var ProducerResult = await _ProducerService.Update(Id, ProducerVM.MapProducerModel());
 
-                if (ProducerResult.UpdateSucceded)
+                if (ProducerResult is not null)
                 {
                     _logger.LogInformation($"Producer update succeded: {DateTime.Now}");
                     return RedirectToAction(nameof(Index));
