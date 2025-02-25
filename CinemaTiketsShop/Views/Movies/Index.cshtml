@@ -1,5 +1,5 @@
 ﻿@using CinemaTiketsShop.ViewModels.MovieVMs
-@model IEnumerable<Movie>
+@model IEnumerable<IndexMovieViewModel>
 
 @{
     ViewData["Title"] = "List of movies";
@@ -38,7 +38,8 @@
                     <div class="col-md-6">
                         <div class="card-body" >
                             <p class="card-text">@item.Description</p>
-                            <p class="card-text"><b>Cinema:   </b>@item.Cinema?.Name</p>
+                            <p class="card-text"><b>Cinema:   </b>@item.CinemaName</p>
+                            <p class="card-text"><b>Producer:   </b>@item.ProducerName</p>
                             <p class="card-text"><b>Category:   </b>@item.Category</p>
                             <p class="card-text"><b>Start Date:   </b>@item.StartDate.ToString("dd MMM yyy")</p>
                             <p class="card-text"><b>End Date:   </b>@item.EndDate.ToString("dd MMM yyy")</p>
@@ -64,7 +65,7 @@
                     <div class="col-md-12">
                         <div class="card-footer">
                             <p class="card-text" style="display: flex; flex-direction: row; justify-content: space-between">
-                                <a class="btn btn-outline-primary float-right"><i class="bi bi-eye-fill">Show details</i></a>
+                                <a class="btn btn-outline-primary float-right" asp-action="Details"  asp-route-id="@item.Id"><i class="bi bi-eye-fill">Show details</i></a>
                                 <a class="btn btn-success text-white"><i class="bi bi-cart-plus">Add to cart(Price @item.Price.ToString()€)</i></a>
                             </p>
                         </div>

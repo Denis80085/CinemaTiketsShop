@@ -9,6 +9,7 @@ using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 using CinemaTiketsShop.ViewModels.MovieVMs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 using System.Collections;
 
 namespace CinemaTiketsShop.Controllers
@@ -41,18 +42,20 @@ namespace CinemaTiketsShop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var Movies = await _CacheService.GetValues<Movie>("Movie");
+            var Movies = await _CacheService.GetValues<IndexMovieViewModel>("Movie");
 
             if (Movies.Any())
             {
                 return View(Movies);
             }
 
-            Movies = await _movieService.GetAll();
+            var MoviesModel = await _movieService.GetAll();
 
-            await _CacheService.SetValues("Movie", Movies, 10);
+            IEnumerable<IndexMovieViewModel> MovieVMs = MoviesModel.Where(m => m.Cinema is not null).Where(m => m.Producer is not null).Select(m => m.MapIndexVM()).AsEnumerable();
 
-            return View(Movies);
+            await _CacheService.SetValues("Movie", MovieVMs, 5);
+
+            return View(MovieVMs);
         }
 
         //Seeds Actors, Producers tables and Cinemas select in create view
@@ -148,6 +151,27 @@ namespace CinemaTiketsShop.Controllers
                 await _photoService.DeletePhotoAsync(UploadRes.PublicId);
 
                 _logger.LogCritical($"Movie Creation failed: {ex.Message}");
+                return View("Empty");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details([FromRoute]int id) 
+        {
+            try
+            {
+                var Movie = await _movieService.GetById(id);
+
+                if(Movie is null) 
+                {
+                    return View("Empty");
+                }
+
+                return View(Movie);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogCritical($"Movie details failed: {ex.Message}");
                 return View("Empty");
             }
         }

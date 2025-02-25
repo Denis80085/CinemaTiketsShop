@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CinemaTiketsShop.Migrations
 {
     /// <inheritdoc />
-    public partial class docker : Migration
+    public partial class CinemaSessions : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,6 +62,28 @@ namespace CinemaTiketsShop.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cinema_Halls",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Row = table.Column<int>(type: "int", nullable: false),
+                    Call = table.Column<int>(type: "int", nullable: false),
+                    CinemaId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cinema_Halls", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Cinema_Halls_Cinemas_CinemaId",
+                        column: x => x.CinemaId,
+                        principalTable: "Cinemas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Movies",
                 columns: table => new
                 {
@@ -91,7 +113,29 @@ namespace CinemaTiketsShop.Migrations
                         name: "FK_Movies_Producers_ProducerId",
                         column: x => x.ProducerId,
                         principalTable: "Producers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Movie_Sessions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Starts = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Ends = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MovieId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Movie_Sessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Movie_Sessions_Movies_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,6 +158,30 @@ namespace CinemaTiketsShop.Migrations
                         name: "FK_Movies_Actors_Movies_MovieId",
                         column: x => x.MovieId,
                         principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CinemaHall_MovieSessions",
+                columns: table => new
+                {
+                    CinemaHallId = table.Column<int>(type: "int", nullable: false),
+                    MovieSessionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CinemaHall_MovieSessions", x => new { x.CinemaHallId, x.MovieSessionId });
+                    table.ForeignKey(
+                        name: "FK_CinemaHall_MovieSessions_Cinema_Halls_CinemaHallId",
+                        column: x => x.CinemaHallId,
+                        principalTable: "Cinema_Halls",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CinemaHall_MovieSessions_Movie_Sessions_MovieSessionId",
+                        column: x => x.MovieSessionId,
+                        principalTable: "Movie_Sessions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -169,6 +237,21 @@ namespace CinemaTiketsShop.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cinema_Halls_CinemaId",
+                table: "Cinema_Halls",
+                column: "CinemaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CinemaHall_MovieSessions_MovieSessionId",
+                table: "CinemaHall_MovieSessions",
+                column: "MovieSessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Movie_Sessions_MovieId",
+                table: "Movie_Sessions",
+                column: "MovieId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Movies_CinemaId",
                 table: "Movies",
                 column: "CinemaId");
@@ -188,7 +271,16 @@ namespace CinemaTiketsShop.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CinemaHall_MovieSessions");
+
+            migrationBuilder.DropTable(
                 name: "Movies_Actors");
+
+            migrationBuilder.DropTable(
+                name: "Cinema_Halls");
+
+            migrationBuilder.DropTable(
+                name: "Movie_Sessions");
 
             migrationBuilder.DropTable(
                 name: "Actors");

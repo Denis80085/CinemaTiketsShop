@@ -19,7 +19,23 @@ namespace CinemaTiketsShop.Data.Services
 
         public async Task<IEnumerable<Movie>> GetAll()
         {
-            return await _context.Movies.Include(m => m.Cinema).ToListAsync();
+            return await _context.Movies.Include(m => m.Cinema).Include(m => m.Producer).ToListAsync();
+        }
+
+        public async Task<Movie?> GetById(int id) 
+        {
+            try
+            {
+                var FoundMovie = _context.Movies.Where(m => m.Id == id).Include(m => m.Producer).Include(m => m.Cinema).Include(m => m.Movies_Actors!).ThenInclude(x => x.Actor).Select(m => m);
+
+
+                return await FoundMovie.FirstOrDefaultAsync();
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception("Movie GetById", ex);
+            }
+            
         }
 
         public async Task<Movie?> Create(Movie entity, List<int> ActorsId)

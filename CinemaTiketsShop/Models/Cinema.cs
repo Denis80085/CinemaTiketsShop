@@ -22,5 +22,6 @@ namespace CinemaTiketsShop.Models
 
         //Relationships
         public List<Movie>? Movies { get; set; }
+        public List<CinemaHall>? Halls { get; set; }
     }
 }

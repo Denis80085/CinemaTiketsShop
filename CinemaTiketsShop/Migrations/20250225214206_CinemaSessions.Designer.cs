@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaTiketsShop.Migrations
 {
     [DbContext(typeof(ApplicationDbConntext))]
-    [Migration("20250215235555_docker")]
-    partial class docker
+    [Migration("20250225214206_CinemaSessions")]
+    partial class CinemaSessions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,6 +121,49 @@ namespace CinemaTiketsShop.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Call")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CinemaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Row")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
+
+                    b.ToTable("Cinema_Halls");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall_MovieSession", b =>
+                {
+                    b.Property<int>("CinemaHallId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovieSessionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CinemaHallId", "MovieSessionId");
+
+                    b.HasIndex("MovieSessionId");
+
+                    b.ToTable("CinemaHall_MovieSessions");
+                });
+
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie", b =>
                 {
                     b.Property<int>("Id")
@@ -225,6 +268,30 @@ namespace CinemaTiketsShop.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CinemaTiketsShop.Models.MovieSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Ends")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Starts")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Movie_Sessions");
+                });
+
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie_Actor", b =>
                 {
                     b.Property<int>("MovieId")
@@ -309,6 +376,36 @@ namespace CinemaTiketsShop.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall", b =>
+                {
+                    b.HasOne("CinemaTiketsShop.Models.Cinema", "Cinema")
+                        .WithMany("Halls")
+                        .HasForeignKey("CinemaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cinema");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall_MovieSession", b =>
+                {
+                    b.HasOne("CinemaTiketsShop.Models.CinemaHall", "CinemaHall")
+                        .WithMany("CinemaHall_MovieSessions")
+                        .HasForeignKey("CinemaHallId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CinemaTiketsShop.Models.MovieSession", "MovieSession")
+                        .WithMany("CinemaHall_MovieSessions")
+                        .HasForeignKey("MovieSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CinemaHall");
+
+                    b.Navigation("MovieSession");
+                });
+
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie", b =>
                 {
                     b.HasOne("CinemaTiketsShop.Models.Cinema", "Cinema")
@@ -319,11 +416,22 @@ namespace CinemaTiketsShop.Migrations
 
                     b.HasOne("CinemaTiketsShop.Models.Producer", "Producer")
                         .WithMany("Movies")
-                        .HasForeignKey("ProducerId");
+                        .HasForeignKey("ProducerId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Cinema");
 
                     b.Navigation("Producer");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.MovieSession", b =>
+                {
+                    b.HasOne("CinemaTiketsShop.Models.Movie", "Movie")
+                        .WithMany("MovieSessions")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie_Actor", b =>
@@ -352,12 +460,26 @@ namespace CinemaTiketsShop.Migrations
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Cinema", b =>
                 {
+                    b.Navigation("Halls");
+
                     b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall", b =>
+                {
+                    b.Navigation("CinemaHall_MovieSessions");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie", b =>
                 {
+                    b.Navigation("MovieSessions");
+
                     b.Navigation("Movies_Actors");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.MovieSession", b =>
+                {
+                    b.Navigation("CinemaHall_MovieSessions");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Producer", b =>

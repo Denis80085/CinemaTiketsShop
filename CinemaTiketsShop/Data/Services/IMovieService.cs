@@ -7,5 +7,6 @@ namespace CinemaTiketsShop.Data.Services
     {
         Task<Movie?> Create(Movie entity, List<int> ActorsId);
         Task<IEnumerable<Movie>> GetAll();
+        Task<Movie?> GetById(int id);
     }
 }
