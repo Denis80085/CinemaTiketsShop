@@ -1,0 +1,27 @@
+﻿.movie {
+    display: inline-block; /* Keeps the movie items inline */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.movie img {
+transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth scaling and opacity transitions */
+opacity: 0.1; /* Initially hide the image */
+
+}
+
+.movie:hover {
+transform: scale(2); /* Scales the whole movie on hover */
+box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow effect */
+}
+
+.movie:hover img {
+    opacity: 1; /* Makes the image fully visible */
+
+}
+
+.btn{
+    margin: 2px;
+}

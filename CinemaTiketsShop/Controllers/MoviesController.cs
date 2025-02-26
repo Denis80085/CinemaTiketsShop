@@ -51,7 +51,7 @@ namespace CinemaTiketsShop.Controllers
 
             var MoviesModel = await _movieService.GetAll();
 
-            IEnumerable<IndexMovieViewModel> MovieVMs = MoviesModel.Where(m => m.Cinema is not null).Where(m => m.Producer is not null).Select(m => m.MapIndexVM()).AsEnumerable();
+            IEnumerable<IndexMovieViewModel> MovieVMs = MoviesModel.Where(m => m.Cinema is not null).Select(m => m.MapIndexVM()).AsEnumerable();
 
             await _CacheService.SetValues("Movie", MovieVMs, 5);
 

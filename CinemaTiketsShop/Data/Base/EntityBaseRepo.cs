@@ -9,8 +9,8 @@ namespace CinemaTiketsShop.Data.Base
     {
         private readonly ApplicationDbConntext _context;
         private readonly IRedisCachingService _cache;
-        private readonly string cache_key;
-        private readonly long TTL_Min = 5;
+        protected readonly string cache_key;
+        protected readonly long TTL_Min = 5;
 
         public EntityBaseRepo(ApplicationDbConntext context, IRedisCachingService cache, string CacheKey)
         {

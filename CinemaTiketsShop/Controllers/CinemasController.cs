@@ -29,7 +29,7 @@ namespace CinemaTiketsShop.Controllers
         {
             try
             {
-                var Cinemas = await _cinemaService.GetAll();
+                var Cinemas = await _cinemaService.GetCinemaDtos();
                 return View(Cinemas);
             }
             catch (Exception ex)

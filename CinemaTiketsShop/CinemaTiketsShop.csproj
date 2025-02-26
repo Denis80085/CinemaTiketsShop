@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\CinemaIndex.css" />
     <None Include="wwwroot\js\index.global.js" />
     <None Include="wwwroot\js\index.global.min.js" />
   </ItemGroup>
