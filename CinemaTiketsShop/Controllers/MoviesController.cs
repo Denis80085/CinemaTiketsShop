@@ -3,6 +3,7 @@ using CinemaTiketsShop.Dictionarys;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Mappers.MovieMappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.QueryObjects.MoviesQuery;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.Redis;
 using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
@@ -40,21 +41,29 @@ namespace CinemaTiketsShop.Controllers
             _CacheService = CacheService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery]MovieQueryObj movieQuery)
         {
-            var Movies = await _CacheService.GetValues<IndexMovieViewModel>("Movie");
+            var Movies = await _CacheService.GetValues<IndexMovieViewModel>($"Movie-OfCinema-{movieQuery.OfCinemaId}");
 
             if (Movies.Any())
             {
                 return View(Movies);
             }
 
-            var MoviesModel = await _movieService.GetAll();
+            var MoviesModel = await _movieService.GetAll(movieQuery);
 
-            IEnumerable<IndexMovieViewModel> MovieVMs = MoviesModel.Where(m => m.Cinema is not null).Select(m => m.MapIndexVM()).AsEnumerable();
+            if(MoviesModel is null) 
+            {  
+                return View(null); 
+            }
 
-            await _CacheService.SetValues("Movie", MovieVMs, 5);
+            IEnumerable<IndexMovieViewModel>? MovieVMs = MoviesModel.Where(m => m.Cinema is not null).Select(m => m.MapIndexVM());
 
+            if(MovieVMs is not null) 
+            {
+                await _CacheService.SetValues($"Movie-OfCinema-{MovieVMs.First().CinemaId}", MovieVMs, 5);
+            }
+            
             return View(MovieVMs);
         }
 

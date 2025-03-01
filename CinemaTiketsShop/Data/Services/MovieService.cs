@@ -3,6 +3,8 @@ using CinemaTiketsShop.Data.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Data.Common;
+using CinemaTiketsShop.QueryObjects.MoviesQuery;
+using CinemaTiketsShop.QuerySelectors.MovieSelector;
 
 namespace CinemaTiketsShop.Data.Services
 {
@@ -17,9 +19,12 @@ namespace CinemaTiketsShop.Data.Services
             _ActorMovieService = ActorMovieService;
         }
 
-        public async Task<IEnumerable<Movie>> GetAll()
+        public async Task<IEnumerable<Movie>> GetAll(MovieQueryObj movieQuery)
         {
-            return await _context.Movies.Include(m => m.Cinema).Include(m => m.Producer).ToListAsync();
+
+             var Query = _context.Movies.Include(m => m.Cinema).Include(m => m.Producer).AsQueryable().SelectByCinema(movieQuery.OfCinemaId);
+
+             return await Query.ToListAsync();
         }
 
         public async Task<Movie?> GetById(int id) 

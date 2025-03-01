@@ -1,5 +1,5 @@
 ﻿@using CinemaTiketsShop.ViewModels.MovieVMs
-@model IEnumerable<IndexMovieViewModel>
+@model IEnumerable<IndexMovieViewModel>?
 
 @{
     ViewData["Title"] = "List of movies";
@@ -15,8 +15,11 @@
 }
 
 <div class="row">
+    @if(Model is not null)
     @foreach(var item in Model)
     {
+        @if(item is not null)
+        {
         <div class="col-md-3 col-xs-6 mb-3 border-primary">
             <div class="card mb-4">
                 <div class="row g-0">
@@ -74,6 +77,7 @@
             </div>
 
         </div>
+        }
     }
 
     @await Html.PartialAsync("_AddNewModelTemplate.cshtml", AddNewMovie)
