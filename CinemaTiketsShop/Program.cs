@@ -1,8 +1,13 @@
 using CinemaTiketsShop.Data;
+using CinemaTiketsShop.Data.Base;
+using CinemaTiketsShop.Data.Base.CacheDecoration;
 using CinemaTiketsShop.Data.Services;
+using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Services;
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace CinemaTiketsShop
 {
@@ -17,15 +22,22 @@ namespace CinemaTiketsShop
 
             builder.Services.AddDbContext<ApplicationDbConntext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), builder =>
+                {
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
+            });          
 
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
             builder.Services.AddScoped<IPictureUploader, PictureUploader>();
-
+            builder.Services.AddScoped<ICinemaService, CinemaService>();
+            builder.Services.AddScoped<IMovieService, MovieService>();
+            builder.Services.AddScoped<IActor_MovieService, Actor_MovieService>();
+            builder.Services.AddScoped<IRedisCachingService, RedisCachingService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
+            builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))); //Redis configuration
 
             var app = builder.Build();
 
@@ -35,6 +47,7 @@ namespace CinemaTiketsShop
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.AplyMigrations();
             }
 
             app.UseHttpsRedirection();
@@ -45,7 +58,7 @@ namespace CinemaTiketsShop
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Movies}/{action=Index}/{id?}")
+                pattern: "{controller=Cinemas}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

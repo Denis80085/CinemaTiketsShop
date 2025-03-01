@@ -1,0 +1,52 @@
+﻿@model CinemaTiketsShop.ViewModels.MovieVMs.AddNewMovieTemplate
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<div class="clickable-card" onclick="location.href='@Url.Action("Create", "Movies")'">
+    <div class="card-content">
+        <div class="col-md-12 mb-0 border-primary">
+            <div class="card ">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-header text-white bg-info">
+                            <p class="card-text">
+                                <h5 class="card-title" style="font-size: 25px">
+                                    @Model.Name
+                                    <i class="bi bi-pencil-square" style="float: right; transform:scale(1.4);"></i>
+                                </h5>
+
+                            </p>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="@Model.Logo" alt="@Model.Name" style="width:100%; padding: 2px;" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <p class="card-text">@Model.Description</p>
+
+
+                            <p class="card-text">
+                                <b>Status: <span class="badge bg-primary text-white">Add new</span></b>
+                            </p>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="card-footer">
+                            <p class="card-text" style="display: flex; flex-direction: row; justify-content: space-between">
+                                <span class="float-right btn btn-info"><i class="bi bi-eye-fill">Show details</i></span>
+                                <span class="text-white btn btn-success"><i class="bi bi-cart-plus">Add to cart(Price @Model.Price.ToString("c"))</i></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

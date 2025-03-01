@@ -18,10 +18,43 @@ namespace CinemaTiketsShop.Data
         public required DbSet<Cinema> Cinemas {  get; set; }
         public required DbSet<Movie> Movies { get; set; }
         public required DbSet<Movie_Actor> Movies_Actors { get; set; } //Join table
+        public required DbSet<CinemaHall> Cinema_Halls { get; set; }
+        public required DbSet<MovieSession> Movie_Sessions { get; set; }
+        public required DbSet<CinemaHall_MovieSession> CinemaHall_MovieSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<MovieSession>(s =>
+            {
+                s.HasKey(x => x.Id);
+
+                s.HasOne(s => s.Movie)
+                .WithMany(m => m.MovieSessions)
+                .HasForeignKey(s => s.MovieId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            builder.Entity<CinemaHall_MovieSession>(x =>
+            {
+                x.HasOne(x => x.MovieSession)
+                .WithMany(x => x.CinemaHall_MovieSessions)
+                .HasForeignKey(x => x.MovieSessionId).OnDelete(DeleteBehavior.Cascade);
+
+                x.HasOne(x => x.CinemaHall)
+                .WithMany(x => x.CinemaHall_MovieSessions)
+                .HasForeignKey(x => x.CinemaHallId).OnDelete(DeleteBehavior.Cascade);
+
+                x.HasKey(x => new { x.CinemaHallId, x.MovieSessionId });
+            });
+
+            builder.Entity<CinemaHall>(h =>
+            {
+                h.HasOne(x => x.Cinema)
+                .WithMany(c => c.Halls)
+                .HasForeignKey(x => x.CinemaId);
+            });
 
             builder.Entity<Actor>(a => {
                 a.HasData(
@@ -78,11 +111,13 @@ namespace CinemaTiketsShop.Data
             {
                 m.HasOne(m => m.Cinema)
                 .WithMany(c => c.Movies)
-                .HasForeignKey(m => m.CinemaId);  //One To Many
+                .HasForeignKey(m => m.CinemaId)
+                .OnDelete(DeleteBehavior.Cascade);  //One To Many
                 
                 m.HasOne(m => m.Producer)
                 .WithMany(p => p.Movies)
-                .HasForeignKey(m => m.ProducerId); //One To Many
+                .HasForeignKey(m => m.ProducerId)
+                .OnDelete(DeleteBehavior.SetNull);//One To Many
             });
 
             builder.Entity<Movie_Actor>(ma =>
@@ -104,14 +139,14 @@ namespace CinemaTiketsShop.Data
                 {
                     Id = 1,
                     Name = "Disel Kino",
-                    Logo = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
+                    LogoUrl = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
                     Description = "Big cinema. Evrey week new realeases. Suports new talented producers"
                 },
                 new Cinema 
                 {
                     Id=2,
                     Name = "Hookie Cinema",
-                    Logo = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
+                    LogoUrl = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
                     Description = "Cosy Cinema, all brand new movies. Anime night evrey monday"
                 }
                     
@@ -127,8 +162,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 1,
                         Description = "Other history of the WW2",
                         Logo = "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg",
-                        StartDate = DateTime.Parse("18.11.2024"),
-                        EndDate = DateTime.Parse("26.11.2024"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 2,
                         Category = Enums.MovieCategory.Action   
@@ -140,8 +175,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 2,
                         Description = "The life of a guy, who made a dirty buisnes",
                         Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
-                        StartDate = DateTime.Parse("18.11.2024"),
-                        EndDate = DateTime.Parse("26.11.2024"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 1,
                         Category = Enums.MovieCategory.Criminal
@@ -153,8 +188,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 2,
                         Description = "The life of a guy, who made a dirty buisnes",
                         Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
-                        StartDate = DateTime.Parse("18.11.2024"),
-                        EndDate = DateTime.Parse("28.11.2024"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 2,
                         Category = Enums.MovieCategory.Criminal
@@ -166,8 +201,8 @@ namespace CinemaTiketsShop.Data
                         ProducerId = 3,
                         Description = "Disney movie about pirates",
                         Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
-                        StartDate = DateTime.Parse("30.11.2024"),
-                        EndDate = DateTime.Parse("01.02.2025"),
+                        StartDate = DateTime.Parse("2024.11.18"),
+                        EndDate = DateTime.Parse("2024.11.25"),
                         Price = 20.0,
                         CinemaId = 1,
                         Category = Enums.MovieCategory.Action

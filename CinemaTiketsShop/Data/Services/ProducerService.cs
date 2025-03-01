@@ -1,15 +1,17 @@
-﻿using CinemaTiketsShop.Data.Wrappers;
+﻿using CinemaTiketsShop.Data.Base;
+using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace CinemaTiketsShop.Data.Services
 {
-    public class ProducerService : IProducerService
+    public class ProducerService : EntityBaseRepo<Producer> ,IProducerService
     {
         private readonly ApplicationDbConntext _context;
 
-        public ProducerService(ApplicationDbConntext context) 
+        public ProducerService(ApplicationDbConntext context, IRedisCachingService cache) : base(context, cache, "Producer")
         {
             _context = context;
         }
@@ -47,6 +49,8 @@ namespace CinemaTiketsShop.Data.Services
         {
             try 
             {
+
+
                 var Producer = await _context.Producers.Include(p => p.Movies).FirstOrDefaultAsync(x => x.Id == id);
                 
                 if (Producer != null)

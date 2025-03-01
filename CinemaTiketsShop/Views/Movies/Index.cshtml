@@ -1,34 +1,48 @@
-﻿@model IEnumerable<Movie>
+﻿@using CinemaTiketsShop.ViewModels.MovieVMs
+@model IEnumerable<IndexMovieViewModel>?
 
 @{
     ViewData["Title"] = "List of movies";
 }
+@{
+    var AddNewMovie = new AddNewMovieTemplate
+            {
+                Name = "Add new Movie",
+                Description = "Click me to add new",
+                Logo = "https://res.cloudinary.com/dimy9yld4/image/upload/v1738768627/add-new-user-icon_nf6rcw.webp",
+                Price = 00.00
+            };
+}
 
 <div class="row">
+    @if(Model is not null)
     @foreach(var item in Model)
     {
-        <div class="col-md-4 col-xs-6 border-primary mb-3">
-            <div class="card mb-4" style="max-width: 540px">
+        @if(item is not null)
+        {
+        <div class="col-md-3 col-xs-6 mb-3 border-primary">
+            <div class="card mb-4">
                 <div class="row g-0">
                     <div class="col-md-12">
                         <div class="card-header text-white bg-info">
                             <p class="card-text">
-                                <h5 class="card-title">
+                                <h5 class="card-title" style="font-size: 25px">
                                     @item.Name
-                                    <a class="text-white float-right"><i class="bi bi-pencil-square" style="float: right"></i></a>
+                                    <a class="btn float-end" asp-action="Edit"><i class="bi bi-pencil-square" style="float: right; transform:scale(2);"></i></a>
                                 </h5>
-                                
+
                             </p>
 
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <img src="@item.Logo" alt="@item.Name" style="width:100%; padding: 2px"/>
+                        <img src="@item.Logo" alt="@item.Name" style="width:250px; height:340px; padding: 2px; object-fit:cover"/>
                     </div>
                     <div class="col-md-6">
-                        <div class="card-body" style="font-size: 12px">
+                        <div class="card-body" >
                             <p class="card-text">@item.Description</p>
-                            <p class="card-text"><b>Cinema:   </b>@item.Cinema.Name</p>
+                            <p class="card-text"><b>Cinema:   </b>@item.CinemaName</p>
+                            <p class="card-text"><b>Producer:   </b>@item.ProducerName</p>
                             <p class="card-text"><b>Category:   </b>@item.Category</p>
                             <p class="card-text"><b>Start Date:   </b>@item.StartDate.ToString("dd MMM yyy")</p>
                             <p class="card-text"><b>End Date:   </b>@item.EndDate.ToString("dd MMM yyy")</p>
@@ -48,20 +62,25 @@
                                     }
                                 </b>
                             </p>
-                            
+
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="card-footer">
                             <p class="card-text" style="display: flex; flex-direction: row; justify-content: space-between">
-                                <a class="btn btn-outline-primary float-right" style="font-size:12px"><i class="bi bi-eye-fill">Show details</i></a>
-                                <a class="btn btn-success text-white" style="font-size:12px"><i class="bi bi-cart-plus">Add to cart(Price @item.Price.ToString("c"))</i></a>
+                                <a class="btn btn-outline-primary float-right" asp-action="Details"  asp-route-id="@item.Id"><i class="bi bi-eye-fill">Show details</i></a>
+                                <a class="btn btn-success text-white"><i class="bi bi-cart-plus">Add to cart(Price @item.Price.ToString()€)</i></a>
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
+        }
     }
+
+    @await Html.PartialAsync("_AddNewModelTemplate.cshtml", AddNewMovie)
+    
     
 </div>

@@ -1,12 +1,14 @@
 ﻿
+using CinemaTiketsShop.Data.Base;
 using CinemaTiketsShop.Data.Enums;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace CinemaTiketsShop.Models
 {
-    public class Movie
+    public class Movie : IEntityBase
     {
         public int Id { get; set; }
         [Required]
@@ -29,11 +31,15 @@ namespace CinemaTiketsShop.Models
         [Required]
         public double Price { get; set; }
 
+        [AllowNull]
+        public string? PublicId { get; set; }
+
         //Ralationships
         public int CinemaId { get; set; }
 
         [ForeignKey("CinemaId")]
-        public Cinema Cinema { get; set; }
+        [Required]
+        public Cinema? Cinema { get; set; }
 
         [AllowNull]
         public int? ProducerId { get; set; }
@@ -41,6 +47,10 @@ namespace CinemaTiketsShop.Models
         [ForeignKey("ProducerId")]
         public Producer? Producer { get; set; }
 
+        [JsonIgnore]
         public List<Movie_Actor>? Movies_Actors { get; set; }
+        [JsonIgnore]
+        [AllowNull]
+        public List<MovieSession>? MovieSessions { get; set; }
     }
 }

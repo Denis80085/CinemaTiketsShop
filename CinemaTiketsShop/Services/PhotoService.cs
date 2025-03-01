@@ -51,8 +51,8 @@ namespace CinemaTiketsShop.Services
                 var UploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.Name, stream),
-                    Transformation = new Transformation().Height(250).Width(250).Crop("fill").Gravity("face"),
-                    AllowedFormats = ["jpg", "png", "svg", "webp"] 
+                    Transformation = new Transformation().Width(250).Crop("fill").Gravity("face"),
+                    AllowedFormats = ["jpg", "png", "svg", "webp", "jpeg"] 
                 };
 
                 UploadResult = await _cloudinary.UploadAsync(UploadParams);
@@ -74,7 +74,7 @@ namespace CinemaTiketsShop.Services
                 var UploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(PicUrl),
-                    Transformation = new Transformation().Height(250).Width(250).Crop("fill").Gravity("face"),
+                    Transformation = new Transformation().Width(250).Crop("fill").Gravity("face"),
                     AllowedFormats = ["jpg", "png", "svg", "webp"]
                 };
 

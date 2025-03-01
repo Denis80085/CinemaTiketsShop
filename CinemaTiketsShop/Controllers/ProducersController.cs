@@ -4,6 +4,7 @@ using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Mappers.ProducerMappers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
+using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 using CinemaTiketsShop.ViewModels.ProducerVMs;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet.Core;
@@ -38,7 +39,7 @@ namespace CinemaTiketsShop.Controllers
             {
                 _logger.LogInformation($"Producer Controler Index called: {DateTime.Now}");
 
-                var Producers = await _context.Producers.Select(p => p).ToListAsync();
+                var Producers = await _ProducerService.GetAll();
 
                 return View(Producers);
             }
@@ -106,7 +107,7 @@ namespace CinemaTiketsShop.Controllers
                         PublicId = result.PublicId
                     };
 
-                    var producer = await _ProducerService.CreateAsync(NewProducer);
+                    var producer = await _ProducerService.Create(NewProducer);
 
                     if (producer != null)
                     {
@@ -175,7 +176,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [FromForm]string picture_change_method,[Bind("Id, Name, Bio, PictureUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
+        public async Task<IActionResult> Edit([FromForm]int Id, [FromForm]string picture_change_method,[Bind("Id, Name, Bio, FotoUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
@@ -194,26 +195,14 @@ namespace CinemaTiketsShop.Controllers
                     result = await _pictureUploader.UpdateImageFromFileAsync(ProducerVM.Foto, ProducerVM.PublicId);
                 }
                 
-                if(picture_change_method == "FromUrl" && ProducerVM.PictureUrl != ProducerVM.OldPictureUrl) 
+                if(picture_change_method == "FromUrl" && ProducerVM.FotoUrl != ProducerVM.OldPictureUrl) 
                 {
-                    if (string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
-                    {
-                        ModelState.AddModelError("PictureUrl", "Please enter a image url");
-                        return View(ProducerVM);
-                    }
-
-                    if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
-                    {
-                        ModelState.AddModelError("PictureUrl", "Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg");
-                        return View(ProducerVM);
-                    }
-
-                    result = await _pictureUploader.UpdateImageFromUrlAsync(ProducerVM.PictureUrl, ProducerVM.PublicId);
+                    result = await _pictureUploader.UpdateImageFromUrlAsync(ProducerVM.FotoUrl, ProducerVM.PublicId);
                 }
 
                 if (result.ErrorAcured)
                 {
-                    ModelState.AddModelError("Foto", "Picture upload failed");
+                    ModelState.AddModelError(result.ErrorAt, result.ErrorMessage);
                     return View(ProducerVM);
                 }
 
@@ -223,9 +212,9 @@ namespace CinemaTiketsShop.Controllers
                     ProducerVM.PublicId = result.PublicId;
                 }
 
-                var ProducerResult = await _ProducerService.UpdateAsync(ProducerVM.MapProducerModel(), Id);
+                var ProducerResult = await _ProducerService.Update(Id, ProducerVM.MapProducerModel());
 
-                if (ProducerResult.UpdateSucceded)
+                if (ProducerResult is not null)
                 {
                     _logger.LogInformation($"Producer update succeded: {DateTime.Now}");
                     return RedirectToAction(nameof(Index));

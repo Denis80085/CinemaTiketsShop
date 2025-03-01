@@ -1,0 +1,129 @@
+﻿@using CinemaTiketsShop.ViewModels.BaseAbstractVMs
+@using CinemaTiketsShop.ViewModels.MovieVMs
+
+@model CreateMovieViewModel
+
+@{
+    Dictionary<int, ItemSelect>? Actors = (Dictionary<int, ItemSelect>?)ViewData["Actors"];
+
+    Dictionary<int, ItemSelect>? Producers = (Dictionary<int, ItemSelect>?)ViewData["Producers"];
+}
+
+<div style="margin-top: 10px">
+    <h2>Select Actors/Producer:</h2>
+    <button id="toggleButton" type="button">Switch Table</button>
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table id="table1" class="table-active">
+                <thead>
+                    <tr>
+                        <th>Picture</th>
+                        <th>Name</th>
+                        <th>Select</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Actors is not null)
+                        @foreach (var a in Actors)
+                        {
+                            <tr>
+                                <td><img class="rounded-circle" src="@a.Value.Picture" /></td>
+                                <td>
+                                    @a.Value.Name
+                                    <span asp-validation-for="SelActors" class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" name="SelActors" value="@a.Key" 
+                                        @if(Model is not null)
+                                        {
+                                            @(Model.SelActors.Contains(a.Key) ? "checked" : ""); 
+                                        }/>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        }
+                </tbody>
+            </table>
+
+
+            <table id="table2" class="table-active">
+                <thead>
+                    <tr>
+                        <th>Picture</th>
+                        <th>Name</th>
+                        <th>Select</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Producers is not null)
+                        @foreach (var p in Producers)
+                        {
+                            <tr>
+                                <td><img class="rounded-circle" src="@p.Value.Picture" /></td>
+                                <td>
+                                    @p.Value.Name
+                                    <span asp-validation-for="ProducerId" class="text-danger"></span>
+                                </td>
+                                <td>
+                                    <label class="switch">
+                                        <input id="radio" type="radio" name="ProducerId" value="@p.Key" 
+                                        @if (Model is not null)
+                                        {
+                                            @(Model!.ProducerId == p.Key ? "checked" : "")
+                                        }/>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+</div>
+
+
+<script>
+    document.getElementById('toggleButton').addEventListener('click', function () {
+        const tableWrapper = document.querySelector('.table-wrapper');
+        if (tableWrapper.style.transform === 'translateX(-50%)') {
+            tableWrapper.style.transform = 'translateX(0)';
+        } else {
+            tableWrapper.style.transform = 'translateX(-50%)';
+        }
+    });
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        const row = this.closest('tr');
+        if (this.checked) {
+            row.style.backgroundColor = '#e6f7ff'; // Highlight selected row
+        } else {
+            row.style.backgroundColor = ''; // Remove highlight
+        }
+    });
+    });
+
+    document.querySelectorAll('input[name="ProducerId"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            // Remove highlight from all rows
+            document.querySelectorAll('input[name="ProducerId"]').forEach(r => {
+                const row = r.closest('tr');
+                row.style.backgroundColor = ''; // Reset background color
+            });
+
+            // Highlight the selected row
+            const selectedRow = this.closest('tr');
+            if (this.checked) {
+                selectedRow.style.backgroundColor = '#e6f7ff'; // Highlight selected row
+            }
+
+        });
+    });
+</script>

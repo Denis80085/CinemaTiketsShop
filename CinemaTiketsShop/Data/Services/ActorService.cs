@@ -1,28 +1,32 @@
-﻿using CinemaTiketsShop.Data.Wrappers;
+﻿using CinemaTiketsShop.Data.Base;
+using CinemaTiketsShop.Data.Wrappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
 namespace CinemaTiketsShop.Data.Services
 {
-    public class ActorService : IActorServices
+    public class ActorService : EntityBaseRepo<Actor>, IActorServices
     {
         private readonly ApplicationDbConntext _context;
 
-        public ActorService(ApplicationDbConntext context)
+        public ActorService(ApplicationDbConntext context, IRedisCachingService cache) : base(context, cache, "Actor") 
         {
             _context = context;
         }
 
-        public async Task Create(Actor actor)
+        public override async Task<Actor?> Create(Actor actor)
         {
             await _context.Actors.AddAsync(actor);
 
             await _context.SaveChangesAsync();
+
+            return actor;
         }
 
-        public async Task<Actor?> Delete(Actor actor)
+        public override async Task<Actor?> Delete(Actor actor)
         {
             try
             {
@@ -39,14 +43,14 @@ namespace CinemaTiketsShop.Data.Services
 
         }
 
-        public async Task<IEnumerable<Actor>> GetActors()
-        {
-            var result = await _context.Actors.Select(a => a).ToListAsync();
+        //public async Task<IEnumerable<Actor>> GetActors()
+        //{
+        //    var result = await _context.Actors.Select(a => a).ToListAsync();
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public async Task<ActorResult> GetById(int id)
+        public  async Task<ActorResult> GetActorResultById(int id)
         {
             var Actors = await _context.Actors.Include(a => a.Movies_Actors).ThenInclude(a => a.Movie).Where(a => a.Id == id ).Select(a => a).ToListAsync();
 
@@ -60,34 +64,38 @@ namespace CinemaTiketsShop.Data.Services
             }
         }
 
-        public async Task<Actor?> Update(int id, Actor NewActor)
-        {
-            try
-            {
-                if(_context.Actors.Any(a => a.Id == id)) 
-                {
-                    _context.Update(NewActor);
+        //public override async Task<Actor?> Update(int id, Actor NewActor)
+        //{
+        //    try
+        //    {
+        //        if(_context.Actors.Any(a => a.Id == id)) 
+        //        {
+        //            _context.Update(NewActor);
 
-                    await _context.SaveChangesAsync();
+        //            await _context.SaveChangesAsync();
 
-                    return NewActor;
-                }
-                else 
-                {
-                    throw new KeyNotFoundException($"No Actor with id {id} was found");
-                }
+        //            return NewActor;
+        //        }
+        //        else 
+        //        {
+        //            throw new KeyNotFoundException($"No Actor with id {id} was found");
+        //        }
                 
-            }
-            catch (KeyNotFoundException kex)
-            {
-                Debug.WriteLine(kex.Message, category: "Actor Id not found while Updating");
-                return null;
-            }
-            catch (Exception ex) 
-            {
-                Debug.WriteLine(ex.Message, category: "Actor Updating Error");
-                return null;
-            }  
-        }
+        //    }
+        //    catch (KeyNotFoundException kex)
+        //    {
+        //        Debug.WriteLine(kex.Message, category: "Actor Id not found while Updating");
+        //        return null;
+        //    }
+        //    catch (Exception ex) 
+        //    {
+        //        Debug.WriteLine(ex.Message, category: "Actor Updating Error");
+        //        return null;
+        //    }  
+        //}
+
+        
+
+        
     }
 }

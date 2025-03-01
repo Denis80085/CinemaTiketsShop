@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaTiketsShop.Migrations
 {
     [DbContext(typeof(ApplicationDbConntext))]
-    [Migration("20250114152100_ProducerUpdate")]
-    partial class ProducerUpdate
+    [Migration("20250225214206_CinemaSessions")]
+    partial class CinemaSessions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,9 @@ namespace CinemaTiketsShop.Migrations
                         .IsRequired()
                         .HasMaxLength(270)
                         .HasColumnType("nvarchar(270)");
+
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -86,12 +89,15 @@ namespace CinemaTiketsShop.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Logo")
+                    b.Property<string>("LogoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PublicId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -103,16 +109,59 @@ namespace CinemaTiketsShop.Migrations
                         {
                             Id = 1,
                             Description = "Big cinema. Evrey week new realeases. Suports new talented producers",
-                            Logo = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
+                            LogoUrl = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
                             Name = "Disel Kino"
                         },
                         new
                         {
                             Id = 2,
                             Description = "Cosy Cinema, all brand new movies. Anime night evrey monday",
-                            Logo = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
+                            LogoUrl = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
                             Name = "Hookie Cinema"
                         });
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Call")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CinemaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Row")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CinemaId");
+
+                    b.ToTable("Cinema_Halls");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall_MovieSession", b =>
+                {
+                    b.Property<int>("CinemaHallId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MovieSessionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CinemaHallId", "MovieSessionId");
+
+                    b.HasIndex("MovieSessionId");
+
+                    b.ToTable("CinemaHall_MovieSessions");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie", b =>
@@ -150,6 +199,9 @@ namespace CinemaTiketsShop.Migrations
                     b.Property<int?>("ProducerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PublicId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -168,7 +220,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 5,
                             CinemaId = 2,
                             Description = "Other history of the WW2",
-                            EndDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img3.acsta.net/medias/nmedia/18/71/58/48/19138855.jpg",
                             Name = "Unglorious Bastards",
                             Price = 18.399999999999999,
@@ -181,7 +233,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 7,
                             CinemaId = 1,
                             Description = "The life of a guy, who made a dirty buisnes",
-                            EndDate = new DateTime(2024, 11, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
                             Name = "Wolf of Wall street",
                             Price = 18.399999999999999,
@@ -194,7 +246,7 @@ namespace CinemaTiketsShop.Migrations
                             Category = 7,
                             CinemaId = 2,
                             Description = "The life of a guy, who made a dirty buisnes",
-                            EndDate = new DateTime(2024, 11, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://de.web.img2.acsta.net/pictures/210/613/21061365_20131127123712997.jpg",
                             Name = "Wolf of Wall street",
                             Price = 18.399999999999999,
@@ -207,13 +259,37 @@ namespace CinemaTiketsShop.Migrations
                             Category = 5,
                             CinemaId = 1,
                             Description = "Disney movie about pirates",
-                            EndDate = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2024, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Logo = "https://m.media-amazon.com/images/M/MV5BMjE5MjkwODI3Nl5BMl5BanBnXkFtZTcwNjcwMDk4NA@@._V1_.jpg",
                             Name = "Pirates of Caribbean",
                             Price = 20.0,
                             ProducerId = 3,
-                            StartDate = new DateTime(2024, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            StartDate = new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.MovieSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Ends")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Starts")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Movie_Sessions");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie_Actor", b =>
@@ -300,6 +376,36 @@ namespace CinemaTiketsShop.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall", b =>
+                {
+                    b.HasOne("CinemaTiketsShop.Models.Cinema", "Cinema")
+                        .WithMany("Halls")
+                        .HasForeignKey("CinemaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cinema");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall_MovieSession", b =>
+                {
+                    b.HasOne("CinemaTiketsShop.Models.CinemaHall", "CinemaHall")
+                        .WithMany("CinemaHall_MovieSessions")
+                        .HasForeignKey("CinemaHallId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CinemaTiketsShop.Models.MovieSession", "MovieSession")
+                        .WithMany("CinemaHall_MovieSessions")
+                        .HasForeignKey("MovieSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CinemaHall");
+
+                    b.Navigation("MovieSession");
+                });
+
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie", b =>
                 {
                     b.HasOne("CinemaTiketsShop.Models.Cinema", "Cinema")
@@ -310,11 +416,22 @@ namespace CinemaTiketsShop.Migrations
 
                     b.HasOne("CinemaTiketsShop.Models.Producer", "Producer")
                         .WithMany("Movies")
-                        .HasForeignKey("ProducerId");
+                        .HasForeignKey("ProducerId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Cinema");
 
                     b.Navigation("Producer");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.MovieSession", b =>
+                {
+                    b.HasOne("CinemaTiketsShop.Models.Movie", "Movie")
+                        .WithMany("MovieSessions")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie_Actor", b =>
@@ -343,12 +460,26 @@ namespace CinemaTiketsShop.Migrations
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Cinema", b =>
                 {
+                    b.Navigation("Halls");
+
                     b.Navigation("Movies");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.CinemaHall", b =>
+                {
+                    b.Navigation("CinemaHall_MovieSessions");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Movie", b =>
                 {
+                    b.Navigation("MovieSessions");
+
                     b.Navigation("Movies_Actors");
+                });
+
+            modelBuilder.Entity("CinemaTiketsShop.Models.MovieSession", b =>
+                {
+                    b.Navigation("CinemaHall_MovieSessions");
                 });
 
             modelBuilder.Entity("CinemaTiketsShop.Models.Producer", b =>
