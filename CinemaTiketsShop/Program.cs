@@ -4,8 +4,11 @@ using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.Redis;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
+using System.Text;
 
 namespace CinemaTiketsShop
 {
@@ -35,7 +38,32 @@ namespace CinemaTiketsShop
             builder.Services.AddScoped<IActor_MovieService, Actor_MovieService>();
             builder.Services.AddScoped<IRedisCachingService, RedisCachingService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
-            builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))); //Redis configuration
+            builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!)); //Redis configuration
+
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme =
+                x.DefaultChallengeScheme =
+                x.DefaultScheme =
+                x.DefaultSignOutScheme =
+                x.DefaultForbidScheme =
+                x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
+                {
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        ValidAudience = builder.Configuration["JWT_Settings:Audience"],
+                        ValidIssuer = builder.Configuration["JWT_Settings:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT_Settings:Key"]!))
+                    };
+                });
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -51,6 +79,7 @@ namespace CinemaTiketsShop
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
