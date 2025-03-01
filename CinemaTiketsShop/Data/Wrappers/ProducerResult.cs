@@ -8,14 +8,14 @@ namespace CinemaTiketsShop.Data.Wrappers
         public bool isFound { get; }
         public bool UpdateSucceded { get; }
 
-        public ProducerResult(Producer? producer = null, bool isFound = false, bool isUpdated  = false)
+        public ProducerResult(Producer? producer = null, bool isFound = false, bool isUpdated = false)
         {
             this.isFound = isFound;
             this.UpdateSucceded = isUpdated;
             this.Producer = producer;
         }
 
-        public static ProducerResult Found(Producer producer) 
+        public static ProducerResult Found(Producer producer)
         {
             return new ProducerResult(producer, true);
         }
@@ -25,7 +25,7 @@ namespace CinemaTiketsShop.Data.Wrappers
             return new ProducerResult();
         }
 
-        public static ProducerResult UpdateSuccess(Producer producer) 
+        public static ProducerResult UpdateSuccess(Producer producer)
         {
             return new ProducerResult(producer, true, true);
         }

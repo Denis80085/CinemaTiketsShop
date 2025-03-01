@@ -12,7 +12,7 @@ namespace CinemaTiketsShop.Data.Services
     {
         private readonly ApplicationDbConntext _context;
 
-        public ActorService(ApplicationDbConntext context, IRedisCachingService cache) : base(context, cache, "Actor") 
+        public ActorService(ApplicationDbConntext context, IRedisCachingService cache) : base(context, cache, "Actor")
         {
             _context = context;
         }
@@ -35,7 +35,7 @@ namespace CinemaTiketsShop.Data.Services
 
                 return actor;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, category: "Actor Updating Error");
                 return null;
@@ -50,15 +50,15 @@ namespace CinemaTiketsShop.Data.Services
         //    return result;
         //}
 
-        public  async Task<ActorResult> GetActorResultById(int id)
+        public async Task<ActorResult> GetActorResultById(int id)
         {
-            var Actors = await _context.Actors.Include(a => a.Movies_Actors).ThenInclude(a => a.Movie).Where(a => a.Id == id ).Select(a => a).ToListAsync();
+            var Actors = await _context.Actors.Include(a => a.Movies_Actors).ThenInclude(a => a.Movie).Where(a => a.Id == id).Select(a => a).ToListAsync();
 
-            if (Actors != null) 
+            if (Actors != null)
             {
                 return ActorResult.Found(Actors[0]);
             }
-            else 
+            else
             {
                 return ActorResult.NotFound();
             }
@@ -80,7 +80,7 @@ namespace CinemaTiketsShop.Data.Services
         //        {
         //            throw new KeyNotFoundException($"No Actor with id {id} was found");
         //        }
-                
+
         //    }
         //    catch (KeyNotFoundException kex)
         //    {
@@ -94,8 +94,8 @@ namespace CinemaTiketsShop.Data.Services
         //    }  
         //}
 
-        
 
-        
+
+
     }
 }

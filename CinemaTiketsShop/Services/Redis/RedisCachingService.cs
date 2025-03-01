@@ -1,15 +1,11 @@
 ﻿using CinemaTiketsShop.Data.Base;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
-using System.Collections;
 
 namespace CinemaTiketsShop.Services.Redis
 {
-    public class RedisCachingService : IRedisCachingService 
+    public class RedisCachingService : IRedisCachingService
     {
         private readonly IConnectionMultiplexer _connection;
         private readonly ILogger<RedisCachingService> _logger;
@@ -56,7 +52,7 @@ namespace CinemaTiketsShop.Services.Redis
 
                 var Vals = await db.HashGetAllAsync(Key);
 
-                if(!(Vals.Length > 0)) 
+                if (!(Vals.Length > 0))
                 {
                     return Enumerable.Empty<T>();
                 }
@@ -70,7 +66,7 @@ namespace CinemaTiketsShop.Services.Redis
 
                 return Entries!;
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
                 _logger.LogError(e.ToString());
                 return Enumerable.Empty<T>();
@@ -83,7 +79,7 @@ namespace CinemaTiketsShop.Services.Redis
             {
                 var db = _connection.GetDatabase();
 
-                if (!await db.HashExistsAsync(Key, Val.Id)) 
+                if (!await db.HashExistsAsync(Key, Val.Id))
                     return;
 
                 await db.HashSetAsync(Key, Val.Id, JsonConvert.SerializeObject(Val));
@@ -103,13 +99,13 @@ namespace CinemaTiketsShop.Services.Redis
             {
                 var db = _connection.GetDatabase();
 
-                foreach(var val in Values) 
+                foreach (var val in Values)
                 {
                     var serializedVal = JsonConvert.SerializeObject(val);
 
                     await db.HashSetAsync(Key, val.Id, serializedVal.ToString());
                 }
-                
+
                 var expiration = TimeSpan.FromMinutes(TTL_Min) + TimeSpan.FromSeconds(new Random().Next(1, 3));
                 await db.KeyExpireAsync(Key, expiration);
             }

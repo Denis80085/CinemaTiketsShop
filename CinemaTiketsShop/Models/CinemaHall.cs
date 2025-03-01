@@ -16,7 +16,7 @@ namespace CinemaTiketsShop.Models
 
         [Required]
         public int CinemaId { get; set; }
-        
+
         [ForeignKey(nameof(CinemaId))]
         public required Cinema Cinema { get; set; }
 

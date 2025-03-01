@@ -1,6 +1,4 @@
 using CinemaTiketsShop.Data;
-using CinemaTiketsShop.Data.Base;
-using CinemaTiketsShop.Data.Base.CacheDecoration;
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
@@ -26,7 +24,7 @@ namespace CinemaTiketsShop
                 {
                     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
-            });          
+            });
 
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
@@ -58,7 +56,7 @@ namespace CinemaTiketsShop
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Movies}/{action=Index}/{id?}")
+                pattern: "{controller=Cinemas}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();

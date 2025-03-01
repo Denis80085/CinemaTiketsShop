@@ -1,14 +1,12 @@
-﻿using Microsoft.Identity.Client;
-using System.Net;
-using System.Runtime.CompilerServices;
+﻿using System.Net;
 
 namespace CinemaTiketsShop.Helpers
 {
     public static class PictureUrl
     {
         private readonly static List<string?> AllowedTypes = ["image/jpeg", "image/png", "image/svg", "image/webp"];
-        
-        public async static Task<bool> isValid(string? Uri) 
+
+        public async static Task<bool> isValid(string? Uri)
         {
             using HttpClient client = new();
 
@@ -18,7 +16,7 @@ namespace CinemaTiketsShop.Helpers
 
                 var response = await client.SendAsync(request);
 
-                if(response == null) 
+                if (response == null)
                 {
                     return false;
                 }
@@ -40,7 +38,7 @@ namespace CinemaTiketsShop.Helpers
             {
                 return false;
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 return false;
             }

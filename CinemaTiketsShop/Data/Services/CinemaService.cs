@@ -1,12 +1,9 @@
 ﻿using CinemaTiketsShop.Data.Base;
-using CinemaTiketsShop.Data.Base.CacheDecoration;
 using CinemaTiketsShop.Mappers.CinemaMappers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services.Redis;
 using CinemaTiketsShop.ViewModels.CinemaVMs;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using System.Runtime.CompilerServices;
 
 namespace CinemaTiketsShop.Data.Services
 {
@@ -41,6 +38,6 @@ namespace CinemaTiketsShop.Data.Services
             var FoundCinema = await _context.Cinemas.Include(c => c.Movies).FirstOrDefaultAsync(c => c.Id == cinema.Id);
 
             return FoundCinema;
-        } 
+        }
     }
 }

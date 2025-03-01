@@ -1,15 +1,12 @@
-﻿using CinemaTiketsShop.Data;
-using CinemaTiketsShop.Data.Services;
-using CinemaTiketsShop.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using CinemaTiketsShop.ViewModels.ActorVMs;
+﻿using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Helpers;
-using CloudinaryDotNet.Actions;
-using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Mappers.ActorMappers;
+using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Services;
+using CinemaTiketsShop.ViewModels.ActorVMs;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace CinemaTiketsShop.Controllers
 {
@@ -34,15 +31,15 @@ namespace CinemaTiketsShop.Controllers
             return View(Data);
         }
 
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, PictureUrl, Bio, Foto")]CreateActorViewModel ActorVM, [FromForm] string Picture_Upload_Method) 
+        public async Task<IActionResult> Create([Bind("Name, PictureUrl, Bio, Foto")] CreateActorViewModel ActorVM, [FromForm] string Picture_Upload_Method)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 Debug.WriteLine("Actor not created", category: "Actor Validation Error by creating:");
                 return View(ActorVM);
@@ -55,7 +52,7 @@ namespace CinemaTiketsShop.Controllers
                 return View(ActorVM);
             }
 
-            try 
+            try
             {
                 var result = new ImageUploadResult();
 
@@ -84,7 +81,7 @@ namespace CinemaTiketsShop.Controllers
                 var actor = new Actor
                 {
                     Name = ActorVM.Name,
-                    Bio  = ActorVM.Bio,
+                    Bio = ActorVM.Bio,
                     FotoURL = result.Url.ToString(),
                     PublicId = result.PublicId
                 };
@@ -93,7 +90,7 @@ namespace CinemaTiketsShop.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Actor Controler Error at Create");
 
@@ -103,15 +100,15 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet("Actors/Details/{id:int}")]
-        public async Task<IActionResult> Details([FromRoute] int id) 
+        public async Task<IActionResult> Details([FromRoute] int id)
         {
             var Actor = await _actorService.GetActorResultById(id);
 
-            if (Actor._isFound) 
+            if (Actor._isFound)
             {
                 return View(Actor._actor);
             }
-            else 
+            else
             {
                 Debug.WriteLine("Actor Not Found", category: "Details Controler Error:");
                 return View("Empty");
@@ -119,15 +116,15 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet("Edit/{id:int}")]
-        public async Task<IActionResult> Edit([FromRoute]int id) 
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
             var ActorResult = await _actorService.GetActorResultById(id);
 
-            if (ActorResult._isFound && ActorResult._actor != null) 
+            if (ActorResult._isFound && ActorResult._actor != null)
             {
                 return View(ActorResult._actor.MapEditActorViewModel());
             }
-            else 
+            else
             {
                 Debug.WriteLine("Actor Not Found", category: "Edit Controler Error:");
                 return View("Empty");
@@ -136,9 +133,9 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost("Edit/{id:int}")]
-        public async Task<IActionResult> Edit([FromRoute]int id, [FromForm]string picture_change_method, [Bind("Id, Name, FotoUrl, OldFotoUrl, Bio, PublicId, Foto")] EditActorViewModel ActorVM)
+        public async Task<IActionResult> Edit([FromRoute] int id, [FromForm] string picture_change_method, [Bind("Id, Name, FotoUrl, OldFotoUrl, Bio, PublicId, Foto")] EditActorViewModel ActorVM)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return View(ActorVM);
             }
@@ -181,7 +178,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet("Delete/{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute]int id) 
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var ActorResult = await _actorService.GetActorResultById(id);
 
@@ -199,17 +196,17 @@ namespace CinemaTiketsShop.Controllers
         [HttpPost("Delete/{id:int}")]
         public async Task<IActionResult> Delete([Bind("Id, Name, FotoURL, Bio, PublicId")] Actor deleteActor)
         {
-            if(await _actorService.Delete(deleteActor) != null) 
+            if (await _actorService.Delete(deleteActor) != null)
             {
                 await _photoService.DeletePhotoAsync(deleteActor.PublicId);
 
                 return RedirectToAction(nameof(Index));
             }
-            else 
+            else
             {
                 Debug.WriteLine("Actor Not Found", category: "HDelete Controler Error:");
                 return RedirectToAction(nameof(Index));
-            }        
+            }
         }
     }
 }

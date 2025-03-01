@@ -1,6 +1,4 @@
-﻿using CinemaTiketsShop.Models;
-using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
-using System.ComponentModel.DataAnnotations;
+﻿using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 
 namespace CinemaTiketsShop.ViewModels.ProducerVMs
 {

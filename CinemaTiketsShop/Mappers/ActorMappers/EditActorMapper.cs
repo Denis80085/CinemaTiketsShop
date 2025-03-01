@@ -5,7 +5,7 @@ namespace CinemaTiketsShop.Mappers.ActorMappers
 {
     public static class EditActorMapper
     {
-        public static EditActorViewModel MapEditActorViewModel(this Actor ActorModel) 
+        public static EditActorViewModel MapEditActorViewModel(this Actor ActorModel)
         {
             return new EditActorViewModel
             {
@@ -18,7 +18,7 @@ namespace CinemaTiketsShop.Mappers.ActorMappers
             };
         }
 
-        public static Actor MapActorModel(this EditActorViewModel ActorVM) 
+        public static Actor MapActorModel(this EditActorViewModel ActorVM)
         {
             return new Actor
             {

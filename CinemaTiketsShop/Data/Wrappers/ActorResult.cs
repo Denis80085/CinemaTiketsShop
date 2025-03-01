@@ -13,12 +13,12 @@ namespace CinemaTiketsShop.Data.Wrappers
             _actor = actor;
         }
 
-        public static ActorResult Found(Actor actor) 
+        public static ActorResult Found(Actor actor)
         {
             return new ActorResult(true, actor);
         }
 
-        public static ActorResult NotFound() 
+        public static ActorResult NotFound()
         {
             return new ActorResult(false, null);
         }

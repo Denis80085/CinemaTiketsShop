@@ -1,7 +1,6 @@
 ﻿using CinemaTiketsShop.Models;
 using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 using CinemaTiketsShop.ViewModels.CinemaVMs;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace CinemaTiketsShop.Mappers.CinemaMappers
 {
@@ -20,7 +19,7 @@ namespace CinemaTiketsShop.Mappers.CinemaMappers
             };
         }
 
-        public static Cinema MapCinemaModel(this EditBaseViewModel ViewModel) 
+        public static Cinema MapCinemaModel(this EditBaseViewModel ViewModel)
         {
             return new Cinema
             {
