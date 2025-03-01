@@ -1,18 +1,16 @@
 ﻿using CinemaTiketsShop.Data.Base;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 
 namespace CinemaTiketsShop.Models
 {
-    public class Actor : IEntityBase  
+    public class Actor : IEntityBase
     {
         public int Id { get; set; }
 
         [Required]
-        [Display(Name ="Full name")]
-        [StringLength( 270,  MinimumLength = 2,ErrorMessage = "Full name must contain at least 2 and maximum 70 chars")]
+        [Display(Name = "Full name")]
+        [StringLength(270, MinimumLength = 2, ErrorMessage = "Full name must contain at least 2 and maximum 70 chars")]
         public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Biography")]

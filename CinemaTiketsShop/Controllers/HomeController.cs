@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using CinemaTiketsShop.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CinemaTiketsShop.Controllers
@@ -16,7 +14,7 @@ namespace CinemaTiketsShop.Controllers
         public IActionResult Index()
         {
             return View();
-            
+
         }
 
     }

@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace CinemaTiketsShop.Data.Services
 {
-    public class ProducerService : EntityBaseRepo<Producer> ,IProducerService
+    public class ProducerService : EntityBaseRepo<Producer>, IProducerService
     {
         private readonly ApplicationDbConntext _context;
 
@@ -18,14 +18,14 @@ namespace CinemaTiketsShop.Data.Services
 
         public async Task<Producer?> CreateAsync(Producer NewProducer)
         {
-            try 
+            try
             {
                 await _context.Producers.AddAsync(NewProducer);
                 await _context.SaveChangesAsync();
 
                 return NewProducer;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message, category: "Producer Creating Error");
                 return null;
@@ -34,7 +34,7 @@ namespace CinemaTiketsShop.Data.Services
 
         public async Task DeleteAsync(Producer producer)
         {
-            try 
+            try
             {
                 _context.Producers.Remove(producer);
                 await _context.SaveChangesAsync();
@@ -47,17 +47,17 @@ namespace CinemaTiketsShop.Data.Services
 
         public async Task<ProducerResult> GetByIdAsync(int id)
         {
-            try 
+            try
             {
 
 
                 var Producer = await _context.Producers.Include(p => p.Movies).FirstOrDefaultAsync(x => x.Id == id);
-                
+
                 if (Producer != null)
                 {
                     return ProducerResult.Found(Producer);
                 }
-                else 
+                else
                 {
                     Debug.WriteLine($"Producer wiht id {id} not found", category: "Producer not found");
                     return ProducerResult.NotFound();
@@ -74,7 +74,7 @@ namespace CinemaTiketsShop.Data.Services
         {
             try
             {
-                if(!_context.Producers.Any(p => p.Id == id)) 
+                if (!_context.Producers.Any(p => p.Id == id))
                 {
                     throw new KeyNotFoundException($"Producer with id {id} not found");
                 }
@@ -84,7 +84,7 @@ namespace CinemaTiketsShop.Data.Services
 
                 return ProducerResult.UpdateSuccess(UpdatedProducer);
             }
-            catch(KeyNotFoundException ex)
+            catch (KeyNotFoundException ex)
             {
                 Debug.WriteLine(ex.Message, category: "Producer Service KeyNotFound Error");
                 return ProducerResult.UpdateFails();

@@ -1,5 +1,4 @@
-﻿using CinemaTiketsShop.Data.Base;
-using CinemaTiketsShop.Models;
+﻿using CinemaTiketsShop.Models;
 using CinemaTiketsShop.QueryObjects.MoviesQuery;
 
 namespace CinemaTiketsShop.Data.Services

@@ -4,14 +4,9 @@ using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Mappers.ProducerMappers;
 using CinemaTiketsShop.Models;
 using CinemaTiketsShop.Services;
-using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
 using CinemaTiketsShop.ViewModels.ProducerVMs;
 using CloudinaryDotNet.Actions;
-using CloudinaryDotNet.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 
 namespace CinemaTiketsShop.Controllers
 {
@@ -33,7 +28,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet]
-        public  async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -43,15 +38,15 @@ namespace CinemaTiketsShop.Controllers
 
                 return View(Producers);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogCritical(ex, "Producer Controler Error at Index");
 
                 return View("Empty");
-            }           
+            }
         }
 
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             _logger.LogInformation($"Producer Controler Create-View called: {DateTime.Now}");
 
@@ -59,7 +54,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Name, Bio, Foto, PictureUrl")]CreateProducerViewModel ProducerVM, [FromForm]string Picture_Upload_Method) 
+        public async Task<IActionResult> Create([Bind("Name, Bio, Foto, PictureUrl")] CreateProducerViewModel ProducerVM, [FromForm] string Picture_Upload_Method)
         {
             _logger.LogInformation($"Producer Controler Create-Action called: {DateTime.Now}");
 
@@ -81,7 +76,7 @@ namespace CinemaTiketsShop.Controllers
                     {
                         result = await _photoService.UploadPhotoAsync(ProducerVM.Foto);
                     }
-                    
+
                     if (Picture_Upload_Method == "FromUrl" && !string.IsNullOrWhiteSpace(ProducerVM.PictureUrl))
                     {
                         if (!await PictureUrl.isValid(ProducerVM.PictureUrl))
@@ -138,25 +133,25 @@ namespace CinemaTiketsShop.Controllers
                 _logger.LogWarning($"Producer Controler Create-Action validation failed: {DateTime.Now}");
 
                 return View(ProducerVM);
-            }   
+            }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int id) 
+        public async Task<IActionResult> Edit(int id)
         {
             _logger.LogInformation($"Producer Controler Edit-View called: {DateTime.Now}");
 
-            try 
+            try
             {
                 var ProducerResult = await _ProducerService.GetByIdAsync(id);
 
-                if (ProducerResult.isFound && ProducerResult.Producer != null) 
+                if (ProducerResult.isFound && ProducerResult.Producer != null)
                 {
                     var ProducerModel = ProducerResult.Producer;
 
                     return View(ProducerModel.MapEditProducerVM());
                 }
-                else 
+                else
                 {
                     throw new ArgumentNullException($"Producer with id {id} not found");
                 }
@@ -167,7 +162,7 @@ namespace CinemaTiketsShop.Controllers
 
                 return View("Empty");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Producer Controller Error at Editing, {DateTime.Now}");
 
@@ -176,7 +171,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromForm]int Id, [FromForm]string picture_change_method,[Bind("Id, Name, Bio, FotoUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
+        public async Task<IActionResult> Edit([FromForm] int Id, [FromForm] string picture_change_method, [Bind("Id, Name, Bio, FotoUrl, Foto, PublicId, OldPictureUrl")] EditProducerViewModel ProducerVM)
         {
             _logger.LogInformation($"Producer Controler Edit-Action called: {DateTime.Now}");
 
@@ -190,12 +185,12 @@ namespace CinemaTiketsShop.Controllers
             {
                 UploadedImageResult result = new UploadedImageResult(false);
 
-                if(picture_change_method == "FromDevice" && ProducerVM.Foto != null) 
+                if (picture_change_method == "FromDevice" && ProducerVM.Foto != null)
                 {
                     result = await _pictureUploader.UpdateImageFromFileAsync(ProducerVM.Foto, ProducerVM.PublicId);
                 }
-                
-                if(picture_change_method == "FromUrl" && ProducerVM.FotoUrl != ProducerVM.OldPictureUrl) 
+
+                if (picture_change_method == "FromUrl" && ProducerVM.FotoUrl != ProducerVM.OldPictureUrl)
                 {
                     result = await _pictureUploader.UpdateImageFromUrlAsync(ProducerVM.FotoUrl, ProducerVM.PublicId);
                 }
@@ -232,18 +227,18 @@ namespace CinemaTiketsShop.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete([FromRoute] int id) 
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             _logger.LogInformation($"Producer Controler Delete-View called: {DateTime.Now}");
             try
             {
                 var producerResult = await _ProducerService.GetByIdAsync(id);
 
-                if (producerResult.isFound) 
+                if (producerResult.isFound)
                 {
                     return View(producerResult.Producer);
                 }
-                else 
+                else
                 {
                     throw new Exception($"Deleting of producer failed. Producer Not Found");
                 }
@@ -257,14 +252,14 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed([FromForm] int Id) 
+        public async Task<IActionResult> DeleteConfirmed([FromForm] int Id)
         {
             _logger.LogInformation($"Producer Controler Delete-Action called: {DateTime.Now}");
-            try 
+            try
             {
                 var producerResult = await _ProducerService.GetByIdAsync(Id);
 
-                if (producerResult.isFound && producerResult.Producer !=  null)
+                if (producerResult.isFound && producerResult.Producer != null)
                 {
                     if (!string.IsNullOrWhiteSpace(producerResult.Producer.PublicId))
                     {
@@ -281,7 +276,7 @@ namespace CinemaTiketsShop.Controllers
                     throw new Exception($"Confirm Deleting of the producer failed. Producer Not Found");
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Producer-Delete Failed, {DateTime.Now}");
 
@@ -290,29 +285,29 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Details([FromRoute]int id) 
+        public async Task<IActionResult> Details([FromRoute] int id)
         {
             _logger.LogInformation($"Details-View called with id {id}");
 
-            try 
+            try
             {
                 var producerResult = await _ProducerService.GetByIdAsync(id);
-                
+
                 if (producerResult.isFound && producerResult.Producer != null)
                 {
                     return View(producerResult.Producer);
                 }
                 else
-                { 
+                {
                     throw new ArgumentNullException($"Producer with id {id} Not Found");
                 }
             }
-            catch(ArgumentNullException ex) 
+            catch (ArgumentNullException ex)
             {
                 _logger.LogError(ex, $"Producer-Details Null Exception, {DateTime.Now}");
                 return View("Empty");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, $"Producer-Details Failed, {DateTime.Now}");
                 return View("Empty");

@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
+﻿namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
 {
     public interface ICreateBaseViewModel
     {
-        string Name { get; set; } 
+        string Name { get; set; }
 
         string? Bio { get; set; }
 

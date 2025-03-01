@@ -1,7 +1,4 @@
-﻿using CinemaTiketsShop.Data.Wrappers;
-using CinemaTiketsShop.Models;
-
-namespace CinemaTiketsShop.Data.Base
+﻿namespace CinemaTiketsShop.Data.Base
 {
     public interface IEntityBaseRepo<T> where T : class, IEntityBase, new()
     {

@@ -16,7 +16,7 @@ namespace CinemaTiketsShop.Controllers
         private readonly IPictureUploader _pictureUploader;
         private readonly IPhotoService _photoService;
 
-        public CinemasController( ICinemaService cinemaService, ILogger<CinemasController> logger, IPictureUploader pictureUploader, IPhotoService photoService)
+        public CinemasController(ICinemaService cinemaService, ILogger<CinemasController> logger, IPictureUploader pictureUploader, IPhotoService photoService)
         {
             _cinemaService = cinemaService;
             _logger = logger;
@@ -38,7 +38,7 @@ namespace CinemaTiketsShop.Controllers
                 return View("Empty");
             }
         }
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             return View();
         }
@@ -46,7 +46,7 @@ namespace CinemaTiketsShop.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Name, Bio, Foto, PictureUrl")] CreateCinemaViewModel CinemaVM, [FromForm] string Picture_Upload_Method)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return View(CinemaVM);
             }
@@ -58,20 +58,20 @@ namespace CinemaTiketsShop.Controllers
                 return View(CinemaVM);
             }
 
-            try 
+            try
             {
                 var UploadImageRes = new UploadedImageResult();
 
-                if(Picture_Upload_Method == "FromDevice") 
+                if (Picture_Upload_Method == "FromDevice")
                 {
                     UploadImageRes = await _pictureUploader.UploadNewImageFromFileAsync(CinemaVM.Foto);
                 }
-                else 
+                else
                 {
                     UploadImageRes = await _pictureUploader.UploadNewImageFromUrl(CinemaVM.PictureUrl);
                 }
 
-                if (UploadImageRes.ErrorAcured) 
+                if (UploadImageRes.ErrorAcured)
                 {
                     ModelState.AddModelError(UploadImageRes.ErrorAt, UploadImageRes.ErrorMessage);
                     return View(CinemaVM);
@@ -91,10 +91,10 @@ namespace CinemaTiketsShop.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
-                else 
+                else
                     return View("Empty;");
             }
-            catch(OperationCanceledException ex) 
+            catch (OperationCanceledException ex)
             {
                 _logger.LogCritical(ex, "Cinema could not be created with message: " + ex.Message);
                 return RedirectToAction(nameof(Index));
@@ -107,15 +107,15 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit([FromRoute]int id) 
+        public async Task<IActionResult> Edit([FromRoute] int id)
         {
-            try 
+            try
             {
                 var Cinema = await _cinemaService.GetById(id);
 
                 return View(Cinema.MapEditViewModel());
             }
-            catch(KeyNotFoundException ex) 
+            catch (KeyNotFoundException ex)
             {
                 _logger.LogCritical(ex, ex.Message);
                 return RedirectToAction(nameof(Index));
@@ -129,13 +129,13 @@ namespace CinemaTiketsShop.Controllers
             {
                 _logger.LogCritical(ex, ex.Message);
                 return View("Empty");
-            }  
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([Bind("Id, Name, PictureUrl, OldPictureUrl, Bio, Foto, PublicId")]EditCinemaViewModel CinemaViewModel, [FromForm]string picture_change_method) 
+        public async Task<IActionResult> Edit([Bind("Id, Name, PictureUrl, OldPictureUrl, Bio, Foto, PublicId")] EditCinemaViewModel CinemaViewModel, [FromForm] string picture_change_method)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return View(CinemaViewModel);
             }
@@ -166,14 +166,14 @@ namespace CinemaTiketsShop.Controllers
 
             var Cinema = CinemaViewModel.MapCinemaModel();
 
-            var CinemaUpdated = await _cinemaService.Update(Cinema.Id,  Cinema);
+            var CinemaUpdated = await _cinemaService.Update(Cinema.Id, Cinema);
 
             if (CinemaUpdated != null)
             {
                 _logger.LogInformation($"Producer update succeded: {DateTime.Now}");
                 return RedirectToAction(nameof(Index));
             }
-            else 
+            else
             {
                 _logger.LogInformation($"Producer update failed: {DateTime.Now}");
                 return View("Empty");
@@ -181,7 +181,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details([FromRoute]int id) 
+        public async Task<IActionResult> Details([FromRoute] int id)
         {
             try
             {
@@ -207,7 +207,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete([FromRoute]int id) 
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             try
             {
@@ -215,7 +215,7 @@ namespace CinemaTiketsShop.Controllers
 
                 Cinema = await _cinemaService.IncludeMovies(Cinema);
 
-                if(Cinema == null) 
+                if (Cinema == null)
                 {
                     return View("Empty");
                 }
@@ -240,16 +240,16 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmDelete([Bind("Id, PublicId")]Cinema cinema) 
+        public async Task<IActionResult> ConfirmDelete([Bind("Id, PublicId")] Cinema cinema)
         {
             var DeletedCinema = await _cinemaService.Delete(cinema);
 
-            if (DeletedCinema == null) 
+            if (DeletedCinema == null)
             {
                 return View("Empty");
             }
 
-            if (!string.IsNullOrEmpty(DeletedCinema.PublicId)) 
+            if (!string.IsNullOrEmpty(DeletedCinema.PublicId))
             {
                 await _photoService.DeletePhotoAsync(DeletedCinema.PublicId);
             }

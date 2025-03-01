@@ -6,7 +6,7 @@ namespace CinemaTiketsShop.Mappers.MovieMappers
 {
     public static class MovieMapper
     {
-        public static IndexMovieViewModel MapIndexVM(this Movie MovieModel) 
+        public static IndexMovieViewModel MapIndexVM(this Movie MovieModel)
         {
             return new IndexMovieViewModel
             {
@@ -26,7 +26,7 @@ namespace CinemaTiketsShop.Mappers.MovieMappers
             };
         }
 
-        public static Movie MapMovieModel(this CreateMovieViewModel MovieVM, UploadedImageResult res) 
+        public static Movie MapMovieModel(this CreateMovieViewModel MovieVM, UploadedImageResult res)
         {
             return new Movie
             {

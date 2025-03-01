@@ -8,14 +8,14 @@ namespace CinemaTiketsShop.Data
     {
         private readonly IPhotoService _photoService;
 
-        public ApplicationDbConntext(DbContextOptions options,  IPhotoService photoService) : base(options)
+        public ApplicationDbConntext(DbContextOptions options, IPhotoService photoService) : base(options)
         {
             _photoService = photoService;
         }
 
         public required DbSet<Actor> Actors { get; set; }
         public required DbSet<Producer> Producers { get; set; }
-        public required DbSet<Cinema> Cinemas {  get; set; }
+        public required DbSet<Cinema> Cinemas { get; set; }
         public required DbSet<Movie> Movies { get; set; }
         public required DbSet<Movie_Actor> Movies_Actors { get; set; } //Join table
         public required DbSet<CinemaHall> Cinema_Halls { get; set; }
@@ -56,7 +56,8 @@ namespace CinemaTiketsShop.Data
                 .HasForeignKey(x => x.CinemaId);
             });
 
-            builder.Entity<Actor>(a => {
+            builder.Entity<Actor>(a =>
+            {
                 a.HasData(
                    new Actor
                    {
@@ -65,8 +66,8 @@ namespace CinemaTiketsShop.Data
                        Bio = "Popular actor. He was  filmed in Titanic, Shatered Island, Inception, Try catch me if you can, Wolf of the wool street and a lot more.",
                        FotoURL = "https://phantom-marca.unidadeditorial.es/525c725b581b2cb9476fb16e947a5e49/resize/660/f/webp/assets/multimedia/imagenes/2024/10/23/17296866914532.png"
                    },
-                   new Actor 
-                   { 
+                   new Actor
+                   {
                        Id = 2,
                        Name = "Bred Pit",
                        Bio = "Popular actor. He had filmed in lot of popular movies.",
@@ -80,17 +81,18 @@ namespace CinemaTiketsShop.Data
                        FotoURL = "https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/33623_v9_bd.jpg"
                    });
             });
-            
-            builder.Entity<Producer>(p => 
+
+            builder.Entity<Producer>(p =>
             {
                 p.HasData(
-                    new Producer { 
+                    new Producer
+                    {
                         Id = 1,
                         Name = "Quentin Tarantino",
                         Bio = "My beloved producer. For his entire carrer, he has made such cool movies as: Inglorious Bastards, Kill Bill, Pulp Fiction etc.",
                         FotoURL = "https://cdn.britannica.com/02/156802-050-12ABFA13/Quentin-Tarantino.jpg"
                     },
-                    new Producer 
+                    new Producer
                     {
                         Id = 2,
                         Name = "Martin Scorsese",
@@ -107,13 +109,13 @@ namespace CinemaTiketsShop.Data
                 );
             });
 
-            builder.Entity<Movie>(m => 
+            builder.Entity<Movie>(m =>
             {
                 m.HasOne(m => m.Cinema)
                 .WithMany(c => c.Movies)
                 .HasForeignKey(m => m.CinemaId)
                 .OnDelete(DeleteBehavior.Cascade);  //One To Many
-                
+
                 m.HasOne(m => m.Producer)
                 .WithMany(p => p.Movies)
                 .HasForeignKey(m => m.ProducerId)
@@ -124,38 +126,38 @@ namespace CinemaTiketsShop.Data
             {
                 ma.HasOne(ma => ma.Movie)
                 .WithMany(m => m.Movies_Actors)
-                .HasForeignKey(ma =>  ma.MovieId);
+                .HasForeignKey(ma => ma.MovieId);
 
                 ma.HasOne(ma => ma.Actor)
                 .WithMany(a => a.Movies_Actors)
                 .HasForeignKey(ma => ma.ActorId); //Many to Many
 
-                ma.HasKey(ma => new {ma.MovieId, ma.ActorId});
+                ma.HasKey(ma => new { ma.MovieId, ma.ActorId });
             });
 
             //seeding Cinemas
             builder.Entity<Cinema>().HasData(
-                new Cinema 
+                new Cinema
                 {
                     Id = 1,
                     Name = "Disel Kino",
                     LogoUrl = "https://t3.ftcdn.net/jpg/01/25/57/92/360_F_125579217_HL9SYmJR8KzVZ5Jfddr4BPyD3QxSSHtZ.jpg",
                     Description = "Big cinema. Evrey week new realeases. Suports new talented producers"
                 },
-                new Cinema 
+                new Cinema
                 {
-                    Id=2,
+                    Id = 2,
                     Name = "Hookie Cinema",
                     LogoUrl = "https://static.vecteezy.com/system/resources/previews/028/190/887/non_2x/cinema-logo-vector.jpg",
                     Description = "Cosy Cinema, all brand new movies. Anime night evrey monday"
                 }
-                    
+
             );
 
             //Seeding Movies
             builder.Entity<Movie>()
                 .HasData(
-                    new Movie 
+                    new Movie
                     {
                         Id = 1,
                         Name = "Unglorious Bastards",
@@ -166,9 +168,9 @@ namespace CinemaTiketsShop.Data
                         EndDate = DateTime.Parse("2024.11.25"),
                         Price = 18.4,
                         CinemaId = 2,
-                        Category = Enums.MovieCategory.Action   
+                        Category = Enums.MovieCategory.Action
                     },
-                    new Movie 
+                    new Movie
                     {
                         Id = 2,
                         Name = "Wolf of Wall street",

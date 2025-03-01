@@ -1,5 +1,4 @@
 ﻿using CinemaTiketsShop.Helpers;
-using CloudinaryDotNet.Actions;
 
 namespace CinemaTiketsShop.Data.Services
 {

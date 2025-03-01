@@ -5,7 +5,7 @@ namespace CinemaTiketsShop.Extensions
 {
     public static class MigrationExtensions
     {
-        public static void AplyMigrations(this IApplicationBuilder app) 
+        public static void AplyMigrations(this IApplicationBuilder app)
         {
             using IServiceScope scope = app.ApplicationServices.CreateScope();
 
