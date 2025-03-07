@@ -1,0 +1,13 @@
+﻿.form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.form-sublink {
+    display: inline-block !important;
+    float: right;
+    color: #838E95;
+    font-size: 12px;
+    margin-top: .3rem;
+    margin-right: 3px;
+}

@@ -2,6 +2,8 @@ using CinemaTiketsShop.Data;
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.IdentityServerData.Connections;
+using CinemaTiketsShop.IdentityServerData.Models;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 namespace CinemaTiketsShop
 {
@@ -29,6 +32,14 @@ namespace CinemaTiketsShop
                 });
             });
 
+            builder.Services.AddDbContext<IdentityServerContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityServer"), builder =>
+                {
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
+            });
+
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
@@ -40,6 +51,17 @@ namespace CinemaTiketsShop
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
             builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!)); //Redis configuration
 
+            builder.Services.AddIdentityCore<User>(Options =>
+            {
+                Options.Password.RequiredLength = 13;
+                Options.Password.RequireLowercase = true;
+                Options.Password.RequireDigit = true;
+                Options.Password.RequireNonAlphanumeric = true;
+                Options.Password.RequireUppercase = true;
+                Options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            })
+                .AddEntityFrameworkStores<IdentityServerContext>();
+
             builder.Services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme =
@@ -49,19 +71,20 @@ namespace CinemaTiketsShop
                 x.DefaultForbidScheme =
                 x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(x =>
+            .AddJwtBearer(x =>
+            {
+                x.Authority = "";
+                x.MetadataAddress = "";
+                x.RequireHttpsMetadata = false;
+                x.IncludeErrorDetails = true;
+                x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = true,
-                        ValidateIssuer = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        ValidAudience = builder.Configuration["JWT_Settings:Audience"],
-                        ValidIssuer = builder.Configuration["JWT_Settings:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT_Settings:Key"]!))
-                    };
-                });
+                    ValidateAudience = false,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true
+                };
+            });
 
             builder.Services.AddAuthorization();
 

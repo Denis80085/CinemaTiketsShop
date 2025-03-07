@@ -1,4 +1,5 @@
 ﻿using CinemaTiketsShop.Data;
+using CinemaTiketsShop.IdentityServerData.Connections;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaTiketsShop.Extensions
@@ -12,6 +13,10 @@ namespace CinemaTiketsShop.Extensions
             using ApplicationDbConntext context = scope.ServiceProvider.GetRequiredService<ApplicationDbConntext>();
 
             context.Database.Migrate();
+
+            using IdentityServerContext IdentiyContext = scope.ServiceProvider.GetRequiredService<IdentityServerContext>();
+
+            IdentiyContext.Database.Migrate();
         }
     }
 }
