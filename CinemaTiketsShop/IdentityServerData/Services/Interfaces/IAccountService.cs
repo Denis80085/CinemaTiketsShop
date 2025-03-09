@@ -1,9 +1,11 @@
-﻿using CinemaTiketsShop.IdentityServerData.Models;
+﻿using CinemaTiketsShop.IdentityServerData.Dtos;
+using CinemaTiketsShop.IdentityServerData.Models;
+using CinemaTiketsShop.IdentityServerData.Results;
 
 namespace CinemaTiketsShop.IdentityServerData.Services.Interfaces
 {
     public interface IAccountService
     {
-        User? RegisterUser(); //Implement this method
+        Task<RegisterResult> RegisterUser(User NewUser, string Password);
     }
 }

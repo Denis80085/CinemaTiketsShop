@@ -4,9 +4,12 @@ using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.IdentityServerData.Connections;
 using CinemaTiketsShop.IdentityServerData.Models;
+using CinemaTiketsShop.IdentityServerData.Services.Interfaces;
+using CinemaTiketsShop.IdentityServerData.Services.Repositories;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
@@ -50,8 +53,9 @@ namespace CinemaTiketsShop
             builder.Services.AddScoped<IRedisCachingService, RedisCachingService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
             builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!)); //Redis configuration
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
-            builder.Services.AddIdentityCore<User>(Options =>
+            builder.Services.AddIdentity<User, IdentityRole>(Options =>
             {
                 Options.Password.RequiredLength = 13;
                 Options.Password.RequireLowercase = true;
