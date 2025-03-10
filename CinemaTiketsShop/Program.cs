@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using StackExchange.Redis;
 using System.Configuration;
 using System.Text;
