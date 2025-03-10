@@ -1,13 +1,19 @@
+using CinemaTiketsShop.Configs;
 using CinemaTiketsShop.Data;
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Services;
+using CinemaTiketsShop.Services.CognitoUserMenager;
 using CinemaTiketsShop.Services.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using StackExchange.Redis;
+using System.Configuration;
 using System.Text;
 
 namespace CinemaTiketsShop
@@ -40,30 +46,33 @@ namespace CinemaTiketsShop
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
             builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!)); //Redis configuration
 
-            builder.Services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme =
-                x.DefaultChallengeScheme =
-                x.DefaultScheme =
-                x.DefaultSignOutScheme =
-                x.DefaultForbidScheme =
-                x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(x =>
-                {
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateAudience = true,
-                        ValidateIssuer = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        ValidAudience = builder.Configuration["JWT_Settings:Audience"],
-                        ValidIssuer = builder.Configuration["JWT_Settings:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT_Settings:Key"]!))
-                    };
-                });
+            builder.Services.Configure<CognitoAppConfig>(builder.Configuration.GetSection("AppConfig"));
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-            builder.Services.AddAuthorization();
+            //builder.Services.AddAuthentication(x =>
+            //{
+            //    x.DefaultAuthenticateScheme =
+            //    x.DefaultChallengeScheme =
+            //    x.DefaultScheme =
+            //    x.DefaultSignOutScheme =
+            //    x.DefaultForbidScheme =
+            //    x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //    .AddJwtBearer(x =>
+            //    {
+            //        x.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateAudience = true,
+            //            ValidateIssuer = true,
+            //            ValidateIssuerSigningKey = true,
+            //            ValidateLifetime = true,
+            //            ValidAudience = builder.Configuration["JWT_Settings:Audience"],
+            //            ValidIssuer = builder.Configuration["JWT_Settings:Issuer"],
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT_Settings:Key"]!))
+            //        };
+            //    });
+
+            //builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -79,10 +88,11 @@ namespace CinemaTiketsShop
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.MapStaticAssets();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Cinemas}/{action=Index}/{id?}")
