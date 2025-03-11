@@ -38,12 +38,114 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
 
         public async Task<UserSignUpResponse> ConfirmUserSignUpAsync(UserConfirmSignUpModel model)
         {
-            throw new NotImplementedException();
+            ConfirmSignUpRequest request = new ConfirmSignUpRequest
+            {
+                ClientId = _cognitoAppConfig.AppClientId,
+                ConfirmationCode = model.ConfirmCode,
+                Username = model.Email
+            };
+
+            try
+            {
+                var response = await _provider.ConfirmSignUpAsync(request);
+                return new UserSignUpResponse
+                {
+                    Email = model.Email,
+                    UserId = model.UserId,
+                    Message = "User Confirmed",
+                    IsSuccess = true
+                };
+            }
+            catch (CodeMismatchException)
+            {
+                return new UserSignUpResponse
+                {
+                    IsSuccess = false,
+                    Message = "Invalid Confirmation Code",
+                    Email = model.Email
+                };
+            }
         }
 
         public async Task<UserSignUpResponse> CreateUserAsync(UserSignUpModel model)
         {
-            throw new NotImplementedException();
+            string Secret_hash = CognitoHasher.HashUsername(model.UserName, _cognitoAppConfig.AppClientId, _cognitoAppConfig.AppClientSecret);
+            // create a SignUpRequest
+            var signUpRequest = new SignUpRequest
+            {
+                ClientId = _cognitoAppConfig.AppClientId,
+                Password = model.Password,
+                Username = model.UserName,
+                SecretHash = Secret_hash,
+                ClientMetadata = new Dictionary<string, string>
+                {
+                    { "email", model.Email }
+                }
+            };
+
+            // add all the attributes 
+            // you want to add to the New User
+            signUpRequest.UserAttributes.Add(new AttributeType
+            {
+                Name = "email",
+                Value = model.Email
+            });
+            signUpRequest.UserAttributes.Add(new AttributeType
+            {
+                Value = model.GivenName,
+                Name = "given_name"
+            });
+            signUpRequest.UserAttributes.Add(new AttributeType
+            {
+                Value = model.FamilyName,
+                Name = "family_name"
+            });
+
+
+            //if (model.ProfilePhoto != null)
+            //{
+            //    // upload the incoming profile photo to user's S3 folder
+            //    // and get the s3 url
+            //    // add the s3 url to the profile_photo attribute of the userCognito
+            //    var picUrl = await _storage.AddItem(model.ProfilePhoto, "profile");
+
+            //    signUpRequest.UserAttributes.Add(new AttributeType
+            //    {
+            //          Value = picUrl,
+            //          Name = "picture"
+            //    });
+            //}
+
+            try
+            {
+                // call SignUpAsync() method
+                SignUpResponse response = await _provider.SignUpAsync(signUpRequest);
+
+                var signUpResponse = new UserSignUpResponse
+                {
+                    UserId = response.UserSub,
+                    Email = model.Email,
+                    Message = $"Confirmation Code sent to   {response.CodeDeliveryDetails.Destination} via {response.CodeDeliveryDetails.DeliveryMedium.Value}",
+                    IsSuccess = true
+                };
+                return signUpResponse;
+            }
+            catch (UsernameExistsException)
+            {
+                return new UserSignUpResponse
+                {
+                    IsSuccess = false,
+                    Message = "Emailaddress Already Exists"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new UserSignUpResponse
+                {
+                    IsSuccess = false,
+                    Message = ex.ToString()
+                };
+            }
         }
 
         public async Task<UserProfileResponse> GetUserAsync(string userId)

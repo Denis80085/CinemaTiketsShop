@@ -15,9 +15,9 @@ namespace CinemaTiketsShop.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Register([FromBody] UserLoginModel registerUserDto)
+        public async Task<IActionResult> Login([FromBody] UserLoginModel userLoginModel)
         {
-            var result = await _userRepository.TryLoginAsync(registerUserDto);
+            var result = await _userRepository.TryLoginAsync(userLoginModel);
 
             if(result.IsSuccess)
             {
@@ -26,6 +26,21 @@ namespace CinemaTiketsShop.Controllers
             else 
             {
                 return Unauthorized(result);
+            }
+        }
+
+        [HttpPost]
+        [Route("signup")]
+        public async Task<IActionResult> SignUp([FromBody] UserSignUpModel userSignUpModel)
+        {
+            var result = await _userRepository.CreateUserAsync(userSignUpModel);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
     }
