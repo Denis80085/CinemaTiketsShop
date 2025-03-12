@@ -219,7 +219,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                     Message = "EmailAddress not found."
                 };
             }
-            catch (NotAuthorizedException ex)
+            catch (NotAuthorizedException)
             {
                 return new AuthResponseModel
                 {

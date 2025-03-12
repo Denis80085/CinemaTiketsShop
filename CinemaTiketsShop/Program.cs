@@ -5,6 +5,7 @@ using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.CognitoUserMenager;
+using CinemaTiketsShop.Services.CookieService;
 using CinemaTiketsShop.Services.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ namespace CinemaTiketsShop
                 });
             });
 
+            builder.Services.AddScoped<ICookieRepository, CookieRepository>();
             builder.Services.AddScoped<IActorServices, ActorService>();
             builder.Services.AddScoped<IProducerService, ProducerService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
@@ -48,30 +50,46 @@ namespace CinemaTiketsShop
             builder.Services.Configure<CognitoAppConfig>(builder.Configuration.GetSection("AppConfig"));
             builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-            //builder.Services.AddAuthentication(x =>
-            //{
-            //    x.DefaultAuthenticateScheme =
-            //    x.DefaultChallengeScheme =
-            //    x.DefaultScheme =
-            //    x.DefaultSignOutScheme =
-            //    x.DefaultForbidScheme =
-            //    x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-            //})
-            //    .AddJwtBearer(x =>
-            //    {
-            //        x.TokenValidationParameters = new TokenValidationParameters
-            //        {
-            //            ValidateAudience = true,
-            //            ValidateIssuer = true,
-            //            ValidateIssuerSigningKey = true,
-            //            ValidateLifetime = true,
-            //            ValidAudience = builder.Configuration["JWT_Settings:Audience"],
-            //            ValidIssuer = builder.Configuration["JWT_Settings:Issuer"],
-            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT_Settings:Key"]!))
-            //        };
-            //    });
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme =
+                x.DefaultChallengeScheme =
+                x.DefaultScheme =
+                x.DefaultSignOutScheme =
+                x.DefaultForbidScheme =
+                x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(x =>
+                {
+                    x.RequireHttpsMetadata = true;
+                    x.IncludeErrorDetails = true;
+                    x.Authority = builder.Configuration["Cognito:Authority"];
+                    x.MetadataAddress = builder.Configuration["Cognito:MetaDataAddress"]!;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true
+                    };
 
-            //builder.Services.AddAuthorization();
+                    x.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context => 
+                        {
+                            context.Request.Cookies.TryGetValue("access_token", out var access_token);
+
+                            if (!string.IsNullOrEmpty(access_token))
+                            {
+                                context.Token = access_token;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -87,8 +105,8 @@ namespace CinemaTiketsShop
             app.UseHttpsRedirection();
             app.UseRouting();
 
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapStaticAssets();
 

@@ -1,8 +1,15 @@
-﻿namespace CinemaTiketsShop.Models.UserModels
+﻿using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using System.ComponentModel.DataAnnotations;
+
+namespace CinemaTiketsShop.Models.UserModels
 {
     public abstract class BaseUserModel
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
+        [Required(ErrorMessage ="Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid Email")]
+        public required string Email { get; set; }
+
+        [Required(ErrorMessage = "Password is required")]
+        public required string Password { get; set; }
     }
 }
