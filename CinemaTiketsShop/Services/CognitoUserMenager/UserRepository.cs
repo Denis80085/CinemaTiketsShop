@@ -19,8 +19,9 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
         private readonly CognitoAppConfig _cognitoAppConfig;
         private readonly AmazonCognitoIdentityProviderClient _provider;
         private readonly CognitoUserPool _userPool;
+        private readonly ILogger<UserRepository> _logger;
 
-        public UserRepository(IOptions<CognitoAppConfig> options)
+        public UserRepository(IOptions<CognitoAppConfig> options, ILogger<UserRepository> logger)
         {
             _cognitoAppConfig = options.Value;
 
@@ -34,20 +35,26 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 _cognitoAppConfig.AppClientId,
                 _provider,
                 _cognitoAppConfig.AppClientSecret);
+
+            _logger = logger;
         }
 
         public async Task<UserSignUpResponse> ConfirmUserSignUpAsync(UserConfirmSignUpModel model)
         {
+            string secret_hash = CognitoHasher.HashUsername(model.Email, _cognitoAppConfig.AppClientId, _cognitoAppConfig.AppClientSecret);
+
             ConfirmSignUpRequest request = new ConfirmSignUpRequest
             {
                 ClientId = _cognitoAppConfig.AppClientId,
                 ConfirmationCode = model.ConfirmCode,
-                Username = model.Email
+                Username = model.Email,
+                SecretHash = secret_hash
             };
 
             try
             {
                 var response = await _provider.ConfirmSignUpAsync(request);
+
                 return new UserSignUpResponse
                 {
                     Email = model.Email,
@@ -62,6 +69,15 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 {
                     IsSuccess = false,
                     Message = "Invalid Confirmation Code",
+                    Email = model.Email
+                };
+            }
+            catch (ExpiredCodeException) 
+            {
+                return new UserSignUpResponse
+                {
+                    IsSuccess = false,
+                    Message = "Expired code. Please try again",
                     Email = model.Email
                 };
             }
@@ -100,7 +116,6 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 Value = model.FamilyName,
                 Name = "family_name"
             });
-
 
             //if (model.ProfilePhoto != null)
             //{
@@ -199,17 +214,31 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                     RefreshToken = result.RefreshToken
                 };
 
+                var userResponse = await user.GetUserDetailsAsync();
+
+                var email_verified = userResponse.UserAttributes.Find(u => u.Name == "email_verified");
+
+                if (email_verified != null && email_verified.Value != "true")
+                {
+                    authResponseModel.IsUserConfirmed = false;
+                }
+                else 
+                { 
+                    authResponseModel.IsUserConfirmed = true; 
+                }
+
                 authResponseModel.IsSuccess = true;
                 return authResponseModel;
             }
-            //catch (UserNotConfirmedException)
-            //{
-            //    // Occurs if the User has signed up 
-            //    // but has not confirmed his EmailAddress
-            //    // In this block we try sending 
-            //    // the Confirmation Code again and ask user to confirm
-            //}
-            catch (UserNotFoundException)
+            catch (UserNotConfirmedException)
+            {
+                return new AuthResponseModel
+                {
+                    IsSuccess = false,
+                    Message = "User not confirmed"
+                };
+            }
+            catch (UserNotFoundException ex)
             {
                 // Occurs if the provided emailAddress 
                 // doesn't exist in the UserPool
@@ -219,7 +248,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                     Message = "EmailAddress not found."
                 };
             }
-            catch (NotAuthorizedException)
+            catch (NotAuthorizedException ex)
             {
                 return new AuthResponseModel
                 {

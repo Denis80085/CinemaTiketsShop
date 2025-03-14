@@ -1,39 +1,50 @@
-﻿<section class="section">
+﻿@using CinemaTiketsShop.Models.UserModels;
+
+@{
+    ViewData["Title"] = "Sign Up";
+}
+
+@model UserSignUpModel
+
+<section class="section">
      <div class="container">
          <div class="row">
              <div class="container col-md-6">
-                 <form name="loginform" id="loginform" asp-action="UserProfile" method="post">
+                 <form name="loginform" id="loginform" asp-action="CreateUser">
 
+                    <div class="form-group">
+                        <label asp-for="UserName">Email</label>
+                        <input type="text" name="username" class="form-control" asp-for="UserName" size="20">
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
                      <div class="form-group">
-                         <label for="Email">Email</label>
-                         <input type="email" name="email" class="form-control" for="Email" size="20">
-                         <span  class="text-danger"></span>
+                         <label asp-for="Email">Email</label>
+                         <input type="email" name="email" class="form-control" asp-for="Email" size="20">
+                         <span asp-validation-for="Email" class="text-danger"></span>
                      </div>
                      <div class="form-group">
-                         <label for="Password">Password</label>
+                         <label asp-for="Password">Password</label>
                          <a class="form-sublink" href="https://themes.getbootstrap.com/my-account/lost-password/">Forgot password?</a>
-                         <input for="Password" type="password" name="pwd" id="user_pass" class="form-control" value="" size="20">
-                         <span  class="text-danger"></span>
+                         <input asp-for="Password" type="password" class="form-control" size="20">
+                         <span asp-validation-for="Password" class="text-danger"></span>
                      </div>
 
                      <div class="form-group">
-                         <label for="FirstName">FirstName</label>
-                         <input type="text" name="FirstName" class="form-control"for="FirstName" size="20">
-                         <span  class="text-danger"></span>
+                         <label asp-for="GivenName">FirstName</label>
+                        <input type="text" name="GivenName" class="form-control" asp-for="GivenName" size="20">
+                         <span asp-validation-for="GivenName" class="text-danger"></span>
                      </div>
                      <div class="form-group">
-                         <label for="LastName">LastName</label>
-                         <input type="text" name="LastName" class="form-control" for="LastName" size="20">
-                         <span  class="text-danger"></span>
+                         <label asp-for="FamilyName">LastName</label>
+                        <input type="text" name="FamilyName" class="form-control" asp-for="FamilyName" size="20">
+                        <span asp-validation-for="FamilyName" class="text-danger"></span>
                      </div>
 
                      <div class="form-group">
-                         <input type="submit" value="Sign Up" class="btn btn-primary bi bi-door-open-fill"/>
-                         <a asp-action="UserProfile" class="btn btn-primary w-100"><i class="bi bi-door-open-fill" style="margin-right:2px"></i>Sign Up</a>
+                        <input class="btn btn-primary w-100" type="submit" asp-action="CreateUser" value="Sign Up" />
                      </div>
 
                  </form>
-                 <p class="small text-center">Don't have an account yet? <a href="https://themes.getbootstrap.com/my-account/">Sign up</a></p>
              </div>
          </div>
      </div>
