@@ -1,0 +1,51 @@
+﻿@using CinemaTiketsShop.Models.UserModels;
+
+@{
+    ViewData["Title"] = "Sign Up";
+}
+
+@model UserSignUpModel
+
+<section class="section">
+     <div class="container">
+         <div class="row">
+             <div class="container col-md-6">
+                 <form name="loginform" id="loginform" asp-action="CreateUser">
+
+                    <div class="form-group">
+                        <label asp-for="UserName">UserName</label>
+                        <input type="text" name="username" class="form-control" asp-for="UserName" size="20">
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                     <div class="form-group">
+                         <label asp-for="Email">Email</label>
+                         <input type="email" name="email" class="form-control" asp-for="Email" size="20">
+                         <span asp-validation-for="Email" class="text-danger"></span>
+                     </div>
+                     <div class="form-group">
+                         <label asp-for="Password">Password</label>
+                         <a class="form-sublink" href="https://themes.getbootstrap.com/my-account/lost-password/">Forgot password?</a>
+                         <input asp-for="Password" type="password" class="form-control" size="20">
+                         <span asp-validation-for="Password" class="text-danger"></span>
+                     </div>
+
+                     <div class="form-group">
+                         <label asp-for="GivenName">FirstName</label>
+                        <input type="text" name="GivenName" class="form-control" asp-for="GivenName" size="20">
+                         <span asp-validation-for="GivenName" class="text-danger"></span>
+                     </div>
+                     <div class="form-group">
+                         <label asp-for="FamilyName">LastName</label>
+                        <input type="text" name="FamilyName" class="form-control" asp-for="FamilyName" size="20">
+                        <span asp-validation-for="FamilyName" class="text-danger"></span>
+                     </div>
+
+                     <div class="form-group">
+                        <input class="btn btn-primary w-100" type="submit" asp-action="CreateUser" value="Sign Up" />
+                     </div>
+
+                 </form>
+             </div>
+         </div>
+     </div>
+ </section>

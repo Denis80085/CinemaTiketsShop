@@ -1,10 +1,7 @@
 ﻿using CinemaTiketsShop.Helpers;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace CinemaTiketsShop.Services
 {
@@ -28,7 +25,7 @@ namespace CinemaTiketsShop.Services
 
         public async Task<DeletionResult> DeletePhotoAsync(string? publicId)
         {
-            if (string.IsNullOrWhiteSpace(publicId)) 
+            if (string.IsNullOrWhiteSpace(publicId))
             {
                 return new DeletionResult();
             }
@@ -52,12 +49,12 @@ namespace CinemaTiketsShop.Services
                 {
                     File = new FileDescription(file.Name, stream),
                     Transformation = new Transformation().Width(250).Crop("fill").Gravity("face"),
-                    AllowedFormats = ["jpg", "png", "svg", "webp", "jpeg"] 
+                    AllowedFormats = ["jpg", "png", "svg", "webp", "jpeg"]
                 };
 
                 UploadResult = await _cloudinary.UploadAsync(UploadParams);
             }
-            else 
+            else
             {
                 _logger.LogWarning("Uploading image failed");
             }

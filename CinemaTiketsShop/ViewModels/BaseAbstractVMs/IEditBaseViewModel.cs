@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-
-namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
+﻿namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
 {
     public interface IEditBaseViewModel
     {

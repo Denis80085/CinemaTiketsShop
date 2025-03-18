@@ -19,9 +19,9 @@ namespace CinemaTiketsShop.Dictionarys
         }
 
 
-        public async Task<IDictionary<int, ItemSelect>> SelectActorsKeysAndNames() 
+        public async Task<IDictionary<int, ItemSelect>> SelectActorsKeysAndNames()
         {
-            if(_ActorService == null) 
+            if (_ActorService == null)
             {
                 return new Dictionary<int, ItemSelect>();
             }
@@ -30,7 +30,7 @@ namespace CinemaTiketsShop.Dictionarys
 
             var ActorsList = await _ActorService.GetAll();
 
-            foreach (var Actor in ActorsList) 
+            foreach (var Actor in ActorsList)
             {
                 ActorDictionary[Actor.Id] = new ItemSelect
                 {

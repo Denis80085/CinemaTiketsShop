@@ -1,0 +1,21 @@
+﻿input:focus {
+    box-shadow: none !important;
+}
+
+.form-sublink {
+    float: right;
+    color: #838E95;
+    font-size: 12px;
+    margin-top: .3rem;
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+    outline: none;
+    outline-offset: 0;
+}
+
+a:hover {
+    color: #0083cc;
+}

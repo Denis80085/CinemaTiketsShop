@@ -1,7 +1,5 @@
 ﻿using CinemaTiketsShop.Data.Enums;
-using CinemaTiketsShop.Models;
 using CinemaTiketsShop.ViewModels.BaseAbstractVMs;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -12,7 +10,7 @@ namespace CinemaTiketsShop.ViewModels.MovieVMs
 
         [Display(Name = "Description")]
         [StringLength(500, MinimumLength = 2, ErrorMessage = "Description must contain at least 2 and maximum 500 chars")]
-        override public string? Bio { get; set; } = string.Empty; 
+        override public string? Bio { get; set; } = string.Empty;
         [Required(ErrorMessage = "Plese select a category")]
         public MovieCategory Category { get; set; }
 

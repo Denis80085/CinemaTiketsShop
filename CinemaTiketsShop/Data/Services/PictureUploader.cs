@@ -57,7 +57,7 @@ namespace CinemaTiketsShop.Data.Services
 
         }
 
-        public async Task<UploadedImageResult> UploadNewImageFromFileAsync(IFormFile? image) 
+        public async Task<UploadedImageResult> UploadNewImageFromFileAsync(IFormFile? image)
         {
             var result = new ImageUploadResult();
             var uploadFaieled = new UploadedImageResult(false);
@@ -68,7 +68,7 @@ namespace CinemaTiketsShop.Data.Services
                 {
                     result = await _photoService.UploadPhotoAsync(image);
                 }
-                else 
+                else
                 {
                     uploadFaieled.SetError($"Plese select a foto from your device", "Foto");
 
@@ -98,12 +98,12 @@ namespace CinemaTiketsShop.Data.Services
 
         public async Task<UploadedImageResult> UpdateImageFromFileAsync(IFormFile image, string? OldPublicId)
         {
-            try 
+            try
             {
                 var res = new ImageUploadResult();
 
 
-                 res = await _photoService.UploadPhotoAsync(image);
+                res = await _photoService.UploadPhotoAsync(image);
 
 
                 if (res.StatusCode == System.Net.HttpStatusCode.OK)
@@ -121,7 +121,7 @@ namespace CinemaTiketsShop.Data.Services
 
                 return uploadFaieled;
             }
-            catch 
+            catch
             {
                 var uploadFaieled = new UploadedImageResult(false);
 
@@ -142,14 +142,14 @@ namespace CinemaTiketsShop.Data.Services
                 return uploadFaieled;
             }
 
-            if (!await PictureUrl.isValid(pictureUrl)) 
+            if (!await PictureUrl.isValid(pictureUrl))
             {
                 uploadFaieled.SetError($"Url validation failed. Make sure that it is pointed to a image of type .jpg, .png, .webp or .svg", "PictureUrl");
 
                 return uploadFaieled;
             }
 
-            try 
+            try
             {
                 var res = new ImageUploadResult();
 
@@ -168,13 +168,13 @@ namespace CinemaTiketsShop.Data.Services
 
                 return uploadFaieled;
             }
-            catch 
+            catch
             {
                 uploadFaieled.SetError("Unexcpected error while uploading your picture", "PictureUrl");
 
-                return uploadFaieled; 
+                return uploadFaieled;
             }
-            
+
         }
     }
 }

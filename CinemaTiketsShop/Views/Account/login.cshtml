@@ -1,0 +1,39 @@
+﻿@using CinemaTiketsShop.Models.UserModels;
+
+@model UserLoginModel
+
+@{
+    ViewData["Title"] = "Log In";
+}
+
+<link rel="stylesheet" href="~/css/login.css" />
+
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="container col-md-6">
+                <form name="loginform" id="loginform" asp-action="authorize">
+
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label asp-for="Email">Email</label>
+                        <input type="email" name="email" class="form-control" asp-for="Email" size="20" required>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:10px">
+                        <label asp-for="Password">Password</label>
+                        <a class="form-sublink">Forgot password?</a>
+                        <input asp-for="Password" type="password" id="user_pass" class="form-control" size="20" required>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input asp-action="authorize" type="submit" class="btn btn-primary w-100" value="Log In">
+                    </div>
+
+                </form>
+                <p class="small text-center">Don't have an account yet? <a asp-action="signup">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+</section>

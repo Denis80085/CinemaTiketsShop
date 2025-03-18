@@ -1,7 +1,6 @@
 ﻿
 using CinemaTiketsShop.Services.Redis;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CinemaTiketsShop.Data.Base
 {
@@ -23,7 +22,7 @@ namespace CinemaTiketsShop.Data.Base
         {
             var entry = await _context.Set<T>().AddAsync(entity);
 
-            if(entry.State == EntityState.Added) 
+            if (entry.State == EntityState.Added)
             {
                 await _cache.SetVal(cache_key, entry.Entity, TTL_Min);
             }
@@ -67,7 +66,7 @@ namespace CinemaTiketsShop.Data.Base
         {
             var cacheEntity = await _cache.GetVal<T>(cache_key, id);
 
-            if(cacheEntity is not null) 
+            if (cacheEntity is not null)
             {
                 return cacheEntity;
             }
@@ -84,20 +83,20 @@ namespace CinemaTiketsShop.Data.Base
 
         virtual async public Task<T?> Update(int id, T entity)
         {
-            if(!_context.Set<T>().Any(e => e.Id == id)) 
+            if (!_context.Set<T>().Any(e => e.Id == id))
             {
                 return null;
             }
 
             var updatedEntity = _context.Set<T>().Update(entity);
 
-            if(updatedEntity.State == EntityState.Modified) 
+            if (updatedEntity.State == EntityState.Modified)
             {
                 await _context.SaveChangesAsync();
                 await _cache.SetVal(cache_key, updatedEntity.Entity, TTL_Min);
                 return entity;
             }
-            else 
+            else
                 return null;
         }
     }

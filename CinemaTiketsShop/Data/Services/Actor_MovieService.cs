@@ -28,9 +28,9 @@ namespace CinemaTiketsShop.Data.Services
             }
             catch (OperationCanceledException ex)
             {
-                throw new OperationCanceledException("Create MovieActor canceled",ex);
+                throw new OperationCanceledException("Create MovieActor canceled", ex);
             }
-            catch 
+            catch
             {
                 throw new Exception("Unexpected error by creating MovieActor");
             }

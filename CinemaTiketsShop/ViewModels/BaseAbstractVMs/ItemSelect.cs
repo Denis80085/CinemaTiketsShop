@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-
-namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
+﻿namespace CinemaTiketsShop.ViewModels.BaseAbstractVMs
 {
     public class ItemSelect
     {
