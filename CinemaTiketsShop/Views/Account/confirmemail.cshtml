@@ -10,6 +10,8 @@
 
 <form class="form-group" asp-action="tryconfirm">
        <input type="text" class="form-control" asp-for="ConfirmCode"/>
+       <input type="hidden" asp-for="UserName" />
+       <input type="hidden" asp-for="UserId" />
        <input type="submit"/>
 </form>
     

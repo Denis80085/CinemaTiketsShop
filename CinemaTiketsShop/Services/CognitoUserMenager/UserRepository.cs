@@ -4,11 +4,13 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using CinemaTiketsShop.Configs;
 using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Mappers.UserMapper;
 using CinemaTiketsShop.Models.UserModels;
 using CinemaTiketsShop.ResponseDtos.UserResponsDtos;
 using CinemaTiketsShop.Services.CognitoUserMenager.ActionModels;
 using CinemaTiketsShop.Services.CognitoUserMenager.Token;
 using Microsoft.DotNet.Scaffolding.Shared;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;
 
@@ -39,15 +41,67 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
             _logger = logger;
         }
 
+        public async Task<UserResendConfirmCodeResponse> ResendConfirmationCodeAsync(UserResendConfirmCodeModel model) 
+        {
+            string secret_hash = CognitoHasher.HashUsername(model.UserName, _cognitoAppConfig.AppClientId, _cognitoAppConfig.AppClientSecret);
+
+            ResendConfirmationCodeRequest request = new ResendConfirmationCodeRequest
+            {
+                ClientId = _cognitoAppConfig.AppClientId,
+                Username = model.UserName,
+                SecretHash = secret_hash
+            };
+
+            try 
+            {
+                var response = await _provider.ResendConfirmationCodeAsync(request);
+
+                if(response.HttpStatusCode != System.Net.HttpStatusCode.OK) 
+                {
+                    return new UserResendConfirmCodeResponse
+                    {
+                        IsSuccess = false,
+                        Message = "Confirmation code not resent"
+                    };
+                }
+
+                return new UserResendConfirmCodeResponse
+                {
+                    IsSuccess = true,
+                    Message = "Confirmation code resent"
+                };
+            }
+            catch (CodeDeliveryFailureException ex) 
+            {
+                _logger.LogError(ex, "Code delivery failed");
+
+                return new UserResendConfirmCodeResponse
+                {
+                    IsSuccess = false,
+                    Message = "Code delivery failed"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+
+                return new UserResendConfirmCodeResponse
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
         public async Task<UserSignUpResponse> ConfirmUserSignUpAsync(UserConfirmSignUpModel model)
         {
-            string secret_hash = CognitoHasher.HashUsername(model.Email, _cognitoAppConfig.AppClientId, _cognitoAppConfig.AppClientSecret);
+            string secret_hash = CognitoHasher.HashUsername(model.UserName, _cognitoAppConfig.AppClientId, _cognitoAppConfig.AppClientSecret);
 
             ConfirmSignUpRequest request = new ConfirmSignUpRequest
             {
                 ClientId = _cognitoAppConfig.AppClientId,
                 ConfirmationCode = model.ConfirmCode,
-                Username = model.Email,
+                Username = model.UserName,
                 SecretHash = secret_hash
             };
 
@@ -57,7 +111,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
 
                 return new UserSignUpResponse
                 {
-                    Email = model.Email,
+                    UserName = model.UserName,
                     UserId = model.UserId,
                     Message = "User Confirmed",
                     IsSuccess = true
@@ -69,7 +123,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 {
                     IsSuccess = false,
                     Message = "Invalid Confirmation Code",
-                    Email = model.Email
+                    UserName = model.UserName
                 };
             }
             catch (ExpiredCodeException) 
@@ -78,7 +132,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 {
                     IsSuccess = false,
                     Message = "Expired code. Please try again",
-                    Email = model.Email
+                    UserName = model.UserName
                 };
             }
         }
@@ -139,7 +193,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 var signUpResponse = new UserSignUpResponse
                 {
                     UserId = response.UserSub,
-                    Email = model.Email,
+                    UserName = model.UserName,
                     Message = $"Confirmation Code sent to   {response.CodeDeliveryDetails.Destination} via {response.CodeDeliveryDetails.DeliveryMedium.Value}",
                     IsSuccess = true
                 };
@@ -163,9 +217,62 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
             }
         }
 
+        public async Task<UserProfileResponse> GetUserByEmailAsync(string Email)
+        {
+            var Users = await _provider.ListUsersAsync(new ListUsersRequest
+            {
+                UserPoolId = _cognitoAppConfig.UserPoolId,
+                Filter = $"email = \"{Email}\""
+            });
+
+            if (Users.Users.Count == 0 || Users.Users[0] is null)
+            {
+                return new UserProfileResponse
+                {
+                    IsSuccess = false,
+                    Message = "User not found"
+                };
+            }
+
+            var FoundUser = Users.Users[0];
+
+            var userProfile = new UserProfileResponse
+            {
+                IsSuccess = true,
+                UserProfile = FoundUser.MapUserProfileModel(),
+                Message = "User Found"
+            };
+
+            return userProfile;
+        }
+
         public async Task<UserProfileResponse> GetUserAsync(string userId)
         {
-            throw new NotImplementedException();
+            var Users = await _provider.ListUsersAsync(new ListUsersRequest
+            {
+                UserPoolId = _cognitoAppConfig.UserPoolId,
+                Filter = $"sub = \"{userId}\""
+            });
+
+            if (Users.Users.Count == 0 || Users.Users[0] is null)
+            {
+                return new UserProfileResponse
+                {
+                    IsSuccess = false,
+                    Message = "User not found"
+                };
+            }
+            
+            var FoundUser = Users.Users[0];
+
+            var userProfile = new UserProfileResponse
+            {
+                IsSuccess = true,
+                UserProfile = FoundUser.MapUserProfileModel(),
+                Message = "User Found"
+            };
+
+            return userProfile;
         }
 
         public async Task<BaseResponseModel> TryChangePasswordAsync(ChangePwdModel model)
@@ -213,19 +320,6 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                     ExpiresIn = result.ExpiresIn,
                     RefreshToken = result.RefreshToken
                 };
-
-                var userResponse = await user.GetUserDetailsAsync();
-
-                var email_verified = userResponse.UserAttributes.Find(u => u.Name == "email_verified");
-
-                if (email_verified != null && email_verified.Value != "true")
-                {
-                    authResponseModel.IsUserConfirmed = false;
-                }
-                else 
-                { 
-                    authResponseModel.IsUserConfirmed = true; 
-                }
 
                 authResponseModel.IsSuccess = true;
                 return authResponseModel;

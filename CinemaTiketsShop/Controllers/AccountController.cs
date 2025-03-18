@@ -32,10 +32,30 @@ namespace CinemaTiketsShop.Controllers
                 return View("login", userLoginModel);
             }
 
+            var UserProfileResponse = await _userRepository.GetUserByEmailAsync(userLoginModel.Email);
+
+            if (UserProfileResponse.IsSuccess && (!UserProfileResponse.UserProfile!.IsEmailVerified || UserProfileResponse.UserProfile.UserStatus.ToLower() == "unconfirmed"))
+            {
+                var response = await _userRepository.ResendConfirmationCodeAsync( new UserResendConfirmCodeModel 
+                { 
+                    UserId = UserProfileResponse.UserProfile.UserId, 
+                    UserName = UserProfileResponse.UserProfile.UserName 
+                });
+
+                if (!response.IsSuccess) 
+                {
+                    ModelState.AddModelError("Email", "Invalid login credentials.");
+                    return View("login", userLoginModel);
+                }
+
+                return RedirectToAction(nameof(ConfirmEmail), new { UserProfileResponse.UserProfile.UserId });
+            }
+
             var result = await _userRepository.TryLoginAsync(userLoginModel);
 
             if (result.IsSuccess)
             {
+
                 _cookieRepository.SetAuthCookie(result.Tokens, HttpContext);
                 return RedirectToAction("profile");
             }
@@ -65,9 +85,7 @@ namespace CinemaTiketsShop.Controllers
 
             if (result.IsSuccess)
             {
-                _cookieRepository.SetCookie("email", result.Email, HttpContext);
-                _cookieRepository.SetCookie("uid", result.UserId, HttpContext);
-                return RedirectToAction(nameof(ConfirmEmail));
+                return RedirectToAction(nameof(ConfirmEmail), new{UserId = result.UserId});
             }
             else
             {
@@ -76,30 +94,47 @@ namespace CinemaTiketsShop.Controllers
             }
         }
 
-        [Route("confirmemail")]
-        public IActionResult ConfirmEmail() 
+        [Route("confirmemail/{UserId}")]
+        public async Task<IActionResult> ConfirmEmail([FromRoute]string UserId) // token nujen bleadi!!!! 
         {
+            if(string.IsNullOrEmpty(UserId))
+            {
+                return View("signup");
+            }
+
+            var result = await _userRepository.GetUserAsync(UserId);/////// nahui nado!!!!
+
+            if (result.IsSuccess && result.UserProfile != null)
+            {
+                return View(new UserConfirmSignUpModel 
+                {
+                    UserId = result.UserProfile.UserId,
+                    UserName = result.UserProfile.UserName
+                });
+            }
+
             return View();
         }
 
         [Route("tryconfirm")]
         [HttpPost]
-        public async Task<IActionResult> TryConfirmUser([Bind("ConfirmCode")]UserConfirmSignUpModel userConfirmSignUpModel)
+        public async Task<IActionResult> TryConfirmUser(UserConfirmSignUpModel model)
         {
-            HttpContext.Request.Cookies.TryGetValue("uid", out var uid);
-            HttpContext.Request.Cookies.TryGetValue("email", out var email);
-
-            userConfirmSignUpModel.Email = email;
-            userConfirmSignUpModel.UserId = uid;
-
-            var result = await _userRepository.ConfirmUserSignUpAsync(userConfirmSignUpModel);
+            
+            var result = await _userRepository.ConfirmUserSignUpAsync(model);
 
             if (result.IsSuccess) 
             {
                 return View("login");
             }
 
-            return View("confirmemail", userConfirmSignUpModel);
+            await _userRepository.ResendConfirmationCodeAsync(new UserResendConfirmCodeModel
+            {
+                UserId = model.UserId,
+                UserName = model.UserName
+            });
+
+            return View("confirmemail");
         }
 
         [Authorize]

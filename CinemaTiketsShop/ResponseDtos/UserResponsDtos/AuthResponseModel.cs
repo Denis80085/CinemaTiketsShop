@@ -7,6 +7,5 @@ namespace CinemaTiketsShop.ResponseDtos.UserResponsDtos
         public TokenModel Tokens { get; set; } = new();
         public string UserId { get; set; }
         public string Email { get; set; }
-        public bool IsUserConfirmed { get; set; }
     }
 }
