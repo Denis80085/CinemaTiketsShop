@@ -1,4 +1,5 @@
 ﻿using CinemaTiketsShop.Models.UserModels;
+using CinemaTiketsShop.ResponseDtos.UserResponsDtos;
 using CinemaTiketsShop.Services.CognitoUserMenager;
 using CinemaTiketsShop.Services.CookieService;
 using Microsoft.AspNetCore.Authorization;
@@ -48,7 +49,10 @@ namespace CinemaTiketsShop.Controllers
                     return View("login", userLoginModel);
                 }
 
-                return RedirectToAction(nameof(ConfirmEmail), new { UserProfileResponse.UserProfile.UserId });
+                TempData["UserId"] = UserProfileResponse.UserProfile.UserId;
+                TempData["UserName"] = UserProfileResponse.UserProfile.UserName;
+
+                return RedirectToAction(nameof(ConfirmEmail));
             }
 
             var result = await _userRepository.TryLoginAsync(userLoginModel);
@@ -85,7 +89,10 @@ namespace CinemaTiketsShop.Controllers
 
             if (result.IsSuccess)
             {
-                return RedirectToAction(nameof(ConfirmEmail), new{UserId = result.UserId});
+                TempData["UserId"] = (string)result.UserId;
+                TempData["UserName"] = (string)result.UserName;
+
+                return RedirectToAction(nameof(ConfirmEmail));
             }
             else
             {
@@ -94,26 +101,20 @@ namespace CinemaTiketsShop.Controllers
             }
         }
 
-        [Route("confirmemail/{UserId}")]
-        public async Task<IActionResult> ConfirmEmail([FromRoute]string UserId) // token nujen bleadi!!!! 
+        [Route("confirmemail")]
+        public IActionResult ConfirmEmail()
         {
-            if(string.IsNullOrEmpty(UserId))
+            string? userId = TempData["UserId"]?.ToString();
+            string? userName = TempData["UserName"] as string;
+
+            if (string.IsNullOrEmpty(userId  as string) || string.IsNullOrEmpty(userName))
             {
-                return View("signup");
+                return View("login");
             }
 
-            var result = await _userRepository.GetUserAsync(UserId);/////// nahui nado!!!!
+            var model = new UserConfirmSignUpModel { UserId = userId as string, UserName = userName };
 
-            if (result.IsSuccess && result.UserProfile != null)
-            {
-                return View(new UserConfirmSignUpModel 
-                {
-                    UserId = result.UserProfile.UserId,
-                    UserName = result.UserProfile.UserName
-                });
-            }
-
-            return View();
+            return View(model);
         }
 
         [Route("tryconfirm")]
