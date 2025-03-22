@@ -32,5 +32,6 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
         Task<UpdateProfileResponse> UpdateUserAttributesAsync(UpdateProfileModel model);
         /* Update Profile Flow Ends */
         Task<UserResendConfirmCodeResponse> ResendConfirmationCodeAsync(UserResendConfirmCodeModel model);
+
     }
 }

@@ -1,0 +1,25 @@
+﻿@using CinemaTiketsShop.Models.MessageModels;
+
+@model MessageModel
+
+<link rel="stylesheet" href="~/css/message.css"/>
+
+<div class="d-inline-block" id="message-container">
+    <div class="alert alert-@Model.MessageColor" role="alert">
+        <div class="d-flex flex-row-reverse justify-content-between">
+            <a style="align-self:center" class="btn btn-close" onclick="CloseMessage()"></a>
+            <h3 class="text-md-center">@Model.MessageTitle</h3>
+        </div>
+        
+        <p>@Model.Message</p>
+        
+    </div>
+</div>
+
+
+<script>
+    function CloseMessage(){
+        let message = document.getElementById("message-container");
+        message.remove();
+    }
+</script>

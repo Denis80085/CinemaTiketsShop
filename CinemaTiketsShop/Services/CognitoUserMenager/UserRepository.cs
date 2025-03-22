@@ -9,6 +9,7 @@ using CinemaTiketsShop.Models.UserModels;
 using CinemaTiketsShop.ResponseDtos.UserResponsDtos;
 using CinemaTiketsShop.Services.CognitoUserMenager.ActionModels;
 using CinemaTiketsShop.Services.CognitoUserMenager.Token;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Options;

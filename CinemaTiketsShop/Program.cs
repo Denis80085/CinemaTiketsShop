@@ -3,10 +3,12 @@ using CinemaTiketsShop.Data;
 using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Extensions;
 using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Helpers.EncryptionHelpers.AES;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.Services.CognitoUserMenager;
 using CinemaTiketsShop.Services.CookieService;
 using CinemaTiketsShop.Services.Redis;
+using CinemaTiketsShop.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,6 +48,8 @@ namespace CinemaTiketsShop
             builder.Services.AddScoped<IRedisCachingService, RedisCachingService>();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("AccountSettings"));
             builder.Services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!)); //Redis configuration
+            builder.Services.Configure<AES_Settings>(builder.Configuration.GetSection("AES_VALS"));
+            builder.Services.AddSingleton<IAES_EcryptionHelper, AES_EcryptionHelper>();
 
             builder.Services.Configure<CognitoAppConfig>(builder.Configuration.GetSection("AppConfig"));
             builder.Services.AddScoped<IUserRepository, UserRepository>();
