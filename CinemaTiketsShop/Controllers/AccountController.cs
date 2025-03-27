@@ -110,22 +110,38 @@ namespace CinemaTiketsShop.Controllers
             } // TO DO: Create Diferent Confirmation Page
         }
 
+<<<<<<< HEAD
         public IActionResult ConfirmNewUser()
+=======
+
+        [Route("confirmemail")] // Confirm Email if user is not confirmed
+        public IActionResult ConfirmEmail()
+>>>>>>> 928aa27 (RedirectToAction has also messages)
         {
+            //this.SendWarningMessageToView("Your account exists but it is unconfirmed. Please confirm your account via email.");
+
             string? userId_encrypted = TempData["UserId"]?.ToString();
             string? userName_encrypted = TempData["UserName"] as string;
 
             if (string.IsNullOrEmpty(userId_encrypted as string) || string.IsNullOrEmpty(userName_encrypted))
             {
                 this.SendFailureMessageToView("The confirmation failed");
+<<<<<<< HEAD
                 return View("signup");
             }
 
             var model = new UserConfirmSignUpModel(7, userId_encrypted, userName_encrypted);
+=======
+                return View("login");
+            }
+
+            var model = new UserConfirmSignUpModel { UserId = userId_encrypted, UserName = userName_encrypted };
+>>>>>>> 928aa27 (RedirectToAction has also messages)
 
             return View(model);
         }
 
+<<<<<<< HEAD
         public IActionResult TryConfirmNewUser(UserConfirmSignUpModel model)
         {
             return View(model);
@@ -149,10 +165,18 @@ namespace CinemaTiketsShop.Controllers
             return View(model);
         }
 
+=======
+>>>>>>> 928aa27 (RedirectToAction has also messages)
         [Route("tryconfirm")] // Confirm Email if user is not confirmed
         [HttpPost]
         public async Task<IActionResult> TryConfirmUser(UserConfirmSignUpModel model)
         {
+<<<<<<< HEAD
+=======
+            model.UserName = _AesEcrytor.Decrypt(model.UserName);
+            model.UserId = _AesEcrytor.Decrypt(model.UserId);
+
+>>>>>>> 928aa27 (RedirectToAction has also messages)
             var result = await _userRepository.ConfirmUserSignUpAsync(model);
 
             if (result.IsSuccess) 

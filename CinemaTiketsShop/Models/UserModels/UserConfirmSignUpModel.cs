@@ -9,6 +9,7 @@ namespace CinemaTiketsShop.Models.UserModels
         [Required]
         public string ConfirmCode { get; set; } = string.Empty;
         [Required]
+<<<<<<< HEAD
         public string UserId { get; }
         [Required]
         public string UserName { get; }
@@ -22,5 +23,11 @@ namespace CinemaTiketsShop.Models.UserModels
             this.UserId = UserId;
             this.UserName = UserName;
         }
+=======
+        public string UserId { get; set; } = string.Empty;
+        [Required]
+        public string UserName { get; set; } = string.Empty;
+        public MessageModel? Message { get; set; }
+>>>>>>> 928aa27 (RedirectToAction has also messages)
     }
 }
