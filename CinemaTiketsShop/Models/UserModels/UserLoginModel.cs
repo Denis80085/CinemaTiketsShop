@@ -9,7 +9,5 @@ namespace CinemaTiketsShop.Models.UserModels
         [EmailAddress(ErrorMessage = "Invalid Email")]
         [Required(ErrorMessage = "Email is required")]
         override public string Email { get; set; } = string.Empty;
-
-        public MessageModel? Message { get; set; }
     }
 }

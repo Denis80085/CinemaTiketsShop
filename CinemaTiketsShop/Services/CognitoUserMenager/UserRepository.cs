@@ -82,6 +82,16 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                     Message = "Code delivery failed"
                 };
             }
+            catch(LimitExceededException ex) 
+            {
+                _logger.LogError(ex, $"Limit excided for user{model.UserName}");
+
+                return new UserResendConfirmCodeResponse
+                {
+                    IsSuccess = false,
+                    Message = "You exceeded the limit of logins. Please try again later."
+                };
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());

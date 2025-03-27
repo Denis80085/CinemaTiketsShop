@@ -1,16 +1,18 @@
 ﻿@using CinemaTiketsShop.Models.UserModels;
+@using CinemaTiketsShop.Models.MessageModels;
 
 @model UserLoginModel
 
 @{
     ViewData["Title"] = "Log In";
+    MessageModel? message = ViewBag.Message;
 }
 
 <link rel="stylesheet" href="~/css/login.css" />
 
-@if(Model.Message is not null)
+@if (message is not null)
 {
-    @await Html.PartialAsync("../Message/message", Model.Message);
+    @await Html.PartialAsync("../Message/message", message);
 }
 
 <section class="section">

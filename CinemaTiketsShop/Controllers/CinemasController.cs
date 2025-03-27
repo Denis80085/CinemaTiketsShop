@@ -1,7 +1,9 @@
 ﻿using CinemaTiketsShop.Data.Services;
 using CinemaTiketsShop.Helpers;
+using CinemaTiketsShop.Helpers.MessageProviderHellper;
 using CinemaTiketsShop.Mappers.CinemaMappers;
 using CinemaTiketsShop.Models;
+using CinemaTiketsShop.Models.MessageModels;
 using CinemaTiketsShop.Services;
 using CinemaTiketsShop.ViewModels.CinemaVMs;
 using Microsoft.AspNetCore.Mvc;
