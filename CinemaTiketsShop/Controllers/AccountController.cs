@@ -1,4 +1,8 @@
-﻿using CinemaTiketsShop.Models.UserModels;
+﻿using CinemaTiketsShop.Helpers.EncryptionHelpers.AES;
+using CinemaTiketsShop.Helpers.MessageProviderHellper;
+using CinemaTiketsShop.Models.MessageModels;
+using CinemaTiketsShop.Models.UserModels;
+using CinemaTiketsShop.ResponseDtos.UserResponsDtos;
 using CinemaTiketsShop.Services.CognitoUserMenager;
 using CinemaTiketsShop.Services.CookieService;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +15,12 @@ namespace CinemaTiketsShop.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly ICookieRepository _cookieRepository;
-        public AccountController(IUserRepository userRepository, ICookieRepository cookieRepository)
+        private readonly IAES_EcryptionHelper _AesEcrytor;
+        public AccountController(IUserRepository userRepository, ICookieRepository cookieRepository, IAES_EcryptionHelper AesEcrytor)
         {
             _userRepository = userRepository;
             _cookieRepository = cookieRepository;
+            _AesEcrytor = AesEcrytor;
         }
 
         [Route("login")]
@@ -25,6 +31,7 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
+        [ActionName("Authorize")]
         public async Task<IActionResult> Authorize([Bind("Email, Password")] UserLoginModel userLoginModel)
         {
             if (!ModelState.IsValid)
@@ -32,36 +39,40 @@ namespace CinemaTiketsShop.Controllers
                 return View("login", userLoginModel);
             }
 
-            var UserProfileResponse = await _userRepository.GetUserByEmailAsync(userLoginModel.Email);
+            UserProfileResponse userProfileResponse = userProfileResponse = await _userRepository.GetUserByEmailAsync(userLoginModel.Email);
 
-            if (UserProfileResponse.IsSuccess && (!UserProfileResponse.UserProfile!.IsEmailVerified || UserProfileResponse.UserProfile.UserStatus.ToLower() == "unconfirmed"))
+            if (userProfileResponse.IsSuccess && (!userProfileResponse.UserProfile!.IsEmailVerified || userProfileResponse.UserProfile.UserStatus.ToLower() == "unconfirmed"))
             {
                 var response = await _userRepository.ResendConfirmationCodeAsync( new UserResendConfirmCodeModel 
                 { 
-                    UserId = UserProfileResponse.UserProfile.UserId, 
-                    UserName = UserProfileResponse.UserProfile.UserName 
+                    UserId = userProfileResponse.UserProfile.UserId, 
+                    UserName = userProfileResponse.UserProfile.UserName 
                 });
 
                 if (!response.IsSuccess) 
                 {
-                    ModelState.AddModelError("Email", "Invalid login credentials.");
+                    this.SendWarningMessageToView("Invalid login credentials.");
                     return View("login", userLoginModel);
                 }
 
-                return RedirectToAction(nameof(ConfirmEmail), new { UserProfileResponse.UserProfile.UserId });
+                TempData["UserId"] = _AesEcrytor.Encrypt(userProfileResponse.UserProfile.UserId);
+                TempData["UserName"] = _AesEcrytor.Encrypt(userProfileResponse.UserProfile.UserName);
+
+                this.SendWarningMessageToAction("Your account exists but it is unconfirmed. Please confirm your account via email.");
+                return RedirectToAction(nameof(ConfirmEmail));
             }
 
             var result = await _userRepository.TryLoginAsync(userLoginModel);
 
             if (result.IsSuccess)
             {
-
                 _cookieRepository.SetAuthCookie(result.Tokens, HttpContext);
-                return RedirectToAction("profile");
+                this.SendSuccessMessageToView("You have successfully logged in.");
+                return View("profile");
             }
             else
             {
-                ModelState.AddModelError("Email", result.Message);
+                this.SendFailureMessageToView("Invalid login credentials.");
                 return View("login", userLoginModel);
             }
         }
@@ -73,7 +84,8 @@ namespace CinemaTiketsShop.Controllers
         }
 
         [HttpPost]
-        [Route("CreateUser")]
+        [ActionName("CreateUser")]
+        [Route("signup")]
         public async Task<IActionResult> CreateUser([Bind("UserName, Email, Password, GivenName, FamilyName")]UserSignUpModel userSignUpModel)
         {
             if (!ModelState.IsValid)
@@ -85,47 +97,52 @@ namespace CinemaTiketsShop.Controllers
 
             if (result.IsSuccess)
             {
-                return RedirectToAction(nameof(ConfirmEmail), new{UserId = result.UserId});
+                TempData["UserId"] = _AesEcrytor.Encrypt(result.UserId);
+                TempData["UserName"] = _AesEcrytor.Encrypt(result.UserName);
+                
+
+                return RedirectToAction(nameof(ConfirmEmail));
             }
             else
             {
                 ModelState.AddModelError("Email", result.Message);
                 return View("signup", userSignUpModel);
-            }
+            } // TO DO: Create Diferent Confirmation Page
         }
 
-        [Route("confirmemail/{UserId}")]
-        public async Task<IActionResult> ConfirmEmail([FromRoute]string UserId) // token nujen bleadi!!!! 
+
+        [Route("confirmemail")] // Confirm Email if user is not confirmed
+        public IActionResult ConfirmEmail()
         {
-            if(string.IsNullOrEmpty(UserId))
+            //this.SendWarningMessageToView("Your account exists but it is unconfirmed. Please confirm your account via email.");
+
+            string? userId_encrypted = TempData["UserId"]?.ToString();
+            string? userName_encrypted = TempData["UserName"] as string;
+
+            if (string.IsNullOrEmpty(userId_encrypted as string) || string.IsNullOrEmpty(userName_encrypted))
             {
-                return View("signup");
+                this.SendFailureMessageToView("The confirmation failed");
+                return View("login");
             }
 
-            var result = await _userRepository.GetUserAsync(UserId);/////// nahui nado!!!!
+            var model = new UserConfirmSignUpModel { UserId = userId_encrypted, UserName = userName_encrypted };
 
-            if (result.IsSuccess && result.UserProfile != null)
-            {
-                return View(new UserConfirmSignUpModel 
-                {
-                    UserId = result.UserProfile.UserId,
-                    UserName = result.UserProfile.UserName
-                });
-            }
-
-            return View();
+            return View(model);
         }
 
-        [Route("tryconfirm")]
+        [Route("tryconfirm")] // Confirm Email if user is not confirmed
         [HttpPost]
         public async Task<IActionResult> TryConfirmUser(UserConfirmSignUpModel model)
         {
-            
+            model.UserName = _AesEcrytor.Decrypt(model.UserName);
+            model.UserId = _AesEcrytor.Decrypt(model.UserId);
+
             var result = await _userRepository.ConfirmUserSignUpAsync(model);
 
             if (result.IsSuccess) 
             {
-                return View("login");
+                this.SendSuccessMessageToAction("Your email was confirmed. Please log in again.");
+                return RedirectToAction("login");
             }
 
             await _userRepository.ResendConfirmationCodeAsync(new UserResendConfirmCodeModel
@@ -133,6 +150,8 @@ namespace CinemaTiketsShop.Controllers
                 UserId = model.UserId,
                 UserName = model.UserName
             });
+
+            this.SendFailureMessageToView("The confirmation code is wrong");
 
             return View("confirmemail");
         }

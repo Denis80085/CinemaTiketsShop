@@ -9,6 +9,7 @@ using CinemaTiketsShop.Models.UserModels;
 using CinemaTiketsShop.ResponseDtos.UserResponsDtos;
 using CinemaTiketsShop.Services.CognitoUserMenager.ActionModels;
 using CinemaTiketsShop.Services.CognitoUserMenager.Token;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.DotNet.Scaffolding.Shared;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Options;
@@ -79,6 +80,16 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 {
                     IsSuccess = false,
                     Message = "Code delivery failed"
+                };
+            }
+            catch(LimitExceededException ex) 
+            {
+                _logger.LogError(ex, $"Limit excided for user{model.UserName}");
+
+                return new UserResendConfirmCodeResponse
+                {
+                    IsSuccess = false,
+                    Message = "You exceeded the limit of logins. Please try again later."
                 };
             }
             catch (Exception ex)
