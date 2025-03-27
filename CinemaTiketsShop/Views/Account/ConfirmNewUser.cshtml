@@ -1,0 +1,16 @@
+﻿@using CinemaTiketsShop.Models.UserModels;
+
+@model UserConfirmSignUpModel
+
+@{
+    ViewData["Title"] = "Confirm Email";
+}
+
+<h1>Thank you for your registration. Please confirm your account with a code, send to your email.</h1>
+
+<form class="form-group" asp-action="TryConfirmNewUser">
+    <input type="text" class="form-control" asp-for="ConfirmCode" />
+    <input type="hidden" asp-for="UserName" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="submit" />
+</form>
