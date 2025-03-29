@@ -101,7 +101,7 @@ namespace CinemaTiketsShop.Controllers
                 TempData["UserName"] = _AesEcrytor.Encrypt(result.UserName);
                 
 
-                return View(nameof(ConfirmNewUser));
+                return RedirectToAction(nameof(ConfirmEmail));
             }
             else
             {
@@ -110,13 +110,9 @@ namespace CinemaTiketsShop.Controllers
             } // TO DO: Create Diferent Confirmation Page
         }
 
-<<<<<<< HEAD
-        public IActionResult ConfirmNewUser()
-=======
 
         [Route("confirmemail")] // Confirm Email if user is not confirmed
         public IActionResult ConfirmEmail()
->>>>>>> 928aa27 (RedirectToAction has also messages)
         {
             //this.SendWarningMessageToView("Your account exists but it is unconfirmed. Please confirm your account via email.");
 
@@ -126,57 +122,21 @@ namespace CinemaTiketsShop.Controllers
             if (string.IsNullOrEmpty(userId_encrypted as string) || string.IsNullOrEmpty(userName_encrypted))
             {
                 this.SendFailureMessageToView("The confirmation failed");
-<<<<<<< HEAD
-                return View("signup");
-            }
-
-            var model = new UserConfirmSignUpModel(7, userId_encrypted, userName_encrypted);
-=======
                 return View("login");
             }
 
             var model = new UserConfirmSignUpModel { UserId = userId_encrypted, UserName = userName_encrypted };
->>>>>>> 928aa27 (RedirectToAction has also messages)
 
             return View(model);
         }
 
-<<<<<<< HEAD
-        public IActionResult TryConfirmNewUser(UserConfirmSignUpModel model)
-        {
-            return View(model);
-        }
-
-        [Route("confirmemail")] // Confirm Email if user is not confirmed
-        public IActionResult ConfirmEmail()
-        {
-
-            string? userId_encrypted = TempData["UserId"]?.ToString();
-            string? userName_encrypted = TempData["UserName"] as string;
-
-            if (string.IsNullOrEmpty(userId_encrypted as string) || string.IsNullOrEmpty(userName_encrypted))
-            {
-                this.SendFailureMessageToView("The confirmation failed");
-                return View("login");
-            }
-
-            var model = new UserConfirmSignUpModel(5, userId_encrypted, userName_encrypted);
-
-            return View(model);
-        }
-
-=======
->>>>>>> 928aa27 (RedirectToAction has also messages)
         [Route("tryconfirm")] // Confirm Email if user is not confirmed
         [HttpPost]
         public async Task<IActionResult> TryConfirmUser(UserConfirmSignUpModel model)
         {
-<<<<<<< HEAD
-=======
             model.UserName = _AesEcrytor.Decrypt(model.UserName);
             model.UserId = _AesEcrytor.Decrypt(model.UserId);
 
->>>>>>> 928aa27 (RedirectToAction has also messages)
             var result = await _userRepository.ConfirmUserSignUpAsync(model);
 
             if (result.IsSuccess) 
@@ -187,8 +147,8 @@ namespace CinemaTiketsShop.Controllers
 
             await _userRepository.ResendConfirmationCodeAsync(new UserResendConfirmCodeModel
             {
-                UserId = _AesEcrytor.Decrypt(model.UserId),
-                UserName = _AesEcrytor.Decrypt(model.UserName)
+                UserId = model.UserId,
+                UserName = model.UserName
             });
 
             this.SendFailureMessageToView("The confirmation code is wrong");
