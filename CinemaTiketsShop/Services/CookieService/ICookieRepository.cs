@@ -7,5 +7,6 @@ namespace CinemaTiketsShop.Services.CookieService
         void DeleteCookie(string key, HttpContext context);
         void SetCookie(string key, string value, HttpContext context);
         void SetAuthCookie(TokenModel tokenModel, HttpContext context);
+        public string? GetCookie(string key, HttpContext context);
     }
 }

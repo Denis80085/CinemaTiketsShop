@@ -93,21 +93,108 @@ namespace CinemaTiketsShop.Controllers
                 return View("signup", userSignUpModel);
             }
 
+            var userByEmail = await _userRepository.GetUserByEmailAsync(userSignUpModel.Email);
+
+            if(userByEmail.IsSuccess)
+            {
+                this.SendFailureMessageToView("The email is already in use.");
+                return View("signup", userSignUpModel);
+            }
+
             var result = await _userRepository.CreateUserAsync(userSignUpModel);
 
             if (result.IsSuccess)
             {
                 TempData["UserId"] = _AesEcrytor.Encrypt(result.UserId);
                 TempData["UserName"] = _AesEcrytor.Encrypt(result.UserName);
-                
 
-                return RedirectToAction(nameof(ConfirmEmail));
+                _cookieRepository.SetCookie("Email", _AesEcrytor.Encrypt(userSignUpModel.Email), HttpContext);
+                _cookieRepository.SetCookie("Password", _AesEcrytor.Encrypt(userSignUpModel.Password), HttpContext);
+
+                this.SendSuccessMessageToAction("Your account was created. Please confirm your account via email.");
+
+                return RedirectToAction(nameof(ConfirmCreatedUserView));
             }
             else
             {
-                ModelState.AddModelError("Email", result.Message);
+                this.SendFailureMessageToView(result.Message);
                 return View("signup", userSignUpModel);
             } // TO DO: Create Diferent Confirmation Page
+        }
+
+        public IActionResult ConfirmCreatedUserView()
+        {
+            string? userId_encrypted = TempData["UserId"]?.ToString();
+            string? userName_encrypted = TempData["UserName"] as string;
+
+            if (string.IsNullOrEmpty(userId_encrypted as string) || string.IsNullOrEmpty(userName_encrypted))
+            {
+                _cookieRepository.DeleteCookie("Email", HttpContext);
+                _cookieRepository.DeleteCookie("Password", HttpContext);
+
+                this.SendFailureMessageToView("The confirmation failed");
+                return View("signup");
+            }
+
+            var model = new UserConfirmSignUpModel { UserId = userId_encrypted, UserName = userName_encrypted };
+
+            return View(model);
+        }
+
+        [Route("TryConfirmNewUser")]
+        [HttpPost]
+        public async Task<IActionResult> TryConfirmNewUser(UserConfirmSignUpModel model)
+        {
+            model.UserName = _AesEcrytor.Decrypt(model.UserName);
+            model.UserId = _AesEcrytor.Decrypt(model.UserId);
+
+            string? email = _cookieRepository.GetCookie("Email", HttpContext);
+            string? password = _cookieRepository.GetCookie("Password", HttpContext);
+
+            var result = await _userRepository.ConfirmUserSignUpAsync(model);
+
+            if (result.IsSuccess)
+            {
+                if(email != null && password != null)
+                {
+                    var loginModel = new UserLoginModel { Email = _AesEcrytor.Decrypt(email), Password = _AesEcrytor.Decrypt(password) };
+
+                    _cookieRepository.DeleteCookie("Email", HttpContext);
+                    _cookieRepository.DeleteCookie("Password", HttpContext);
+
+                    var AuthResult = await _userRepository.TryLoginAsync(loginModel);
+
+                    if (result.IsSuccess)
+                    {
+                        _cookieRepository.SetAuthCookie(AuthResult.Tokens, HttpContext);
+                        this.SendSuccessMessageToAction("Your account was succesfully created.");
+                        return RedirectToAction(nameof(UserProfile));
+                    }
+                    else
+                    {
+                        this.SendWarningMessageToAction("Please log in again.");
+                        return RedirectToAction(nameof(Login), loginModel);
+                    }
+                }
+                else
+                {
+                    this.SendSuccessMessageToAction("Your email was confirmed. Please log in again.");
+                    return RedirectToAction("login");
+                }
+            }
+
+            await _userRepository.ResendConfirmationCodeAsync(new UserResendConfirmCodeModel
+            {
+                UserId = model.UserId,
+                UserName = model.UserName
+            });
+
+            this.SendFailureMessageToView("The confirmation code is wrong");
+
+            model.UserName = _AesEcrytor.Encrypt(model.UserName);
+            model.UserId = _AesEcrytor.Encrypt(model.UserId);
+
+            return View("ConfirmCreatedUserView");
         }
 
 
@@ -152,6 +239,9 @@ namespace CinemaTiketsShop.Controllers
             });
 
             this.SendFailureMessageToView("The confirmation code is wrong");
+
+            model.UserName = _AesEcrytor.Encrypt(model.UserName);
+            model.UserId = _AesEcrytor.Encrypt(model.UserId);
 
             return View("confirmemail");
         }

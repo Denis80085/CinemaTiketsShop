@@ -215,7 +215,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 return new UserSignUpResponse
                 {
                     IsSuccess = false,
-                    Message = "Emailaddress Already Exists"
+                    Message = "Username Already Exists"
                 };
             }
             catch (Exception ex)
@@ -223,7 +223,7 @@ namespace CinemaTiketsShop.Services.CognitoUserMenager
                 return new UserSignUpResponse
                 {
                     IsSuccess = false,
-                    Message = ex.ToString()
+                    Message = ex.Message
                 };
             }
         }

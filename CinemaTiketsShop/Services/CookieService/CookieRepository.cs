@@ -16,6 +16,12 @@ namespace CinemaTiketsShop.Services.CookieService
             });
         }
 
+        public string? GetCookie(string key, HttpContext context)
+        {
+            context.Request.Cookies.TryGetValue(key, out string? value);
+            return value;
+        }
+
         public void DeleteCookie(string key, HttpContext context) 
         {
             context.Response.Cookies.Delete(key);
