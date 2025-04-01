@@ -28,7 +28,7 @@
 
                         <div class="container-fluid d-flex justify-content-center">
                             @if (cinema.MoviesQueue is not null)
-                                @while (cinema.MoviesQueue.Count > 0)
+                                @for (int i = 0; i < 3; i++)
                                 {
                                     var movie = cinema.MoviesQueue.Dequeue();
                                     @if (movie is not null)

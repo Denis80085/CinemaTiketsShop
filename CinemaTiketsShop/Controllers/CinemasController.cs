@@ -166,7 +166,7 @@ namespace CinemaTiketsShop.Controllers
                 CinemaViewModel.PublicId = result.PublicId;
             }
 
-            var Cinema = CinemaViewModel.MapCinemaModel();
+            var Cinema = await _cinemaService.IncludeMovies(CinemaViewModel.MapCinemaModel());
 
             var CinemaUpdated = await _cinemaService.Update(Cinema.Id, Cinema);
 
