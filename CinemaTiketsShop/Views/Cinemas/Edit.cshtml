@@ -11,7 +11,7 @@
     <div class="col-md-12">
         <div class="col-md-8  offset-2">
             <p>
-                <h1>Edit Cinema:</h1>
+                <h1 class="text-white">Edit Cinema:</h1>
             </p>
 
             <div class="col-md-8 offset-2">
@@ -20,7 +20,7 @@
                     <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" alt="not initialized" />
                 </div>
 
-                <form enctype="multipart/form-data" asp-action="Edit" class="gap-4">
+                <form enctype="multipart/form-data" asp-action="Edit" class="gap-4 text-white-50">
 
                     <div style="margin-top: 40px">
                         <input type="radio" name="picture_change_method" value="FromDevice" id="picture_change_1" checked />
@@ -55,8 +55,8 @@
 
                     <div class="form-group" style="margin-top: 10px">
                         <div class="d-flex flex-row-reverse justify-content-lg-between">
-                            <input type="submit" value="Update" class="btn btn-outline-success float-start" />
-                            <a class="btn btn-outline-secondary" asp-action="Index">Show all</a>
+                            <input type="submit" value="Update" class="btn btn-success float-start" />
+                            <a class="btn btn-secondary" asp-action="Index">Show all</a>
                         </div>
                     </div>
 

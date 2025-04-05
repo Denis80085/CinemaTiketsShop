@@ -18,12 +18,12 @@
 <div class="row text">
     <div class="col-md-8 offset-2">
         <p>
-            <h1>Press delete to remove @Model.Name or cancel to go back</h1>
+            <h1 class="text-white">Press delete to remove @Model.Name or cancel to go back</h1>
         </p>
 
         <div class="col-md-8 offset-2">
 
-            <div class="d-flex flex-column justify-content-around gap-4">
+            <div class="d-flex flex-column justify-content-around gap-4 text-white-50">
 
                 <div class="form-group text-center">
                     <img style="max-width: 250px" id="FotoPreview" class="border-info rounded-circle" alt="not initialized" />
@@ -54,7 +54,7 @@
                             <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 Delete
                             </button>
-                            <a class="btn btn-outline-primary" asp-controller="Actors" asp-action="Index">Cancel</a>
+                            <a class="btn btn-primary" asp-controller="Actors" asp-action="Index">Cancel</a>
                         </div>
                     </div>
 
@@ -94,8 +94,8 @@
                                 
 
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">No</button>
-                                    <input type="submit" value="Yes" class="btn btn-outline-danger" />
+                                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                                    <input type="submit" value="Yes" class="btn btn-danger" />
                                 </div>
                             </div>
                         </div>
